@@ -36,3 +36,7 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+
+# Lesson authoring scratch — drafts are local; the template stays tracked
+content-drafts/*
+!content-drafts/_DRAFT_TEMPLATE.md

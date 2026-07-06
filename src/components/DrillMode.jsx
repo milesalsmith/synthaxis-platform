@@ -255,7 +255,18 @@ function MiniRegistry({ data, showRedFlags = false }) {
 // ============================================
 // Main DrillMode Component
 // ============================================
-export default function DrillMode({ onComplete }) {
+// Content-driven: pass `items` (same shape as DRILL_PACKAGES) to drill any
+// pattern's package set; omit to use the built-in default set. title/subtitle/
+// description/targetTime let each pattern frame its own drill intro.
+export default function DrillMode({
+  onComplete,
+  items,
+  title,
+  subtitle,
+  description,
+  targetTime,
+}) {
+  const drillItems = items && items.length ? items : DRILL_PACKAGES;
   const [phase, setPhase] = useState('intro'); // 'intro', 'drilling', 'results'
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -267,11 +278,11 @@ export default function DrillMode({ onComplete }) {
   
   const timerRef = useRef(null);
 
-  // Shuffle packages on mount - take all 10
+  // Shuffle packages on mount - use the content-supplied set (or the default)
   useEffect(() => {
-    const shuffled = [...DRILL_PACKAGES].sort(() => Math.random() - 0.5);
+    const shuffled = [...drillItems].sort(() => Math.random() - 0.5);
     setShuffledPackages(shuffled);
-  }, []);
+  }, [drillItems]);
 
   // Timer
   useEffect(() => {
@@ -357,9 +368,9 @@ export default function DrillMode({ onComplete }) {
           <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <Zap className="w-8 h-8 text-amber-400" />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">The Verification Drill</h3>
+          <h3 className="text-2xl font-bold text-white mb-2">{title || 'The Verification Drill'}</h3>
           <p className="text-slate-400 max-w-md mx-auto">
-            10 packages. Each shows registry info. Spot the fakes using what you've learned.
+            {description || subtitle || "10 packages. Each shows registry info. Spot the fakes using what you've learned."}
           </p>
         </div>
         
@@ -389,15 +400,17 @@ export default function DrillMode({ onComplete }) {
         {/* Stats preview */}
         <div className="flex justify-center gap-8 mb-8 text-sm">
           <div className="text-center">
-            <div className="text-3xl font-bold text-white">10</div>
+            <div className="text-3xl font-bold text-white">{drillItems.length}</div>
             <div className="text-slate-500">packages</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-white">~2min</div>
+            <div className="text-3xl font-bold text-white">{targetTime || '~2min'}</div>
             <div className="text-slate-500">target</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-white">5/5</div>
+            <div className="text-3xl font-bold text-white">
+              {drillItems.filter(p => p.isReal).length}/{drillItems.filter(p => !p.isReal).length}
+            </div>
             <div className="text-slate-500">real/fake</div>
           </div>
         </div>
