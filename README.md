@@ -147,22 +147,33 @@ platform/
 │   │   ├── Landing.jsx             # Marketing homepage
 │   │   ├── FoundationShell.jsx     # Module 0 container
 │   │   ├── Module0Renderer.jsx     # Module 0 content
-│   │   ├── LessonShell.jsx         # Pattern lesson container
+│   │   ├── LessonShell.jsx         # Pattern lesson container (STOP nav + completion)
 │   │   ├── StopVisualisation.jsx   # Animated STOP diagram
-│   │   ├── DrillMode.jsx           # Verification game
+│   │   ├── DrillMode.jsx           # Verification game (content-driven via props)
 │   │   ├── RegistryMockup.jsx      # PyPI/npm mockups
 │   │   └── phases/
-│   │       └── PhaseRenderer.jsx   # STOP phase content
+│   │       ├── PhaseRenderer.jsx   # Thin delegate → StepFlow
+│   │       ├── StepFlow.jsx        # Generic data-driven phase engine
+│   │       ├── phaseConfig.js      # Per-phase theming (colors/icons/labels)
+│   │       └── blocks/             # The block library (one screen = one block)
+│   │           ├── BlockRenderer.jsx  # type → component dispatcher (registry)
+│   │           ├── blockKit.js        # icons + interactive/self-nav type sets
+│   │           └── *.jsx              # prose, chat, concept, registry, drill, …
 │   │
 │   ├── data/
 │   │   ├── modules/
 │   │   │   └── module-00-why-smart-people-get-fooled.js
 │   │   └── patterns/
-│   │       └── pattern-01-confident-fabrication.js
+│   │       ├── _TEMPLATE.js         # Scaffold + block catalogue for new patterns
+│   │       └── pattern-01-confident-fabrication.js   # Pure data (steps/blocks)
 │   │
 │   └── utils/
-│       └── patternLoader.js        # Data loading + progress
+│       └── patternLoader.js        # Data loading + progress + registry
 │
+├── content-drafts/                 # Rough lesson drafts (git-ignored except template)
+│   └── _DRAFT_TEMPLATE.md           # Brain-dump checklist → agent builds the pattern
+├── docs/
+│   └── pattern-authoring-guide.md  # How to author a pattern (schema + blocks)
 ├── tailwind.config.js              # Brand colors + theme
 ├── vite.config.js                  # Build configuration
 └── package.json
@@ -179,13 +190,33 @@ App.jsx (Router)
     │   └── Module0Renderer.jsx
     │
     └── LessonShell.jsx ─────────────────────── /learn/:patternNumber
-        └── PhaseRenderer.jsx
-            ├── [SEE phase components]
-            ├── [TEST phase components]
-            ├── [OBSERVE phase components]
-            └── [PRACTICE phase components]
-                └── DrillMode.jsx
+        └── PhaseRenderer.jsx  (thin delegate)
+            └── StepFlow.jsx   (reads phase.steps; progress, gating, nav)
+                └── BlockRenderer.jsx  (block.type → component)
+                    └── blocks/*  (prose, chat, judgementSet, registry,
+                                   drill → DrillMode.jsx, completion, …)
 ```
+
+### Lesson engine (block-based)
+
+Lessons are **pure data**. A pattern file exports four phases (`see`, `test`,
+`observe`, `practice`); each phase is `{ title, estimatedTime, steps: [...] }`, and
+each step is one **block** — `{ type, ...props }` — rendered full-screen.
+
+```
+phase = { title, estimatedTime, steps: [ block, block, ... ] }
+block = { type: 'prose' | 'chat' | 'reveal' | 'stats' | 'points'
+                | 'cardGrid' | 'concept' | 'method' | 'commands' | 'registry'
+                | 'choice' | 'matching'          // single-screen interactive
+                | 'judgementSet' | 'drill' | 'completion',  // self-navigating
+          ...props }
+```
+
+`StepFlow` renders the steps, draws progress dots, **gates** the Continue button on
+single-screen interactive blocks, and **hands navigation** to self-navigating blocks.
+Adding a new block type = one component + one line in `BlockRenderer`'s registry.
+Adding a whole pattern = **no code** — just a data file. See
+[`docs/pattern-authoring-guide.md`](docs/pattern-authoring-guide.md).
 
 ---
 
@@ -219,39 +250,54 @@ synthaxis: {
 
 ### Dev Mode
 
-`LessonShell.jsx` has a `DEV_MODE` flag (line ~37):
+`LessonShell.jsx` derives `DEV_MODE` automatically from the Vite environment
+(line ~38):
 
 ```javascript
-const DEV_MODE = true;  // Set to false for production
+const DEV_MODE = import.meta.env.DEV;  // true in `npm run dev`, false in builds
 ```
 
-When enabled:
+When active (dev only):
 - STOP letters (S T O P) in header are clickable
 - Jump directly to any phase for testing
 - DEV badge shows in header
 
+No manual toggling needed — production builds ship with it off.
+
 ### Adding a New Pattern
 
-1. **Create data file:**
+Patterns are **pure content** — no engine code changes. Two ways:
+
+**Fastest — hand off a rough draft.** Copy `content-drafts/_DRAFT_TEMPLATE.md`,
+brain-dump the lesson (link to the real hallucination + rough questions/red flags),
+and it gets converted into a validated, registered pattern file.
+
+**By hand — from the template:**
+
+1. **Create the data file** from the scaffold:
    ```bash
-   cp src/data/patterns/pattern-01-confident-fabrication.js \
+   cp src/data/patterns/_TEMPLATE.js \
       src/data/patterns/pattern-02-plausible-syntax.js
    ```
 
-2. **Edit content** in the new file
+2. **Author the four phases** as `steps` of blocks. `_TEMPLATE.js` lists every
+   block type; `pattern-01-confident-fabrication.js` is the canonical worked
+   example for exact props. Full reference:
+   [`docs/pattern-authoring-guide.md`](docs/pattern-authoring-guide.md).
 
-3. **Register in patternLoader.js:**
+3. **Register in `patternLoader.js`** (add the lazy import):
    ```javascript
-   const patterns = {
-     1: () => import('../data/patterns/pattern-01-confident-fabrication.js'),
-     2: () => import('../data/patterns/pattern-02-plausible-syntax.js'),  // Add this
-   };
+   2: () => import('../data/patterns/pattern-02-plausible-syntax.js'),
    ```
 
-4. **Update metadata:**
+4. **Flip status** in `curriculumMetadata.patterns`:
    ```javascript
-   { number: 2, status: 'available' }  // Change from 'coming'
+   { number: 2, status: 'available' }  // was 'coming'
    ```
+
+> Keep `keyTakeaways` + `checklist` on the `practice` phase (LessonShell renders the
+> final summary from them). Don't also put a `checklist` on the `completion` block —
+> it would render twice.
 
 ### Progress Storage
 
@@ -284,6 +330,8 @@ synthaxis_pattern_2    // Pattern 2 progress
 - [x] Pattern 1: Confident Fabrication
 - [x] STOP Protocol framework
 - [x] Interactive DrillMode
+- [x] Block-based lesson engine (patterns authored as pure data)
+- [x] Pattern authoring workflow (template, guide, rough-draft handoff)
 
 ### Phase 2: Core Patterns 🔲
 - [ ] Pattern 2: Plausible Syntax
