@@ -99,7 +99,7 @@ Everyone teaches prompting. Almost nobody teaches verification. Synthaxis focuse
 ### Prerequisites
 
 - Node.js 18+
-- pnpm (recommended) or npm
+- npm
 
 ### Installation
 
@@ -109,25 +109,25 @@ git clone https://github.com/synthaxis-ai/platform.git
 cd platform
 
 # Install dependencies
-pnpm install
+npm install
 
 # Start development server
-pnpm dev
+npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) to see the app.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
 ### Build for Production
 
 ```bash
-pnpm build
-pnpm preview  # Preview production build locally
+npm run build
+npm run preview  # Preview production build in the Workers runtime
 ```
 
 ### Deploy to Cloudflare Workers
 
 ```bash
-pnpm run deploy
+npm run deploy   # builds, then deploys to synthaxis.ai via Wrangler
 ```
 
 ---
@@ -199,7 +199,7 @@ App.jsx (Router)
 | **Routing** | React Router 7 | Declarative, parameterized routes |
 | **Icons** | Lucide React | Clean, consistent iconography |
 | **Deployment** | Cloudflare Workers | Edge deployment, free tier |
-| **Package Manager** | pnpm | Fast, disk-efficient |
+| **Package Manager** | npm | Standard, ships with Node |
 
 ### Brand Colors
 

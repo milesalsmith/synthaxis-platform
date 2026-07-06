@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "synthaxis-platform",
+  "compatibility_date": "2026-07-06",
+  "assets": {
+    // SPA fallback: any path not matching a built asset serves index.html,
+    // so React Router handles client-side routes like /foundation and /learn/:n.
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  },
+  // Custom domains. Wrangler provisions the SSL cert + DNS records
+  // automatically because the synthaxis.ai zone is in this account.
+  "routes": [
+    { "pattern": "synthaxis.ai", "custom_domain": true },
+    { "pattern": "www.synthaxis.ai", "custom_domain": true }
+  ]
+  // No "main" Worker yet — this deploys the built SPA as static assets.
+  // To add a backend API later: create worker/index.ts, add
+  //   "main": "worker/index.ts",
+  // and put bindings (KV, D1, R2, AI, etc.) here.
+}
