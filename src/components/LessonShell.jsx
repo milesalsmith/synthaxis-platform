@@ -32,8 +32,10 @@ const PHASE_COLORS = {
   practice: { letter: 'P', bg: 'bg-synthaxis-500/20', text: 'text-synthaxis-300' }
 };
 
-// Dev mode - set to false for production
-const DEV_MODE = true;
+// Dev mode: automatically true during `npm run dev`, false in production builds.
+// Vite sets import.meta.env.DEV based on the build mode, so this never needs
+// to be flipped by hand. Force-enable locally with: `const DEV_MODE = true;`
+const DEV_MODE = import.meta.env.DEV;
 
 // ============================================
 // Main Component
