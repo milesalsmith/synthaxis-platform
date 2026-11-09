@@ -18,16 +18,15 @@ const modules = {
 // Pattern modules
 const patterns = {
   1: () => import('../data/patterns/pattern-01-confident-fabrication.js'),
-  // Patterns 2-10: Coming soon — uncomment as they're built
-  // 2: () => import('../data/patterns/pattern-02-plausible-syntax.js'),
-  // 3: () => import('../data/patterns/pattern-03-version-hallucination.js'),
-  // 4: () => import('../data/patterns/pattern-04-phantom-citation.js'),
-  // 5: () => import('../data/patterns/pattern-05-statistics-invention.js'),
-  // 6: () => import('../data/patterns/pattern-06-api-mirage.js'),
-  // 7: () => import('../data/patterns/pattern-07-historical-confabulation.js'),
-  // 8: () => import('../data/patterns/pattern-08-logic-phantom.js'),
-  // 9: () => import('../data/patterns/pattern-09-confident-extrapolation.js'),
-  // 10: () => import('../data/patterns/pattern-10-authoritative-blend.js'),
+  2: () => import('../data/patterns/pattern-02-plausible-syntax.js'),
+  3: () => import('../data/patterns/pattern-03-version-hallucination.js'),
+  4: () => import('../data/patterns/pattern-04-phantom-citation.js'),
+  5: () => import('../data/patterns/pattern-05-statistics-invention.js'),
+  6: () => import('../data/patterns/pattern-06-api-mirage.js'),
+  7: () => import('../data/patterns/pattern-07-historical-confabulation.js'),
+  8: () => import('../data/patterns/pattern-08-logic-phantom.js'),
+  9: () => import('../data/patterns/pattern-09-confident-extrapolation.js'),
+  10: () => import('../data/patterns/pattern-10-authoritative-blend.js'),
 };
 
 // ============================================
@@ -61,7 +60,7 @@ export const curriculumMetadata = {
       title: 'Plausible Syntax', 
       subtitle: 'Code that looks right but won\'t run',
       hook: 'Syntax errors hidden in plain sight',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -70,7 +69,7 @@ export const curriculumMetadata = {
       title: 'Version Hallucination', 
       subtitle: 'Deprecated APIs recommended as current',
       hook: 'When AI suggests code from 2019',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -79,7 +78,7 @@ export const curriculumMetadata = {
       title: 'Phantom Citation', 
       subtitle: 'Academic sources that don\'t exist',
       hook: 'Lawyers cited fake cases in federal court',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -88,7 +87,7 @@ export const curriculumMetadata = {
       title: 'Statistics Invention', 
       subtitle: 'Made-up numbers stated with confidence',
       hook: '"78% of users prefer..." — or do they?',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -97,7 +96,7 @@ export const curriculumMetadata = {
       title: 'API Mirage', 
       subtitle: 'Endpoints and methods that don\'t exist',
       hook: 'The function that was never there',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -106,7 +105,7 @@ export const curriculumMetadata = {
       title: 'Historical Confabulation', 
       subtitle: 'Wrong dates, events, attributions',
       hook: 'Einstein never said that',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -115,7 +114,7 @@ export const curriculumMetadata = {
       title: 'Logic Phantom', 
       subtitle: 'Reasoning that sounds valid but isn\'t',
       hook: 'When the math doesn\'t math',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -124,7 +123,7 @@ export const curriculumMetadata = {
       title: 'Confident Extrapolation', 
       subtitle: 'Claims beyond training data',
       hook: 'AI predicts the future (incorrectly)',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
     { 
@@ -133,7 +132,7 @@ export const curriculumMetadata = {
       title: 'Authoritative Blend', 
       subtitle: 'Real and fake mixed together',
       hook: 'The most dangerous pattern of all',
-      status: 'coming',
+      status: 'available',
       estimatedTime: 15
     },
   ],

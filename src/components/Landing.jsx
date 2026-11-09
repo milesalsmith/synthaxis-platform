@@ -47,63 +47,63 @@ function Landing() {
       name: 'Plausible Syntax', 
       description: 'Code that looks right but won\'t run',
       realCase: 'Syntax errors hidden in confident responses',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '03', 
       name: 'Version Hallucination', 
       description: 'Deprecated APIs recommended as current',
       realCase: 'Legacy methods breaking production code',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '04', 
       name: 'Phantom Citation', 
       description: 'Academic sources that don\'t exist',
       realCase: 'Lawyers cited fake cases in court filings',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '05', 
       name: 'Statistics Invention', 
       description: 'Made-up numbers stated with confidence',
       realCase: 'Fabricated data in business reports',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '06', 
       name: 'API Mirage', 
       description: 'Endpoints and methods that don\'t exist',
       realCase: 'Integration failures from phantom APIs',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '07', 
       name: 'Historical Confabulation', 
       description: 'Wrong dates, events, and attributions',
       realCase: 'Misattributed quotes spread as fact',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '08', 
       name: 'Logic Phantom', 
       description: 'Reasoning that sounds valid but isn\'t',
       realCase: 'Flawed analysis accepted as insight',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '09', 
       name: 'Confident Extrapolation', 
       description: 'Claims that go beyond training data',
       realCase: 'Future predictions stated as fact',
-      status: 'coming'
+      status: 'available'
     },
     { 
       number: '10', 
       name: 'Authoritative Blend', 
       description: 'Real and fake information mixed together',
       realCase: 'Truth and fiction woven seamlessly',
-      status: 'coming'
+      status: 'available'
     },
   ];
 
@@ -314,7 +314,7 @@ function Landing() {
                     ? 'bg-slate-800/50 border-synthaxis-500/30 hover:border-synthaxis-500/50 cursor-pointer' 
                     : 'bg-slate-900/30 border-slate-800 opacity-50'
                 }`}
-                onClick={() => lesson.status === 'available' && navigate('/learn/1')}
+                onClick={() => lesson.status === 'available' && navigate(`/learn/${parseInt(lesson.number, 10)}`)}
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">

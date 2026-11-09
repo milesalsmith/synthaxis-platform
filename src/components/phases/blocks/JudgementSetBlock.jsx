@@ -6,6 +6,9 @@
 //
 //   { type: 'judgementSet',
 //     intro?: { heading, instruction?, note?, legend?: { trust, verify } },
+//       legend entries: { label, detail, button? } — `button` overrides the small
+//       text under the TRUST/VERIFY buttons (defaults: 'Install it' / 'Check first').
+//     item.code: true renders the prompt as a multi-line code block (no quotes).
 //     items: [{ id, prompt, context?, correct: 'trust'|'verify',
 //               tone: 'good'|'bad', verdictLabel, explanation, redFlag?, meta? }],
 //     scoring: { tiers: [{ min, message }] },   // highest matching min wins
@@ -91,7 +94,7 @@ export function JudgementSetBlock({ block, accent, onComplete }) {
             <div className="bg-slate-800 rounded-xl p-6 space-y-4">
               {item.context && <p className="text-slate-400 text-sm">{item.context}</p>}
               <div className="bg-slate-900 rounded-lg p-4">
-                <p className="text-white font-mono">"{item.prompt}"</p>
+                <p className="text-white font-mono whitespace-pre-wrap">{item.code ? item.prompt : `"${item.prompt}"`}</p>
               </div>
             </div>
 
@@ -101,13 +104,13 @@ export function JudgementSetBlock({ block, accent, onComplete }) {
                   className="p-6 rounded-xl border-2 border-slate-700 hover:border-synthaxis-500 hover:bg-synthaxis-500/10 transition-all group">
                   <Shield className="w-8 h-8 mx-auto mb-2 text-slate-400 group-hover:text-synthaxis-300" />
                   <div className="font-medium text-white">TRUST</div>
-                  <div className="text-sm text-slate-400">Install it</div>
+                  <div className="text-sm text-slate-400">{block.intro?.legend?.trust?.button ?? 'Install it'}</div>
                 </button>
                 <button onClick={() => choose(item.id, 'verify')}
                   className="p-6 rounded-xl border-2 border-slate-700 hover:border-amber-500 hover:bg-amber-500/10 transition-all group">
                   <HelpCircle className="w-8 h-8 mx-auto mb-2 text-slate-400 group-hover:text-amber-400" />
                   <div className="font-medium text-white">VERIFY</div>
-                  <div className="text-sm text-slate-400">Check first</div>
+                  <div className="text-sm text-slate-400">{block.intro?.legend?.verify?.button ?? 'Check first'}</div>
                 </button>
               </div>
             )}

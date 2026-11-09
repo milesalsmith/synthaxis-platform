@@ -71,10 +71,15 @@ Module 0: Why Smart People Get Fooled     10 min   ✅ Available
 └── Transition to Patterns
 
 Pattern 1: Confident Fabrication          15 min   ✅ Available
-Pattern 2: Plausible Syntax               15 min   🔲 Coming Soon
-Pattern 3: Version Hallucination          15 min   🔲 Coming Soon
-...
-Pattern 10: Authoritative Blend           15 min   🔲 Coming Soon
+Pattern 2: Plausible Syntax               15 min   ✅ Available
+Pattern 3: Version Hallucination          15 min   ✅ Available
+Pattern 4: Phantom Citation               15 min   ✅ Available
+Pattern 5: Statistics Invention           15 min   ✅ Available
+Pattern 6: API Mirage                     15 min   ✅ Available
+Pattern 7: Historical Confabulation       15 min   ✅ Available
+Pattern 8: Logic Phantom                  15 min   ✅ Available
+Pattern 9: Confident Extrapolation        15 min   ✅ Available
+Pattern 10: Authoritative Blend           15 min   ✅ Available
 
 Total: ~3 hours to AI discernment
 ```
@@ -295,6 +300,8 @@ and it gets converted into a validated, registered pattern file.
    { number: 2, status: 'available' }  // was 'coming'
    ```
 
+5. **Flip status in `src/components/Landing.jsx`** (it has its own `lessons` array).
+
 > Keep `keyTakeaways` + `checklist` on the `practice` phase (LessonShell renders the
 > final summary from them). Don't also put a `checklist` on the `completion` block —
 > it would render twice.
@@ -333,14 +340,14 @@ synthaxis_pattern_2    // Pattern 2 progress
 - [x] Block-based lesson engine (patterns authored as pure data)
 - [x] Pattern authoring workflow (template, guide, rough-draft handoff)
 
-### Phase 2: Core Patterns 🔲
-- [ ] Pattern 2: Plausible Syntax
-- [ ] Pattern 3: Version Hallucination
-- [ ] Pattern 4: Phantom Citation
-- [ ] Pattern 5: Statistics Invention
+### Phase 2: Core Patterns ✅
+- [x] Pattern 2: Plausible Syntax
+- [x] Pattern 3: Version Hallucination
+- [x] Pattern 4: Phantom Citation
+- [x] Pattern 5: Statistics Invention
 
 ### Phase 3: Complete Curriculum 🔲
-- [ ] Patterns 6-10
+- [x] Patterns 6-10 (first drafts: fact-check and polish pass still to do)
 - [ ] Progress dashboard
 - [ ] Completion certificates
 

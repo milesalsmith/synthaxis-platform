@@ -141,6 +141,16 @@ fall back to the built-in default set.
 }
 ```
 
+## Non-package patterns (patterns 2-10)
+
+`registry` and `drill` are built around package registries. For every other pattern,
+use a second `judgementSet` as the practice drill instead, then `commands`, then
+`completion`. Two optional `judgementSet` fields help here:
+
+- `intro.legend.trust.button` / `intro.legend.verify.button` override the small text
+  under the TRUST / VERIFY buttons (defaults: "Install it" / "Check first").
+- `item.code: true` renders the prompt as a multi-line code block (no quotes).
+
 ## Adding a brand-new block type (rare)
 
 Only needed if a pattern requires a screen shape none of the 15 blocks cover:
