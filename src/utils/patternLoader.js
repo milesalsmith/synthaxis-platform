@@ -50,7 +50,7 @@ export const curriculumMetadata = {
       id: 'pattern-01', 
       title: 'Confident Fabrication', 
       subtitle: 'AI invents packages, libraries, or tools that don\'t exist',
-      hook: '30,000 developers installed a package that didn\'t exist',
+      hook: 'AI agents tried to install a package that never existed',
       status: 'available',
       estimatedTime: 15
     },
@@ -59,7 +59,7 @@ export const curriculumMetadata = {
       id: 'pattern-02', 
       title: 'Plausible Syntax', 
       subtitle: 'Code that looks right but won\'t run',
-      hook: 'Syntax errors hidden in plain sight',
+      hook: 'The AI-built app that worked fine and leaked everything',
       status: 'available',
       estimatedTime: 15
     },
@@ -68,7 +68,7 @@ export const curriculumMetadata = {
       id: 'pattern-03', 
       title: 'Version Hallucination', 
       subtitle: 'Deprecated APIs recommended as current',
-      hook: 'When AI suggests code from 2019',
+      hook: 'When AI pins the version with the known security hole',
       status: 'available',
       estimatedTime: 15
     },
@@ -77,7 +77,7 @@ export const curriculumMetadata = {
       id: 'pattern-04', 
       title: 'Phantom Citation', 
       subtitle: 'Academic sources that don\'t exist',
-      hook: 'Lawyers cited fake cases in federal court',
+      hook: 'A Rs 425 crore penalty built on cases that never existed',
       status: 'available',
       estimatedTime: 15
     },
@@ -86,7 +86,7 @@ export const curriculumMetadata = {
       id: 'pattern-05', 
       title: 'Statistics Invention', 
       subtitle: 'Made-up numbers stated with confidence',
-      hook: '"78% of users prefer..." — or do they?',
+      hook: 'The $200 billion that was two different things',
       status: 'available',
       estimatedTime: 15
     },
@@ -95,7 +95,7 @@ export const curriculumMetadata = {
       id: 'pattern-06', 
       title: 'API Mirage', 
       subtitle: 'Endpoints and methods that don\'t exist',
-      hook: 'The function that was never there',
+      hook: 'The feature that was never there, until users forced it',
       status: 'available',
       estimatedTime: 15
     },
@@ -104,7 +104,7 @@ export const curriculumMetadata = {
       id: 'pattern-07', 
       title: 'Historical Confabulation', 
       subtitle: 'Wrong dates, events, attributions',
-      hook: 'Einstein never said that',
+      hook: 'The cargo that was never there',
       status: 'available',
       estimatedTime: 15
     },
@@ -113,7 +113,7 @@ export const curriculumMetadata = {
       id: 'pattern-08', 
       title: 'Logic Phantom', 
       subtitle: 'Reasoning that sounds valid but isn\'t',
-      hook: 'When the math doesn\'t math',
+      hook: 'One sign error, three papers withdrawn',
       status: 'available',
       estimatedTime: 15
     },
@@ -122,7 +122,7 @@ export const curriculumMetadata = {
       id: 'pattern-09', 
       title: 'Confident Extrapolation', 
       subtitle: 'Claims beyond training data',
-      hook: 'AI predicts the future (incorrectly)',
+      hook: 'Confident voting deadlines, out of date',
       status: 'available',
       estimatedTime: 15
     },

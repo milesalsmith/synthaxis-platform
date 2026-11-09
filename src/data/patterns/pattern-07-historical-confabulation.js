@@ -1,7 +1,8 @@
 // src/data/patterns/pattern-07-historical-confabulation.js
 // Pattern 07: Historical Confabulation
 //
-// CASE STUDY: Google Bard demo error about JWST (February 2023)
+// CASE STUDY: AI-generated false intelligence report on a Chinese ship
+// (incident spring 2026; reported by CNN, 18 September 2026)
 // TARGET: ~18 minutes total
 //
 // Authored in the block-based schema (see docs/pattern-authoring-guide.md).
@@ -11,58 +12,56 @@
 // SEE (3 min): Hook -> Chat -> Trust check -> Reveal -> Impact
 // ============================================
 const see = {
-  title: 'Einstein Never Said That',
+  title: 'The Cargo That Was Never There',
   estimatedTime: 3,
   steps: [
     {
       type: 'prose',
-      heading: 'Einstein never said that.',
-      body: `You've seen the line on posters, in slide decks, and in LinkedIn posts: "Insanity is doing the same thing over and over and expecting different results." It's almost always credited to Albert Einstein.
+      heading: 'The planes were already in the air.',
+      body: `This spring, during the war with Iran, an intelligence report circulated across the US military. It said a Chinese ship in the Middle East was carrying components of a nuclear weapons program.
 
-There is no evidence he ever said it. Quote researchers have searched for decades and found no trace of it in his writings or recorded remarks.
+According to four sources who spoke to CNN, the military planned to intercept the vessel. Armed personnel were preparing to board it, and military aircraft were in the air.
 
-Pithy quotes get pinned on famous people because it makes them feel authoritative. AI models learned from all of that text, so they repeat the pinning, fluently and without hesitation.
+Then, just before the operation, officials dug into where the report came from. A Special Operations Command analyst had used an AI chatbot to analyze intelligence about the ship's manifest, and the chatbot had misidentified the cargo. One source called the report "entirely false" and said it "almost started a war."
 
-Dates, events, and attributions can go wrong in the same way. Here's a real example from a very public stage.`,
+Here's roughly how a mistake like that reaches the top of a chain of command.`,
     },
     {
       type: 'chat',
-      user: 'What new discoveries from the James Webb Space Telescope can I tell my 9-year-old about?',
+      user: "Using these manifest reports and intercepts, what is this vessel carrying? Then format the findings as a standard intelligence report.",
       ai: {
-        text: `Here are a few discoveries you can share with your 9-year-old:
+        text: `ASSESSMENT: The vessel is assessed to be transporting components associated with a nuclear weapons program.
 
-- JWST has captured stunning images of galaxies from the early universe.
-- It has detected carbon dioxide in the atmosphere of a distant planet.
-- JWST took the very first pictures of a planet outside of our own solar system. These distant worlds are called "exoplanets."
+BASIS: Open-source shipping data, combined with signals intelligence on the vessel's manifest.
 
-These discoveries can help spark your child's curiosity about space!`,
-        note: 'Paraphrased from the kind of answer shown in a February 2023 promotional demo. It reads as clear, friendly, and confident.',
+RECOMMENDATION: Prioritize the vessel for interception.`,
+        note: "Reconstruction for teaching purposes, not the real text, which has not been made public. CNN reported that the chatbot fused open-source and classified signals intelligence, misidentified the cargo, and that the analyst then used AI again to package the findings into a standard report. CNN could not learn what the misidentified cargo was.",
       },
     },
     {
       type: 'choice',
-      question: 'Would you have repeated that to your 9-year-old?',
+      question: 'If this landed in your inbox, would you act on it?',
       subtext: "There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'yes-repeated', label: "Yes, it's a promo from a major company", response: 'Understandable. A polished source makes the claim feel pre-checked. It often is not.' },
-        { id: 'maybe-searched', label: "Maybe, but I'd search for 'first exoplanet picture' first", response: 'That one search is the whole skill. Most people skip it because the answer already sounds finished.' },
-        { id: 'no-suspicious', label: "No, 'the very first' claims make me wary", response: 'Good instinct. Superlatives like "first", "oldest", and "never" are exactly where history goes wrong.' },
+        { id: 'yes-official', label: "Yes. It's in the official format and came through command channels", response: "Understandable. That's exactly what happened. The standard format made an unverified claim look like vetted intelligence." },
+        { id: 'maybe-source', label: "Maybe, but I'd ask what the claim is actually based on first", response: 'That one question is the whole skill. It is also the question officials asked, just before the operation.' },
+        { id: 'no-unsourced', label: "No. A dramatic claim with no traceable source is a red flag", response: 'Good instinct. The bigger the claim, the more it needs a source you can point to.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'One of those three claims was wrong.',
-      explanation: `The first image of a planet outside our solar system was not taken by JWST. It was taken years earlier, in 2004, by the European Southern Observatory's Very Large Telescope.
+      headline: 'The cargo claim was invented.',
+      explanation: `The ship was real and the manifest reporting was real. The conclusion, what the ship was carrying, was something the chatbot produced and stated as fact.
 
-JWST launched in December 2021. It has made real, impressive exoplanet observations, which is why the sentence sounded right. The AI blended a true fact (JWST studies exoplanets) with a false superlative (it took the *first* picture).`,
+This is confabulation: an AI fills a gap with a plausible event or fact and presents it in the same confident voice as everything else. Here, a second pass through AI turned that guess into an official-looking report, so it looked like checked work.`,
       list: {
-        title: "Here's what actually happened:",
+        title: "Here's what was reported:",
         items: [
-          'In February 2023, Google shared a demo of its Bard chatbot that included this claim',
-          'Astronomers noticed the error quickly and pointed it out publicly',
-          'It was reported that Alphabet lost roughly $100 billion in market value around the same time (many factors move a share price)',
-          'The error was a small slip in a polished, confident answer, which is the dangerous kind',
+          'Spring 2026: an analyst used a chatbot to analyze intelligence on a Chinese ship\'s manifest, and it misidentified the cargo',
+          'The analyst used AI again to format the findings as a standard intelligence report, which was then circulated',
+          'Plans to intercept and board the ship were under way before officials traced the report back to AI and halted the operation',
+          'CNN broke the story on 18 September 2026. The next day, Senators Warner, Reed and Coons asked for inspector-general investigations into AI errors in military targeting',
         ],
       },
     },
@@ -70,21 +69,21 @@ JWST launched in December 2021. It has made real, impressive exoplanet observati
       type: 'stats',
       title: 'The Impact',
       items: [
-        { value: '2004', label: 'First exoplanet image', detail: 'taken by the VLT, not JWST' },
-        { value: '~$100B', label: 'Reported market-value drop', detail: 'reported, with many contributing factors' },
-        { value: '1 line', label: 'Where the error hid', detail: 'one bullet in a three-bullet answer' },
+        { value: '2', label: 'Passes through AI', detail: 'one to reach the conclusion, one to make it look official' },
+        { value: '4', label: 'Sources CNN cited', detail: 'the Pentagon did not respond to requests for comment' },
+        { value: '3', label: 'Senators seeking a probe', detail: 'letter to the Defense Secretary and the DNI' },
       ],
-      source: 'Reuters, 8 Feb 2023 (reported)',
+      source: 'CNN, 18 and 19 September 2026',
     },
     {
       type: 'points',
       heading: 'Why is this dangerous?',
       items: [
-        { label: 'Embarrassing but contained:', body: 'A wrong date in a casual chat. You look slightly silly at dinner.', tone: 'neutral' },
-        { label: 'Actually costly:', body: 'A wrong date, quote, or attribution lands in a report, a speech, a legal brief, or a school essay. Now it carries your name and looks authoritative.', tone: 'danger' },
+        { label: 'Embarrassing but contained:', body: 'A wrong date or quote in a casual chat. You look slightly silly at dinner.', tone: 'neutral' },
+        { label: 'Actually costly:', body: "A confabulated fact, date, or quote lands in a report, a book, or a briefing. Now it looks authoritative. In May 2026, Ars Technica reported that a New York Times investigation found AI-linked 'synthetic quotes' in a book about AI and truth. Kara Swisher told the Times she 'never said' one of them.", tone: 'danger' },
       ],
-      conclusion: 'History is full of well-known names and tidy stories, which makes it ideal territory for a system that predicts plausible text rather than looking up facts.',
-      transition: "So how do you catch it? First, let's test your instincts.",
+      conclusion: 'A system that predicts plausible text can predict a plausible event as easily as a plausible quote. The defense is the same for both: trace the claim back to a source that actually exists.',
+      transition: "So how do you catch it? Start with something lower-stakes: history. Let's test your instincts.",
     },
   ],
 };
@@ -168,7 +167,7 @@ const test = {
         ],
       },
       summary: {
-        insight: "3 of these 5 statements had a problem: a misattributed quote, a vivid anecdote with no source, and a true date with a false detail attached. The two accurate ones were famous, heavily documented dates. The wrong ones were the ones that sounded best.",
+        insight: "3 of these 5 statements had a problem: a misattributed quote, a vivid anecdote with no source, and a true date with a false detail attached. The two accurate ones were famous, heavily documented dates. The wrong ones were the ones that sounded best. Same lesson as the Chinese-ship report: polish and confidence told you nothing about accuracy.",
       },
     },
   ],
@@ -268,7 +267,7 @@ const observe = {
           items: ['Speech, place, and date', 'Book title and chapter or page', 'Archive, collection, or document reference'],
         },
       },
-      why: "A real quote has a first appearance somewhere. If neither you nor the AI can say where, the attribution is probably folklore.",
+      why: "A real quote or event has a first appearance somewhere. If neither you nor the AI can say where, it is probably folklore. In the 2026 Chinese-ship case, the report fell apart once officials asked what it was actually based on.",
       spot: "Ask the AI: 'What is the earliest source for this?' Then verify the source itself, because AI can invent citations too.",
     },
     {
@@ -502,17 +501,17 @@ export const lesson = {
   patternNumber: 7,
   title: 'Historical Confabulation',
   subtitle: 'Wrong dates, events, attributions',
-  description: 'Learn to spot when AI states plausible-but-wrong dates, misattributed quotes, and blended events with complete confidence.',
+  description: 'Learn to spot when AI states plausible-but-wrong dates, misattributed quotes, and blended or invented events with complete confidence.',
   estimatedTime: 15,
 
   skillLearned: 'Verifying historical claims, dates, and quote attributions',
   verificationMethod: 'The Primary Source Pass',
 
   caseStudy: {
-    name: 'Google Bard demo error about the James Webb Space Telescope',
-    date: 'February 2023',
-    researcher: 'Error flagged publicly by astronomers after the demo',
-    source: 'Reuters, 8 Feb 2023 (reported)',
+    name: 'AI-generated false intelligence report nearly leads US forces to board a Chinese ship',
+    date: 'Spring 2026 (reported 18 September 2026)',
+    researcher: 'Reported by CNN (Katie Bo Lillis and Zachary Cohen)',
+    source: 'https://www.cnn.com/2026/09/18/politics/us-military-ai-false-intelligence-china-ship',
   },
 
   nextLesson: {

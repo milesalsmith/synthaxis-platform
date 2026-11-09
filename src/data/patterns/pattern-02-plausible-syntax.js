@@ -1,7 +1,7 @@
 // src/data/patterns/pattern-02-plausible-syntax.js
 // Pattern 02: Plausible Syntax
 //
-// No single famous incident: the SEE phase uses a clearly illustrative story.
+// SEE phase anchored on the Moltbook database exposure (Wiz Research, Feb 2026).
 // TARGET: ~18 minutes total
 //
 // Authored in the block-based schema: each STOP phase is
@@ -17,33 +17,31 @@ const see = {
   steps: [
     {
       type: 'prose',
-      heading: 'The code looked clean. It was also broken.',
-      body: `Imagine a developer needs a small helper: given a list of user IDs, fetch each user from an API and return their names.
+      heading: 'The app worked. That was the problem.',
+      body: `In late January 2026, Moltbook went viral. It was a Reddit-style site billed as a "social network built exclusively for AI agents", and it launched on 28 January.
 
-They ask an AI assistant. The answer comes back in seconds, nicely formatted, with sensible variable names. They skim it, it looks fine, and they paste it in. (This scenario is illustrative, but this exact mistake is very common.)`,
+Its creator, Matt Schlicht, said publicly that he "didn't write one line of code" for it. An AI assistant built the whole thing, which is the practice known as "vibe coding". And it worked: agents could register, post, vote, and message each other. Nothing crashed.`,
     },
     {
       type: 'chat',
-      user: 'Write a JavaScript function that takes a list of user IDs, fetches each user from /api/users/:id, and returns an array of their names.',
+      user: 'Load the current agent\'s profile from our Supabase database so the page can show it.',
       ai: {
-        text: `Here's a clean helper for that:
+        text: `Here's a simple way to do it straight from the frontend:
 
 \`\`\`
-async function getUserNames(ids) {
-  const names = [];
+import { createClient } from '@supabase/supabase-js';
 
-  ids.forEach(async (id) => {
-    const res = await fetch(\`/api/users/\${id}\`);
-    const user = await res.json();
-    names.push(user.name);
-  });
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  return names;
-}
+const { data: agent, error } = await supabase
+  .from('agents')
+  .select('*')
+  .eq('name', agentName)
+  .single();
 \`\`\`
 
-Call it with \`await getUserNames([1, 2, 3])\` and you'll get the names.`,
-        note: 'It uses async/await, modern syntax, and sensible names. Nothing looks wrong.',
+This gives you the agent's full record, ready to render.`,
+        note: 'Reconstruction of the kind of code typical of vibe-coded Supabase apps. It is not Moltbook\'s actual source, which was not published.',
       },
     },
     {
@@ -51,34 +49,44 @@ Call it with \`await getUserNames([1, 2, 3])\` and you'll get the names.`,
       question: 'Would this code pass your glance review?',
       subtext: "There's no wrong answer. We're testing your instincts.",
       options: [
-        { id: 'yes-pasted', label: "Yes, it looks fine. I'd paste it in", response: "You're in good company. Code that looks idiomatic gets the benefit of the doubt." },
-        { id: 'maybe-ran', label: "Probably, but I'd run it once first", response: 'Good habit. Running it is the fastest way to find out what it actually does.' },
-        { id: 'no-spotted', label: 'No, something seems off', response: 'Nice. Hold that thought: you may have spotted the problem already.' },
+        { id: 'yes-pasted', label: "Yes, it looks fine. I'd ship it", response: "You're in good company. It's tidy, it uses the official client library, and it works when you run it." },
+        { id: 'maybe-ran', label: "Probably, but I'd run it once first", response: 'Good habit, but here running it would pass. It loads the profile perfectly. The question is who else can run it.' },
+        { id: 'no-spotted', label: 'No, something seems off', response: "Nice. Ask what stops someone else from changing agentName, or dropping the filter altogether." },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'It returns an empty array. Every time.',
-      explanation: `The syntax is valid. There's no error message. The function simply returns before any of the fetches finish.
+      headline: 'Every feature worked. The whole database was open.',
+      explanation: `By 31 January 2026, researchers at the security firm Wiz had browsed Moltbook like normal users. Within minutes they found the Supabase key in the site's public JavaScript.
 
-\`forEach\` does not wait for async callbacks. Each callback starts, hits its first \`await\`, and pauses, while \`forEach\` moves on and \`return names\` runs immediately with an empty array. The names get pushed in later, after the caller already has the empty result.`,
+That key is meant to be public, but only when Row Level Security (RLS) rules decide who may read and write each row. Moltbook had no such rules, so the key gave anyone full read and write access. Wiz reports that this exposed 1.5 million API tokens, 35,000 email addresses, and private messages between agents, and let anyone edit live posts. Moltbook fixed it within hours of being told.`,
       list: {
         title: 'Why this is hard to catch by reading:',
         items: [
-          'Every individual line is valid and idiomatic',
-          'The code has an async function and uses await, so it looks asynchronous-aware',
-          'No crash and no error, just a quietly wrong result',
-          'AI learned what correct code looks like, not what it does when it runs',
+          'Every line is valid, idiomatic, and uses the official library',
+          'It runs and returns exactly the right data, so testing it "works" passes',
+          'The flaw is something missing (an access rule), not a wrong line you could spot',
+          'AI learned what working code looks like, not what it should protect',
         ],
       },
+    },
+    {
+      type: 'stats',
+      title: 'The Impact',
+      items: [
+        { value: '1.5M', label: 'API tokens exposed', detail: 'enough to take over any agent account' },
+        { value: '35,000', label: 'Email addresses exposed', detail: 'plus private messages between agents' },
+        { value: '38%', label: 'AI code samples still vulnerable', detail: 'in Veracode\'s October 2026 tests' },
+      ],
+      source: 'Wiz Research, February 2026; Veracode GenAI Code Security Report update, October 2026',
     },
     {
       type: 'points',
       heading: 'Why does AI write code like this?',
       items: [
-        { label: 'What AI is good at:', body: 'Producing code that matches the shape, style, and vocabulary of real code it has seen', tone: 'neutral' },
-        { label: 'What AI cannot do by default:', body: 'Execute the code, check types, or confirm that a function has the signature it claims. Subtle breakage reads exactly like correct code.', tone: 'danger' },
+        { label: 'What AI is good at:', body: 'Producing code that matches the shape, style, and vocabulary of real code it has seen. Veracode reports that the code it produces almost always works.', tone: 'neutral' },
+        { label: 'What AI cannot do by default:', body: 'Execute the code, check types, confirm a function\'s real signature, or notice a safeguard it never wrote. Subtle breakage reads exactly like correct code.', tone: 'danger' },
       ],
       conclusion: "Plausible is not the same as correct. The only way to know is to run it, check it, or test it.",
       transition: "Let's test your eye for broken code before we learn the red flags.",
@@ -146,7 +154,7 @@ const test = {
           correct: 'trust',
           tone: 'good',
           verdictLabel: 'Works',
-          explanation: 'WORKS. map() creates an array of promises and Promise.all() waits for all of them. This is the standard fix for the forEach(async ...) problem from the story.',
+          explanation: 'WORKS. map() creates an array of promises and Promise.all() waits for all of them. This is the standard fix for the common forEach(async ...) mistake, where forEach does not wait for the async callbacks.',
           meta: 'Assumes it runs inside an async function or an ES module with top-level await',
         },
         {
@@ -170,7 +178,7 @@ const test = {
         ],
       },
       summary: {
-        insight: "In this batch, 3 of the 5 snippets would have failed on first run, and none of them looked wrong at a glance. The fastest way to find out is usually to run them.",
+        insight: "In this batch, 3 of the 5 snippets would have failed on first run, and none of them looked wrong at a glance. The fastest way to find out is usually to run them. But remember Moltbook: its code ran perfectly. Running code tells you it works, not that it is safe.",
       },
     },
   ],
@@ -309,7 +317,7 @@ const observe = {
           ],
         },
       },
-      footer: 'Running code takes a minute. Debugging a silent wrong answer in production takes much longer. Plausible code earns trust by running, not by looking right.',
+      footer: 'Running code takes a minute. Debugging a silent wrong answer in production takes much longer. Plausible code earns trust by running, not by looking right. And for anything that touches user data, also ask what the code does for someone who is not supposed to use it: Moltbook passed every "does it work?" check.',
     },
   ],
 };
@@ -455,7 +463,7 @@ search(pattern, string, flags=0)
       type: 'completion',
       icon: 'check',
       title: 'Pattern Learned: Plausible Syntax',
-      summary: "You can now spot code that looks right but won't run. You know the four red flags: forgotten awaits, wrong signatures, wrong-type methods, and quiet loop bugs. You also have a quick routine and the tools to check any snippet before you trust it.",
+      summary: "You can now spot code that looks right but isn't. You know the four red flags: forgotten awaits, wrong signatures, wrong-type methods, and quiet loop bugs. You also have a quick routine and the tools to check any snippet before you trust it.",
       next: { label: 'Up Next', body: "Pattern 3 looks at Version Hallucination: when AI recommends deprecated or removed APIs as if they were current. That is code that was right in 2019, but not today." },
     },
   ],
@@ -488,12 +496,19 @@ export const lesson = {
   id: 'pattern-02',
   patternNumber: 2,
   title: 'Plausible Syntax',
-  subtitle: "Code that looks right but won't run",
+  subtitle: "Code that looks right but isn't",
   description: 'Learn to spot AI-written code that looks clean and idiomatic but contains subtle bugs: missing awaits, wrong arguments, wrong types, and quiet loop errors.',
   estimatedTime: 15,
 
   skillLearned: 'Spotting and verifying subtly broken AI-generated code',
   verificationMethod: 'Run It Before You Trust It',
+
+  caseStudy: {
+    name: 'The Moltbook database exposure',
+    date: 'January-February 2026',
+    researcher: 'Gal Nagli, Wiz Research',
+    source: 'https://www.wiz.io/blog/exposed-moltbook-database-reveals-millions-of-api-keys',
+  },
 
   nextLesson: {
     id: 'pattern-03',

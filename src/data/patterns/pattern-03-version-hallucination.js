@@ -1,8 +1,9 @@
 // src/data/patterns/pattern-03-version-hallucination.js
 // Pattern 03: Version Hallucination
 //
-// HOOK: "When AI suggests code from 2019"
-// CASE STUDY: OpenAI Python SDK 1.0 migration (November 2023)
+// HOOK: "When AI pins a version from the past"
+// CASE STUDY: "Correct Code, Vulnerable Dependencies" (PinTrace study, arXiv, May 2026)
+//   + OpenAI Developer Community thread acknowledged by OpenAI Support (April 2026)
 // TARGET: ~18 minutes total
 //
 // Authored in the block-based schema: each STOP phase is
@@ -18,69 +19,72 @@ const see = {
   steps: [
     {
       type: 'prose',
-      heading: 'The code looked perfect. It just came from the past.',
-      body: `Imagine you're adding an AI feature to a small Python project. You install the latest version of the official OpenAI library and ask an AI assistant to write the first call.
+      heading: 'The code was fine. The version numbers were not.',
+      body: `In April 2026, a developer posted on OpenAI's own Developer Community forum: when ChatGPT writes Python code that uses third-party libraries, it "consistently recommends older version numbers", often a year or more behind the latest release, and many of them have known security vulnerabilities (CVEs).
 
-The answer comes back instantly, clean and confident:`,
+The examples were everyday ones. Ask for a small Flask API and the dependency list comes back looking something like this:`,
     },
     {
       type: 'chat',
-      user: 'How do I call a GPT model from Python with the openai package?',
+      user: 'Write me a small Flask API that calls an external service, plus a requirements.txt.',
       ai: {
-        text: `Here's a simple example:
+        text: `Here's a minimal setup. Pin these versions so your installs are reproducible:
 
 \`\`\`
-import openai
-
-openai.api_key = "YOUR_API_KEY"
-
-response = openai.ChatCompletion.create(
-    model="gpt-4",
-    messages=[{"role": "user", "content": "Hello!"}]
-)
-
-print(response["choices"][0]["message"]["content"])
+# requirements.txt
+flask==3.1.2
+requests==2.31.0
 \`\`\`
 
-Just run this and you'll see the model's reply.`,
-        note: 'Clean, short, well-formatted. Nothing about it looks wrong.',
+Then run pip install -r requirements.txt and start the app with flask run.`,
+        note: 'Reconstruction, not a verbatim transcript. The pinned versions are the ones named in the April 2026 forum post and in the May 2026 PinTrace study.',
       },
     },
     {
       type: 'choice',
-      question: 'You just ran pip install openai today. Would you paste this in and run it?',
+      question: 'The install succeeds and the app runs. Would you commit this requirements.txt as is?',
       subtext: "There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'yes-ran-it', label: 'Yes, it looks standard', response: "Most people would. The code isn't gibberish. It was the correct way to do this, once." },
-        { id: 'maybe-docs', label: "Maybe, but I'd skim the docs first", response: "Good instinct. The docs for your installed version are the tiebreaker." },
-        { id: 'no-version', label: "No, I'd want to know which version this was written for", response: 'Exactly the question to ask. Hold that thought.' },
+        { id: 'yes-ran-it', label: 'Yes, it installs and works', response: "Most people would. Nothing failed, and pinning versions sounds responsible. That's exactly why this slips through." },
+        { id: 'maybe-docs', label: "Maybe, but I'd check the latest release first", response: "Good instinct. The package's own release page is the tiebreaker, not the AI's memory." },
+        { id: 'no-version', label: "No, I'd want to know why it chose those exact versions", response: 'Exactly the question to ask. Hold that thought.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'That code targets a library version that no longer exists.',
-      explanation: `The snippet isn't made up. It's real code that worked on older releases of the openai Python package. But it was written for the old interface, and the AI had no idea which version you installed.
+      headline: 'Those pins point to versions with known vulnerabilities.',
+      explanation: `Nothing here is made up. flask 3.1.2 and requests 2.31.0 are real, published releases. But the AI picked them because they were common in its training data, not because they are safe today.
 
-On the current 1.x library, running it fails with an error saying that \`openai.ChatCompletion\` is no longer supported.`,
+For example, requests versions before 2.32.0 are affected by CVE-2024-35195, a certificate-verification bug published in May 2024. The fix had been out for well over a year when these pins were still being suggested.`,
       list: {
         title: "Here's what actually happened:",
         items: [
-          'OpenAI released version 1.0 of its Python SDK in November 2023, with a redesigned interface',
-          'The old module-level call openai.ChatCompletion.create was removed',
-          'The new style creates a client and calls client.chat.completions.create',
-          'Tutorials, blog posts, and AI answers based on older data kept showing the old style, so people kept hitting the same error',
+          'April 2026: on the OpenAI Developer Community forum, a user reported ChatGPT pinning flask==2.3.3, flask==3.1.2, requests==2.31.0 and django==6.0.1, all with CVEs on osv.dev',
+          'OpenAI Support replied that "there\'s no built-in CVE check when suggesting versions, so this gap shows up across models", and said it would pass the feedback to the team',
+          'May 2026: the PinTrace study tested 10 models, including GPT-5.4, Claude Sonnet 4.6 and Gemini 3.1 Pro, on 1,000 real Stack Overflow tasks',
+          'The models converged on the same small set of risky versions: the most common vulnerable pins showed up in at least 9 of the 10 models, and 75% of the requests pins were 2.31.0',
         ],
       },
+    },
+    {
+      type: 'stats',
+      title: 'What the study found',
+      items: [
+        { value: '36.7-55.7%', label: 'Tasks with a vulnerable pin', detail: 'at least one known CVE, depending on the model' },
+        { value: '72-91%', label: 'Already public', detail: "of those CVEs were disclosed before the model's training cutoff" },
+        { value: '10 of 10', label: 'Models affected', detail: 'closed and open models alike' },
+      ],
+      source: 'Wang et al., "Correct Code, Vulnerable Dependencies", arXiv:2605.06279, May 2026',
     },
     {
       type: 'points',
       heading: 'Why is this one sneaky?',
       items: [
-        { label: 'Annoying but harmless:', body: "The code throws an error right away. You lose time, then find the migration guide.", tone: 'neutral' },
-        { label: 'Actually dangerous:', body: "Old APIs don't always fail loudly. Deprecated functions can linger for years, behave differently, or sit in libraries that no longer get security fixes. The code runs, so you assume it's fine.", tone: 'danger' },
+        { label: 'Annoying but harmless:', body: "An old pin clashes with your Python version or other packages and the install fails. You lose time, but you know something is wrong. The study found install failure was the most common compatibility problem.", tone: 'neutral' },
+        { label: 'Actually dangerous:', body: "The install succeeds, the code runs, and there is no warning. The known vulnerability ships with your project, and nobody thinks to audit a dependency list the AI just wrote.", tone: 'danger' },
       ],
-      conclusion: "AI models learn from a snapshot of the past. Software keeps moving after that snapshot is taken. The AI can't feel the difference, so it won't warn you.",
+      conclusion: "AI models learn from a snapshot of the past, and the most-repeated version in that snapshot wins. Software keeps moving after the snapshot is taken. The AI can't feel the difference, so it won't warn you.",
       transition: "Let's test your instincts on code from different eras.",
     },
   ],
@@ -170,7 +174,7 @@ const test = {
         ],
       },
       summary: {
-        insight: "In this batch, 3 of 5 suggestions were written for older versions. None of them looked broken. Version problems hide behind perfectly clean formatting.",
+        insight: "In this batch, 3 of 5 suggestions were written for older versions. None of them looked broken. Version problems hide behind perfectly clean formatting, just like the tidy requirements.txt pins that the 2026 PinTrace study found carrying known CVEs.",
       },
     },
   ],
@@ -239,7 +243,7 @@ const observe = {
         { label: 'You asked:', variant: 'quote', tone: 'neutral', value: 'How do I call the OpenAI API in Python?' },
         { label: 'AI answered:', variant: 'quote', tone: 'danger', value: 'Here is the code. (No mention of which SDK version, no question about yours.)' },
       ],
-      note: 'A trustworthy answer states its assumptions: "This is for openai 1.x. Which version do you have?"',
+      note: 'A trustworthy answer states its assumptions: "This is for openai 1.x. Which version do you have?" The same goes for pinned versions: an AI that writes requests==2.31.0 is quoting its memory, not checking the latest release. OpenAI Support confirmed in April 2026 that there is no built-in CVE check when ChatGPT suggests versions.',
       why: "The AI can't see your machine. Unless you tell it your versions, it blends everything it has seen into one confident answer.",
       spot: 'If the answer does not mention a version and the library has changed a lot, assume it needs checking. Better: tell the AI your versions up front.',
     },
@@ -492,17 +496,17 @@ export const lesson = {
   patternNumber: 3,
   title: 'Version Hallucination',
   subtitle: 'Deprecated APIs recommended as current',
-  description: 'Learn to spot when AI suggests code, commands, or APIs from an older version of a library: when AI suggests code from 2019.',
+  description: 'Learn to spot when AI suggests code, commands, APIs, or pinned versions from an older release of a library, including versions with known security holes.',
   estimatedTime: 15,
 
   skillLearned: 'Checking AI-suggested code against your installed version',
   verificationMethod: 'The Changelog Check',
 
   caseStudy: {
-    name: 'The OpenAI Python SDK 1.0 migration',
-    date: 'November 2023',
-    researcher: 'openai-python maintainers (migration guide)',
-    source: 'https://github.com/openai/openai-python/discussions/742',
+    name: 'Correct Code, Vulnerable Dependencies: LLMs pinning library versions with known CVEs (PinTrace study)',
+    date: 'May 2026',
+    researcher: 'Chengjie Wang, Jingzheng Wu, Xiang Ling, Tianyue Luo, Chen Zhao',
+    source: 'https://arxiv.org/abs/2605.06279',
   },
 
   nextLesson: {

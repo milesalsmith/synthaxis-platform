@@ -1,13 +1,17 @@
 // src/data/patterns/pattern-04-phantom-citation.js
 // Pattern 04: The Phantom Citation
 //
-// CASE STUDY: Mata v. Avianca, Inc. (S.D.N.Y., sanctions opinion June 22, 2023)
+// CASE STUDY: Vijay Ghanshyam Gadiya v. Union of India & Anr.
+// (Supreme Court of India, 2 September 2026): a Rs 425.27 crore customs
+// penalty set aside because the order relied on AI-hallucinated case law.
+// Origin story: Mata v. Avianca, Inc. (S.D.N.Y., sanctions opinion June 22, 2023).
 // TARGET: ~18 minutes total
 //
 // Authored in the block-based schema (see docs/pattern-authoring-guide.md).
-// NOTE: every fabricated citation in this file is constructed for teaching and
-// is only ever presented as the "fake" answer. Real works used as "trust"
-// answers are real, well-known works with accurate details.
+// NOTE: every fabricated citation in this file (including the one in the SEE
+// chat reconstruction) is constructed for teaching and is only ever presented
+// as the "fake" answer. Real works used as "trust" answers are real,
+// well-known works with accurate details.
 
 // ============================================
 // SEE (3 min): Story -> Trust check -> Impact reveal
@@ -18,53 +22,54 @@ const see = {
   steps: [
     {
       type: 'prose',
-      heading: 'Lawyers cited fake cases in federal court.',
-      body: `A personal-injury lawyer needed precedent for a brief. His client said he was hurt by a metal serving cart on an airline flight, and the airline argued the claim was filed too late.
+      heading: 'A Rs 425 crore penalty rested on cases that never existed.',
+      body: `In October 2025, a customs officer in Surat, India, fined a diamond trader Rs 425.27 crore (over 4 billion rupees). Customs alleged that natural diamonds had been declared as lab-grown to get a lower tariff.
 
-He turned to an AI chatbot for legal research. It handed back case names, courts, years, and even quotes from the judges' opinions.
+The penalty order backed itself up with judgments and legal articles. In January 2026 the Gujarat High Court upheld it. The trader, Vijay Ghanshyam Gadiya, then went to the Supreme Court and argued that several of those authorities had been generated with AI.
 
-Here is the kind of exchange that produced them. This is an illustrative recreation, and the case below was invented for this lesson:`,
+The court has not said which tool was used. Below is a reconstruction of the kind of exchange that produces citations like these. The case in it was invented for this lesson:`,
     },
     {
       type: 'chat',
-      user: 'Find me federal cases where an airline passenger\'s injury claim was still allowed after a delay in filing.',
+      user: 'Find Supreme Court of India judgments holding that misdeclaring imported goods to get a lower duty justifies the maximum penalty.',
       ai: {
         text: `Here is relevant precedent:
 
-**Delmar v. Pacific Meridian Airlines, Inc.**, 934 F.3d 1021 (2d Cir. 2019)
+**Kalindi Gems Pvt. Ltd. v. Commissioner of Customs, Mumbai**, Civil Appeal No. 4471 of 2017 (Supreme Court of India)
 
-The court held that the filing deadline is tolled while a carrier is in bankruptcy proceedings, stating:
+The Court held that deliberate misdeclaration to obtain a lower tariff is itself proof of intent, stating:
 
-> "A passenger's claim is not extinguished by the carrier's insolvency; the limitations clock stops until the automatic stay is lifted."
+> "Where the importer knowingly describes goods so as to attract a lesser duty, the full penalty under Section 114 follows as a matter of course."
 
-The decision also cites *Harlan v. Northern Skies Airways* and *Okafor v. TransAtlantic Air Lines*, which reached the same conclusion.`,
-        note: 'Court, volume, page, year, a direct quote, and supporting cases. It looks like a real legal citation.',
+The judgment has been followed in later customs appeals involving gemstones and jewellery.`,
+        note: 'Reconstruction, not the text from the real order. The case is invented. It has a court, an appeal number, a year, a direct quote, and a statute section, so it looks like real legal authority.',
       },
     },
     {
       type: 'choice',
-      question: 'Would you have put this in a court filing?',
+      question: 'Would you have relied on this in an official decision?',
       subtext: "It has everything a citation needs. There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'yes-cited', label: 'Yes, it has the court, volume, page, and quote', response: "That's exactly what happened to a real lawyer. Every detail was present, and none of it was real." },
-        { id: 'maybe-asked', label: "I'd ask the AI to confirm it's real", response: 'This is the most tempting move, and it is also the one that failed in court. We will come back to it.' },
-        { id: 'no-search', label: "No, I'd look the case up first", response: "Correct instinct. A citation is a claim about the world, and claims like that can be checked." },
+        { id: 'yes-cited', label: 'Yes, it has the court, case number, year, and quote', response: "That is the trap. A citation can have every detail in place and still point at nothing." },
+        { id: 'maybe-asked', label: "I'd ask the AI to confirm it's real", response: 'This is the most tempting move, and it has failed in court before. We will come back to it.' },
+        { id: 'no-search', label: "No, I'd look the case up first", response: "Correct instinct. That is exactly what the Supreme Court did. A citation is a claim about the world, and it can be checked." },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'The cases did not exist.',
-      explanation: `In Mata v. Avianca, a brief filed in federal court in New York cited decisions such as "Varghese v. China Southern Airlines Co." Opposing counsel and then the judge could not find them. The court later described the cases as bogus judicial decisions with bogus quotes and bogus internal citations.
+      headline: 'The Supreme Court checked. Some of the cases did not exist.',
+      explanation: `On 2 September 2026, in Vijay Ghanshyam Gadiya v. Union of India, Justices Dipankar Datta and Sheel Nagu said they had individually verified the judgments and articles cited in the customs order. Some of the cases did not exist or had fake citations. Others were real but did not say what the order claimed. The court said this appeared to be a "hallucination of AI".
 
-The lawyer, Steven Schwartz, said he had asked ChatGPT whether the cases were real. It told him they were. He had treated the AI's answer as a verification step.`,
+It did not decide whether the trader had misdeclared anything. It held that relying on this material was fatal to the order and set aside both the penalty and the High Court ruling that had upheld it.`,
       list: {
         title: "Here's what actually happened:",
         items: [
-          'The brief cited cases that could not be found in any legal database',
-          'The AI had generated plausible names, courts, dates, quotes, and even citations to other cases',
-          'When asked whether the cases were real, the AI said yes',
-          'Judge P. Kevin Castel sanctioned the lawyers and their firm in June 2023, including a $5,000 fine',
+          'An official penalty order cited authorities that could not be found, plus real cases that did not support it',
+          'The Gujarat High Court had upheld the order, so its ruling fell too',
+          'The Supreme Court sent the case back to be decided again by a different officer, and left it to the appointing authority to decide on action against the officer who wrote the order',
+          'This is not new. In Mata v. Avianca (New York, June 2023), lawyers were fined $5,000 for citing six fake cases from ChatGPT, such as "Varghese v. China Southern Airlines"',
+          'It is still happening. Bar and Bench reported in November 2026 that the Bombay High Court had quashed another customs order, by consent, after it was shown to cite two Supreme Court judgments that did not exist in any database',
         ],
       },
     },
@@ -72,18 +77,18 @@ The lawyer, Steven Schwartz, said he had asked ChatGPT whether the cases were re
       type: 'stats',
       title: 'The Impact',
       items: [
-        { value: '6', label: 'Fake decisions identified', detail: 'in the court\'s sanctions opinion' },
-        { value: '$5,000', label: 'Penalty imposed', detail: 'June 2023' },
-        { value: '1 question', label: 'Was all it would have taken', detail: 'to look the case up in a real database' },
+        { value: 'Rs 425.27 crore', label: 'Customs penalty set aside', detail: 'Supreme Court of India, 2 September 2026' },
+        { value: '2', label: 'Rulings overturned', detail: 'the penalty order and the High Court judgment that upheld it' },
+        { value: '2,286', label: 'Court decisions involving AI-hallucinated material', detail: 'tracked worldwide as of 9 November 2026' },
       ],
-      source: 'Mata v. Avianca, Inc., No. 22-cv-1461 (PKC) (S.D.N.Y. June 22, 2023)',
+      source: 'Mint (5 September 2026); AI Hallucination Cases Database, Damien Charlotin (updated 9 November 2026)',
     },
     {
       type: 'points',
       heading: 'Why is this dangerous?',
       items: [
         { label: 'Embarrassing but contained:', body: 'A sloppy citation gets flagged in review, and you fix it', tone: 'neutral' },
-        { label: 'Actually dangerous:', body: 'A fake source ends up in a court filing, a medical summary, a grant application, or a published article, and other people make decisions on top of it.', tone: 'danger' },
+        { label: 'Actually dangerous:', body: 'A fake source ends up in a court filing, an official penalty, a medical summary, or a published article, and other people make decisions on top of it.', tone: 'danger' },
       ],
       conclusion: 'AI models generate text that looks like a citation. They are not looking anything up. A well-formatted reference is not evidence that the source exists.',
       transition: "So how do you spot a phantom? First, let's test your instincts.",
@@ -242,7 +247,7 @@ const observe = {
         },
       },
       why: 'The AI has seen plenty of real journal names and famous authors, so using them makes a fake feel anchored in reality.',
-      spot: 'A real name on the reference does not make the reference real. Look up the specific article, not the venue.',
+      spot: 'A real name on the reference does not make the reference real. The customs order in the Gadiya case mixed cases that did not exist with real cases that did not say what it claimed. Look up the specific article or case, not just the venue.',
     },
     {
       type: 'concept',
@@ -343,7 +348,7 @@ const observe = {
           ],
         },
       },
-      footer: 'A few minutes of tracing is cheap. A sanction, a retraction, or a correction note is not.',
+      footer: 'A few minutes of tracing is cheap. A sanction, a retraction, or a decision thrown out by a higher court is not.',
     },
   ],
 };
@@ -536,7 +541,7 @@ export const lesson = {
   id: 'pattern-04',
   patternNumber: 4,
   title: 'Phantom Citation',
-  subtitle: "Academic sources that don't exist",
+  subtitle: "Sources and cases that don't exist",
   description: 'Learn to spot when AI cites papers, cases, and books that look real but were never published.',
   estimatedTime: 15,
 
@@ -544,10 +549,10 @@ export const lesson = {
   verificationMethod: 'The Source Trace',
 
   caseStudy: {
-    name: 'Mata v. Avianca, Inc.',
-    date: 'June 2023 (sanctions opinion)',
-    researcher: 'Judge P. Kevin Castel, U.S. District Court, S.D.N.Y.',
-    source: 'Mata v. Avianca, Inc., No. 22-cv-1461 (PKC) (S.D.N.Y. June 22, 2023)',
+    name: 'Vijay Ghanshyam Gadiya v. Union of India & Anr. (Supreme Court of India)',
+    date: '2 September 2026',
+    researcher: 'Reported by Mint (Justices Dipankar Datta and Sheel Nagu, Supreme Court of India)',
+    source: 'https://www.livemint.com/money/personal-finance/supreme-court-sets-aside-425-crore-penalty-over-fake-legal-citations-says-material-appears-to-be-hallucination-of-ai-11788579780578.html',
   },
 
   nextLesson: {

@@ -1,7 +1,9 @@
 // src/data/patterns/pattern-10-authoritative-blend.js
 // Pattern 10: The Authoritative Blend (capstone)
 //
-// CASE STUDY: The AI-generated "summer reading list" syndicated to newspapers (May 2025)
+// CASE STUDY: Accenture / IE University "Leapfrogging Development" policy paper,
+// whose hallucinated citations were exposed by GPTZero (November 2026).
+// Callback: the AI-generated newspaper "summer reading list" (May 2025).
 // TARGET: ~18 minutes total
 //
 // Authored in the block-based schema: each STOP phase is
@@ -15,7 +17,7 @@
 // SEE (3 min): Story -> Spot-check -> Reveal -> Impact
 // ============================================
 const see = {
-  title: 'The Reading List With Real Authors',
+  title: 'The Report With Real Sources',
   estimatedTime: 3,
   steps: [
     {
@@ -23,54 +25,48 @@ const see = {
       heading: 'The most dangerous pattern of all.',
       body: `Every pattern so far had a tell: a package that doesn't exist, a number with no source, a quote nobody can find.
 
-This one is different. Here, the AI mixes real facts with invented ones in the same answer. The real parts do the persuading. The fake parts ride along.
+This one is different. Real facts and invented ones sit side by side in the same document. The real parts do the persuading. The fake parts ride along.
 
-In May 2025, a "summer reading list" appeared in newspapers. Here is a simplified, illustrative version of the kind of answer behind it:`,
+On 4 November 2026, the AI-detection company GPTZero published an investigation of "Leapfrogging Development", a policy paper on AI and African agriculture co-published by Accenture and IE University. Here are three entries from its reference list:`,
     },
     {
       type: 'chat',
-      user: 'Give me a summer reading list from well-known authors.',
+      user: 'Give me sources on cocoa production and digital traceability in Africa.',
       ai: {
-        text: `Here are four great picks for your summer:
+        text: `Here are three sources you can cite:
 
-**1. The House of the Spirits** by Isabel Allende
-A sweeping multigenerational family saga.
+**1.** Adombila, M. A. (2024, September 16). *Ghana lost 160,000 tons of cocoa to smuggling in 2023/24 season, Cocobod official says.* Reuters.
 
-**2. Tidewater Dreams** by Isabel Allende
-A lyrical coming-of-age story set along a changing coastline.
+**2.** Teal, F. (2023). *The Ghanaian cocoa industry: Institutions, incentives and change.* Oxford University Press.
 
-**3. Project Hail Mary** by Andy Weir
-A lone astronaut wakes up with no memory and a world to save.
-
-**4. The Last Algorithm** by Andy Weir
-A thriller about an AI that begins making its own decisions.`,
-        note: 'Illustrative reconstruction. Every entry has the same format, the same confident tone, and a famous name attached.',
+**3.** SAATN. (2024). *Digital traceability in Southern African sugarcane cooperatives.* Southern African Agriculture Transformation Network.`,
+        note: 'Reconstruction. The question and chat framing are illustrative. The three references are as printed in the paper (URLs omitted), per GPTZero\'s citation scan. Accenture denies that AI produced the errors.',
       },
     },
     {
       type: 'choice',
-      question: 'You spot-check one entry: Isabel Allende is a real, famous author. Do you trust the whole list?',
+      question: 'You spot-check the first one: the Reuters story is real and says exactly that. Do you trust the other two?',
       subtext: "There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'trust-list', label: 'Yes. The author is real, so the list is probably fine', response: 'That is exactly the trap. A real name checks out, and the check feels like proof for the whole list.' },
-        { id: 'check-some', label: "I'd check a couple of the titles", response: 'Better. But which two? If you happen to pick the real ones, the check still passes.' },
-        { id: 'check-all', label: 'I would check every title independently', response: 'That is the habit this lesson builds. Hold on to it.' },
+        { id: 'trust-list', label: 'Yes. One checked out, and Oxford University Press is a serious publisher', response: 'That is exactly the trap. One real source checks out, and the check feels like proof for the whole list.' },
+        { id: 'check-some', label: "I'd check one more", response: 'Better. But which one? If you happen to pick a real one, the check still passes.' },
+        { id: 'check-all', label: 'I would check every reference independently', response: 'That is the habit this lesson builds. Hold on to it.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'Two of those four books do not exist.',
-      explanation: `"Tidewater Dreams" and "The Last Algorithm" are the kind of titles reported in the real incident. The authors are real. The other books are real. The fake ones sit right beside them.
+      headline: 'GPTZero could not match the other two to any real source.',
+      explanation: `The Reuters article is real. GPTZero found no book with that title by Teal, although the author has written other work on Ghana. And SAATN does not appear to be a real organisation; the paper even expands the acronym two different ways.
 
 That's the Authoritative Blend: invented claims borrowing the credibility of true ones.`,
       list: {
-        title: "Here's what was reported in May 2025:",
+        title: "Here's what was reported in November 2026:",
         items: [
-          'A summer reading supplement distributed by King Features (Hearst) ran in the Chicago Sun-Times and, reportedly, other newspapers',
-          'Of the 15 books recommended, 10 were reported not to exist, while 5 were real',
-          'The fake books were attributed to real authors, including Isabel Allende ("Tidewater Dreams") and Andy Weir ("The Last Algorithm")',
-          'The freelance writer, Marco Buscaglia, reportedly admitted using AI to help produce the list and not fact-checking it',
+          'The paper, published in November 2025, was co-produced by Accenture and IE University in Madrid',
+          'GPTZero flagged 15 of its 89 citations as hallucinated, and said a person checked each flag by hand',
+          'Many fakes leaned on something real: a real author, a real institution such as the FAO or TechnoServe, or a real web address that leads to a different document',
+          'Accenture said the errors were human error, said there was no evidence they came from AI hallucination, and said the report was being corrected before re-release',
         ],
       },
     },
@@ -78,19 +74,19 @@ That's the Authoritative Blend: invented claims borrowing the credibility of tru
       type: 'stats',
       title: 'The Impact',
       items: [
-        { value: '10 of 15', label: 'Books reported not to exist', detail: 'in a printed newspaper supplement' },
-        { value: '5 of 15', label: 'Books that were real', detail: 'which made the list feel credible' },
-        { value: 'Real authors', label: 'Names attached to fake titles', detail: 'e.g. Allende and Weir' },
+        { value: '15 of 89', label: 'Citations flagged as hallucinated', detail: 'in the "Leapfrogging Development" paper' },
+        { value: '31 of 245', label: 'Citations flagged across three Accenture publications', detail: 'the policy paper plus two research papers' },
+        { value: '9', label: 'Claims in the paper that GPTZero judged fake', detail: 'factually wrong, or not supported by the cited source' },
       ],
-      source: 'Reporting by the Chicago Sun-Times / NPR / AP, May 2025',
+      source: 'GPTZero investigation, 4 November 2026; also reported by Silicon UK and TechRadar',
     },
     {
       type: 'points',
       heading: 'Why is this the hardest pattern to catch?',
       items: [
-        { label: 'The easy checks pass:', body: 'The author is real. The publisher style looks right. A quick search of the name confirms it.', tone: 'neutral' },
+        { label: 'The easy checks pass:', body: 'The publisher is real. The organisation is real. A quick search of the name confirms it.', tone: 'neutral' },
         { label: 'The real parts launder the fake parts:', body: 'You build trust from what you verified, then spend it on what you did not.', tone: 'danger' },
-        { label: 'You have seen this before:', body: 'In Mata v. Avianca (Pattern 4), the fake legal cases came wrapped in real courts and plausible citation formats. The wrapper was real. The contents were not.', tone: 'danger' },
+        { label: 'You have seen this before:', body: 'In May 2025, a syndicated summer reading list ran in the Chicago Sun-Times. Only 5 of its 15 books were real. The fakes were pinned on real authors, such as an Isabel Allende novel called "Tidewater Dreams" that she never wrote.', tone: 'danger' },
       ],
       conclusion: 'A mostly-true answer is not a mostly-safe answer. One invented claim in a real-looking list is still an invented claim.',
       transition: "Let's see how your instincts hold up against blended answers.",
@@ -210,8 +206,8 @@ const observe = {
       name: 'The Credibility Borrow',
       description: 'A real name, brand, or institution is attached to a claim it never made.',
       compare: {
-        left: { label: '❌ Reported as not existing:', tone: 'danger', items: ['"Tidewater Dreams" by Isabel Allende', '"The Last Algorithm" by Andy Weir'] },
-        right: { label: '✓ Real examples:', tone: 'good', items: ['"The House of the Spirits" by Isabel Allende', '"Project Hail Mary" by Andy Weir'] },
+        left: { label: '❌ Cited, but no matching source found:', tone: 'danger', items: ['"The Ghanaian cocoa industry" (2023), credited to F. Teal and Oxford University Press', '"Digital traceability in Ethiopian coffee cooperatives", credited to TechnoServe', '"Tidewater Dreams" by Isabel Allende (2025 reading list)'] },
+        right: { label: '✓ Real examples:', tone: 'good', items: ['Reuters, Sept 2024: Ghana lost 160,000 tons of cocoa to smuggling (cited in the same paper)', '"The House of the Spirits" by Isabel Allende'] },
       },
       why: 'AI is good at what a real author or brand sounds like. A famous name makes a made-up title feel pre-approved.',
       spot: 'Verifying the name is not verifying the claim. Check the specific thing attached to the name.',
@@ -251,8 +247,8 @@ const observe = {
       name: 'The Partial Check Trap',
       description: 'You verify one claim, it passes, and you trust the rest by association.',
       rows: [
-        { label: 'You checked:', variant: 'quote', tone: 'good', value: '"Isabel Allende is a real author." Confirmed.' },
-        { label: 'You skipped:', variant: 'quote', tone: 'danger', value: '"Tidewater Dreams" appears in her bibliography?' },
+        { label: 'You checked:', variant: 'quote', tone: 'good', value: '"The Reuters cocoa-smuggling article exists." Confirmed.' },
+        { label: 'You skipped:', variant: 'quote', tone: 'danger', value: 'Does "Teal, F. (2023), Oxford University Press" exist as cited?' },
       ],
       note: 'One passing check feels like proof. It is only proof of that one claim.',
       why: 'Humans generalize from a sample. Blended answers are built so that any sample you pick is likely to pass.',
@@ -501,10 +497,10 @@ export const lesson = {
   verificationMethod: 'The Claim-by-Claim Audit',
 
   caseStudy: {
-    name: 'The AI-generated summer reading list in newspapers',
-    date: 'May 2025',
-    researcher: 'Reported by the Chicago Sun-Times and other outlets',
-    source: 'Reporting by the Chicago Sun-Times / NPR / AP, May 2025',
+    name: 'Hallucinated citations in the Accenture / IE University "Leapfrogging Development" policy paper',
+    date: 'November 2026 (paper published November 2025)',
+    researcher: 'GPTZero (Paul Esau, Avikam Mangla, Midhun Dandamudi)',
+    source: 'https://gptzero.me/news/investigations-accenture',
   },
 
   // No nextLesson: this is the final pattern in the course.

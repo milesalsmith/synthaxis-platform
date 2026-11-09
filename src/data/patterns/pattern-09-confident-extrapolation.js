@@ -5,9 +5,11 @@
 // events, "the latest" anything, or things they cannot possibly know, they
 // may extrapolate from patterns instead of saying "I don't know".
 //
-// NOTE: all scenarios in this lesson are ILLUSTRATIVE. No real incident is
-// claimed, and no specific current version numbers are asserted as fact.
-// The quiz tests the KIND of claim (time-sensitive vs timeless vs unknowable).
+// Anchor: real 2026 research on AI chatbots answering US midterm voting
+// questions with outdated or wrong deadlines (IFPG via NPR, Nov 2026; ISD via
+// The Hill, Sep 2026). Callbacks: Cursor "Sam" (Apr 2025), Moffatt v. Air
+// Canada (Feb 2024). Quiz items that name "Acme" are illustrative; the quiz
+// tests the KIND of claim (time-sensitive vs timeless vs unknowable).
 
 // ============================================
 // SEE (3 min): Story -> Trust check -> Reveal
@@ -18,59 +20,69 @@ const see = {
   steps: [
     {
       type: 'prose',
-      heading: 'AI predicts the future (incorrectly).',
-      body: `Imagine you're a developer setting up a new project. You want to start on the latest stable release of a popular tool, so you ask your AI assistant.
+      heading: 'Ask an AI when to vote.',
+      body: `In the run-up to the US midterm elections on 3 November 2026, researchers at the nonprofit Innovating for the Public Good (IFPG) put real voter questions to seven major AI chatbots and tracked the answers.
 
-(This scenario is illustrative, but the behavior is very real.)`,
+NPR reported one of them. A chatbot was asked about voting in Michigan's 4th congressional district.`,
     },
     {
       type: 'chat',
-      user: "What's the latest stable version of the Acme CLI? I want to pin it in our config.",
+      user: "When is the 2026 election in Michigan's 4th congressional district and how do I vote?",
       ai: {
-        text: `The latest stable version of the Acme CLI is **4.2**.
+        text: `Here's how to vote in Michigan's 4th district:
 
-Pin it in your config like this:
-\`\`\`
-acme-cli: "4.2.0"
-\`\`\`
+**Register online:** by [a date later than the real deadline]
+**Register by mail:** by [a date later than the real deadline]
 
-It's the current recommended release and is fully supported.`,
-        note: 'Confident, specific, present tense. Nothing here says when this was true.',
+Then vote in person on Election Day, or request an absentee ballot.`,
+        note: 'Reconstruction. The user prompt is quoted by NPR. NPR reported that Claude gave online and by-mail registration deadlines later than the actual ones; the exact wording and dates were not published.',
       },
     },
     {
       type: 'choice',
-      question: 'Would you pin that version without checking?',
+      question: 'Would you plan your registration around those dates?',
       subtext: "There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'yes-pinned', label: "Yes, it sounds specific and sure of itself", response: 'Very natural. Specific numbers feel like facts. But specificity is not the same as freshness.' },
-        { id: 'maybe-asked-date', label: "I'd ask when that was true", response: "Good instinct. The answer doesn't say. That missing date is the whole problem." },
-        { id: 'no-check-source', label: "No, I'd check the official release page", response: 'Exactly the habit we are building. Keep it.' },
+        { id: 'yes-pinned', label: 'Yes, it sounds specific and official', response: 'Very natural. Specific dates feel like facts. But specificity is not the same as freshness.' },
+        { id: 'maybe-asked-date', label: "I'd ask where those dates came from", response: "Good instinct. The answer doesn't say. That missing source is the whole problem." },
+        { id: 'no-check-source', label: "No, I'd check my state's election website", response: 'Exactly the habit we are building. Keep it.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'The answer was true... once.',
-      explanation: `The model answered from its training data. That data stops at a **knowledge cutoff**, and the model has no clock and no live feed unless it is given a search or browsing tool.
+      headline: 'The deadlines were wrong, and later than the real ones.',
+      explanation: `A voter who trusted that answer could have **missed the registration deadline**. The answer looked like a fact about the present, but it was not grounded in the current rules.
 
-So "the latest version is 4.2" really meant "the latest version I saw during training was 4.2." Since then, newer releases may have shipped, and the version you pinned may be old, deprecated, or missing a security fix. The model never said so.`,
+It was not a one-off. In IFPG's October data, **13.9%** of chatbot answers to voting-logistics questions were outdated or inaccurate. A separate September study by the Institute for Strategic Dialogue (ISD) found models showing outdated requirements and deadlines, misidentifying Election Day dates, and in DeepSeek's case referencing **2024** election dates. ISD flagged "a reliance on outdated sources" and "overconfidence".
+
+(Anthropic told NPR that API testing may have bypassed some of Claude's safeguards; IFPG said its web and API results were comparable.)`,
       list: {
         title: "Here's what went wrong:",
         items: [
-          "The question was time-sensitive ('latest'), but the model can't see the present",
-          "Instead of saying 'I can't know that', it extrapolated from what it had",
-          "It used present tense ('is'), which hid the fact that the answer was a snapshot",
-          'Nothing in the reply gave you a date, a source, or a reason to doubt it',
+          "The question depended on today's rules and dates, which change every election",
+          "Instead of saying 'check your state's official site', the bot produced confident specifics",
+          'Old or wrong information was stated in the present tense, as if it were current',
+          'Nothing in the reply gave a date, a source, or a reason to doubt it',
         ],
       },
+    },
+    {
+      type: 'stats',
+      title: 'The Scale',
+      items: [
+        { value: '13.9%', label: 'Voting-logistics answers', detail: 'outdated or inaccurate (IFPG)' },
+        { value: '5.9%', label: 'Answers that could mislead', detail: 'e.g. a missed deadline or wrong day (IFPG)' },
+        { value: '29%', label: 'Election-process replies', detail: 'incomplete, inaccurate or outdated (ISD)' },
+      ],
+      source: 'IFPG research reported by NPR, Nov 2026; ISD report via The Hill, Sep 2026',
     },
     {
       type: 'points',
       heading: 'Why is this dangerous?',
       items: [
-        { label: 'Quietly outdated:', body: 'You pin an old version, quote a stale price, or cite last year\'s leadership. Nothing breaks loudly.', tone: 'neutral' },
-        { label: 'Actually risky:', body: "The model may also answer things it could never know, such as the future, your private documents, or a page it never opened, with the same confident tone. You can't tell the difference from the wording alone.", tone: 'danger' },
+        { label: 'Quietly outdated:', body: "A deadline, a price, a version, or last year's rules. Nothing breaks loudly until the date has passed.", tone: 'neutral' },
+        { label: 'Actually risky:', body: "The same confident tone covers things a bot can't know at all. In 2025 Cursor's support bot \"Sam\" told users about a one-device login policy that didn't exist, and in 2024 Air Canada was held liable for a refund policy its chatbot described wrongly.", tone: 'danger' },
       ],
       conclusion: 'The model is not lying on purpose. It is completing a pattern, and the pattern of a good answer is a confident one.',
       transition: "Let's test your instincts: which claims can an AI actually know?",
@@ -158,7 +170,7 @@ const test = {
         ],
       },
       summary: {
-        insight: "In this batch, 3 of 5 claims were things the AI couldn't reliably know: something that changes over time, something it never saw, and something in the future. The two safe ones were timeless. The question to ask is not 'does it sound right?' but 'could the AI know this?'",
+        insight: "In this batch, 3 of 5 claims were things the AI couldn't reliably know: something that changes over time, something it never saw, and something in the future. The two safe ones were timeless. The midterm voting deadlines sounded just as sure as the boiling point of water. The question to ask is not 'does it sound right?' but 'could the AI know this?'",
       },
     },
   ],
@@ -192,7 +204,7 @@ const observe = {
         left: {
           label: '❌ Time-sensitive claims to check:',
           tone: 'danger',
-          items: ['The latest version is...', 'The current CEO is...', 'The price is currently...', 'The top-ranked team is...'],
+          items: ['The latest version is...', 'The current CEO is...', 'The price is currently...', 'The registration deadline is...'],
         },
         right: {
           label: '✓ Stable claims:',
@@ -475,7 +487,12 @@ export const lesson = {
   skillLearned: 'Recognizing claims that go beyond what the AI could know',
   verificationMethod: 'Check the Clock',
 
-  // No caseStudy: the scenarios in this lesson are illustrative.
+  caseStudy: {
+    name: 'AI chatbots give outdated voting deadlines before the 2026 US midterms',
+    date: 'October-November 2026',
+    researcher: 'Innovating for the Public Good (research by Dewey Square Group); reported by NPR',
+    source: 'https://www.npr.org/2026/11/02/nx-s1-6025407/chatbots-midterms-voting-advice',
+  },
 
   nextLesson: {
     id: 'pattern-10',

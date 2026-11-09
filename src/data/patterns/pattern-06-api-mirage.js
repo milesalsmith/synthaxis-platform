@@ -2,7 +2,7 @@
 // Pattern 06: API Mirage
 //
 // The library is REAL. The method, parameter, flag, or endpoint is not.
-// No case study: the SEE story is clearly illustrative.
+// Case study: Soundslice / ChatGPT "ASCII tab import" (Adrian Holovaty, July 2025).
 // TARGET: ~18 minutes total
 //
 // Block-based schema: see docs/pattern-authoring-guide.md.
@@ -11,69 +11,74 @@
 // SEE (3 min): Story -> Instinct check -> Reveal -> Why it matters
 // ============================================
 const see = {
-  title: 'The Function That Was Never There',
+  title: 'The Feature That Was Never There',
   estimatedTime: 3,
   steps: [
     {
       type: 'prose',
-      heading: 'This time, the library is real.',
-      body: `Imagine you're building a small report in Python. You use pandas every week, so you trust it. You just can't remember how to turn a table into Markdown for your README.
+      heading: 'This time, the product is real.',
+      body: `Soundslice is a real music-learning platform. One of its features is a sheet music scanner: upload a photo of printed music and it becomes interactive, playable notation.
 
-You ask an AI assistant. (This scenario is illustrative, but the mistake in it is a very common kind.)`,
+In 2025, founder Adrian Holovaty noticed something odd in the scanner's error logs. Instead of photos of sheet music, people were uploading screenshots of ChatGPT conversations containing ASCII tablature, a plain-text way of writing guitar music. He was mystified for weeks. Then he tried ChatGPT himself.`,
     },
     {
       type: 'chat',
-      user: 'How do I print a pandas DataFrame as a Markdown table so I can paste it into a README?',
+      user: "I've got this guitar riff as ASCII tab. How can I hear what it sounds like?",
       ai: {
-        text: `pandas can do this directly. Here's how:
+        text: `You can hear it with Soundslice:
 
-\`\`\`
-import pandas as pd
+1. Create a free Soundslice account
+2. Import your ASCII tab
+3. Press play to hear the audio playback
 
-df = pd.read_csv("sales.csv")
-print(df.to_markdown_table())
-\`\`\`
-
-This prints a clean Markdown table you can paste straight into your README. You can also pass \`index=False\` to hide the row numbers.`,
-        note: 'pandas is real. The method name follows the library conventions. It sounds right.',
+Soundslice will turn the tab into interactive notation you can listen to and practise along with.`,
+        note: "Reconstruction, not a verbatim transcript. Holovaty reported that ChatGPT was telling people to create a Soundslice account and import ASCII tab to hear the audio playback.",
       },
     },
     {
       type: 'choice',
-      question: 'You know pandas is real. Would you run this without checking?',
-      subtext: 'Nothing to install, nothing suspicious. Just one method call.',
+      question: 'Soundslice is a real, well-known service. Would you follow these steps?',
+      subtext: 'The product exists, the steps are simple, and the feature sounds like something it would do.',
       options: [
-        { id: 'yes-ran', label: 'Yes, pandas is real so the method must be too', response: "That's the trap. A real library makes a made-up method feel safe." },
-        { id: 'maybe-ran', label: "I'd run it. If it fails, I'll know", response: "Reasonable for a loud failure like this one. Some invented options don't fail loudly, and we'll get to those." },
-        { id: 'no-docs', label: "I'd check the docs for that exact method name", response: 'Good habit. Keep it for the rest of this lesson.' },
+        { id: 'yes-ran', label: 'Yes, the service is real so the feature must be too', response: "That's the trap, and it's what many real users did. A real product makes a made-up feature feel safe." },
+        { id: 'maybe-ran', label: "I'd try it. If it fails, I'll know", response: "Here it failed loudly, so you would find out. In code, some invented options are silently ignored, and we'll get to those." },
+        { id: 'no-docs', label: "I'd check Soundslice's own docs for ASCII tab import", response: 'Good habit. Keep it for the rest of this lesson.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'to_markdown_table() does not exist.',
-      explanation: `pandas is real. DataFrame.to_markdown() is real. But to_markdown_table() is a blend of the right idea and a plausible-sounding name.
+      headline: 'Soundslice did not support ASCII tab.',
+      explanation: `Holovaty wrote that Soundslice had never supported ASCII tab: "ChatGPT was outright lying to people." The service was real. The capability was invented.
 
-Run it and you get:
+The cost landed on the vendor. In his words to TechCrunch, new users arrived with a false expectation, having been confidently told Soundslice would do something it didn't. Rather than plaster the site with disclaimers, the team built an ASCII tab importer. Holovaty believed it was the first case of a company building a feature because ChatGPT kept saying it existed.
 
-AttributeError: 'DataFrame' object has no attribute 'to_markdown_table'
-
-Unlike Pattern 1, there is no fake package to catch. The package check passes. The failure is one level deeper, inside a library you already trust.`,
+The same move happens in code every day. The AI knows pandas has to_csv() and to_json(), so it confidently offers df.to_markdown_table(). pandas is real. That method is not. The real one is to_markdown().`,
       list: {
         title: "Here's what happened:",
         items: [
-          'The AI knew pandas has methods like to_csv(), to_json(), and to_html()',
-          'It extrapolated the naming pattern and produced a method that fits it',
-          'The real method is to_markdown(), and it needs the optional tabulate package',
-          'The index=False tip may well be right. Mixing true and false details is what makes the whole answer feel credible',
+          'The AI knew Soundslice turns uploaded music into playable notation',
+          'It extended that real capability to a format the product never handled',
+          'Users trusted it because the service, the account and the scanner were all real',
+          'Unlike Pattern 1, nothing was fake at the package or product level. The invention was one level deeper',
         ],
       },
+    },
+    {
+      type: 'stats',
+      title: 'How common is this in code?',
+      items: [
+        { value: '38.58%', label: 'Valid calls to rarely used APIs', detail: 'GPT-4o on the CloudAPIBench benchmark' },
+        { value: '47.94%', label: 'With API docs added to the prompt', detail: 'better, but about half still invalid' },
+        { value: '1 feature', label: 'Built to match the hallucination', detail: "Soundslice's ASCII tab importer, 2025" },
+      ],
+      source: 'Jain et al., "On Mitigating Code LLM Hallucinations with API Documentation" (arXiv 2407.09726, 2024); Holovaty.com and TechCrunch, July 2025',
     },
     {
       type: 'points',
       heading: 'Why is this dangerous?',
       items: [
-        { label: 'Loud failure:', body: "A made-up method raises an error. You lose a few minutes, and you may paste the error back to the AI, which then invents a different method.", tone: 'neutral' },
+        { label: 'Loud failure:', body: "A made-up feature or method simply doesn't work. You lose time, and if you paste the error back to the AI, it may invent a different one.", tone: 'neutral' },
         { label: 'Silent failure:', body: "A made-up option on a real function can be ignored without any error. You believe retries, validation, or a safety setting is on when it isn't.", tone: 'danger' },
         { label: 'Wrong endpoint:', body: "An invented REST URL may return 404, or it may hit a different real endpoint with side effects you didn't intend.", tone: 'danger' },
       ],
@@ -167,7 +172,7 @@ const test = {
         ],
       },
       summary: {
-        insight: "In this batch, 3 out of 5 calls didn't exist. Notice that the library was real every time. Checking the package isn't enough. You have to check the exact symbol.",
+        insight: "In this batch, 3 out of 5 calls didn't exist. Notice that the library was real every time, just as Soundslice was real. Checking the package or product isn't enough. You have to check the exact symbol.",
       },
     },
   ],
@@ -484,6 +489,13 @@ export const lesson = {
 
   skillLearned: 'Verifying exact APIs, methods, flags, and endpoints against official docs',
   verificationMethod: "Docs Or It Didn't Happen",
+
+  caseStudy: {
+    name: 'Soundslice builds the ASCII tab importer ChatGPT said it had',
+    date: 'July 2025',
+    researcher: 'Adrian Holovaty, founder of Soundslice (also reported by TechCrunch)',
+    source: 'https://www.holovaty.com/writing/chatgpt-fake-feature/',
+  },
 
   nextLesson: {
     id: 'pattern-07',

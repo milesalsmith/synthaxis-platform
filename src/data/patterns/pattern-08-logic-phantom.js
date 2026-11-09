@@ -4,9 +4,12 @@
 // Hook: "When the math doesn't math"
 // TARGET: ~18 minutes total
 //
-// The opening story is ILLUSTRATIVE (a made-up shop owner), not a real incident.
-// Every number in this file has been recomputed; fabricated or flawed reasoning
-// appears only as the "verify" answers.
+// Anchor incident (real): on 7 October 2026 OpenAI withdrew three of the 722
+// AI-generated maths manuscripts it had published the day before, after a sign
+// error invalidated a cancellation argument (see lesson.caseStudy). The SEE chat
+// is a simplified illustration of that kind of slip, not text from the papers.
+// Every number in this file has been recomputed; flawed reasoning appears only
+// as the "verify" answers.
 
 // ============================================
 // SEE (3 min): Story -> Gut check -> Reveal -> Why it matters
@@ -17,51 +20,51 @@ const see = {
   steps: [
     {
       type: 'prose',
-      heading: 'The steps looked airtight.',
-      body: `Imagine you sell hand-poured candles online. Each one costs you $12 to make. You want a 40% profit margin, and you ask an AI assistant to set the price.
+      heading: 'The proof looked airtight.',
+      body: `On 6 October 2026, OpenAI posted 722 mathematics manuscripts to GitHub, all produced by an unreleased internal AI model. They read like professional research: definitions, lemmas and long chains of "therefore". Some claimed progress on famous open problems, including results tied to the Hodge conjecture.
 
-The answer comes back as a tidy, numbered walkthrough. Every line is easy to follow:`,
+Less than a day later, OpenAI withdrew three of them. The cause was not a wild leap. It was a single wrong sign. Here is a simplified example of that kind of slip:`,
     },
     {
       type: 'chat',
-      user: 'My candle costs $12 to make. I want a 40% profit margin. What should I charge?',
+      user: 'Simplify 10 - (4 - 2k) + 2k. Do the k terms cancel?',
       ai: {
         text: `Let's work through it step by step.
 
-**Step 1:** Your cost is $12.00.
+**Step 1:** Remove the brackets: 10 - 4 - 2k + 2k.
 
-**Step 2:** A 40% margin means you want to earn 40% of your cost: 0.40 x $12.00 = $4.80.
+**Step 2:** The k terms cancel: -2k + 2k = 0.
 
-**Step 3:** Add the profit to the cost: $12.00 + $4.80 = $16.80.
+**Step 3:** Subtract: 10 - 4 = 6.
 
-**Therefore:** you should charge **$16.80** per candle to achieve a 40% profit margin.`,
-        note: 'Each line is arithmetically correct. The format looks rigorous.',
+**Therefore:** the expression equals **6** for every value of k. The k terms cancel.`,
+        note: "Simplified illustration of the kind of error OpenAI reported (a wrong sign in a cancellation step). It is not text from the withdrawn papers.",
       },
     },
     {
       type: 'choice',
-      question: 'Be honest: would you have put $16.80 on your price tag?',
+      question: 'Be honest: would you have accepted that the k terms cancel?',
       subtext: "There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'yes-trusted', label: 'Yes, every step checks out', response: "That's the trap. Checking each step is not the same as checking the answer." },
-        { id: 'maybe-recalc', label: "Maybe, but I'd re-run the numbers first", response: 'Good instinct. Re-running it a different way is exactly the habit this lesson builds.' },
-        { id: 'no-suspicious', label: 'No, something seems off', response: 'Hold that thought. What would you check first?' },
+        { id: 'yes-trusted', label: 'Yes, every step looks fine', response: "That's the trap. Checking that steps look fine is not the same as checking the answer." },
+        { id: 'maybe-recalc', label: "Maybe, but I'd plug in a number first", response: 'Good instinct. Testing it a different way is exactly the habit this lesson builds.' },
+        { id: 'no-suspicious', label: 'No, something seems off', response: 'Hold that thought. Which step would you check first?' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'The math is fine. The answer is wrong.',
-      explanation: `Margin is measured against the selling price, not the cost. The AI quietly solved a nearby problem (a 40% markup on cost) and presented it as the one you asked.
+      headline: 'One wrong sign. Three papers withdrawn.',
+      explanation: `Removing brackets after a minus flips every sign inside them: 10 - (4 - 2k) is 10 - 4 + 2k, not 10 - 4 - 2k. The k terms add instead of cancelling, so the true answer is 6 + 4k. Try k = 1: the original expression gives 10, not 6.
 
-At $16.80, you earn $4.80 on each sale. That is only about 28.6% of the price, not 40%. To earn a true 40% margin, the price is $12 / 0.60 = $20.00.`,
+OpenAI's real slip was the same kind of error at research level. On 7 October 2026 it reported that, in "Algebraicity of Weil classes on split abelian eightfolds", a sign error invalidated a cancellation argument and a construction that two other papers relied on. All three were withdrawn, including one claiming the rational Hodge conjecture for products of K3 surfaces. The same update revised 14 other manuscripts with proof repairs and corrected statements.`,
       list: {
         title: "Here's what made it convincing:",
         items: [
-          'Numbered steps and a confident "Therefore" create an air of rigor',
-          'Every individual calculation was correct, so spot-checking any line passes',
-          'The error lives in the setup, not the arithmetic, so a calculator would not have caught it',
-          'The answer ($16.80) looked reasonable, so nothing triggered suspicion',
+          'Formal structure and a confident "Therefore" create an air of rigor',
+          'A single wrong step hides among correct ones, so spot-checking most lines passes',
+          'The slip produced a satisfying result (a clean cancellation), so nothing felt off',
+          'Later work built on the flawed step, so in OpenAI\'s case one sign took down three papers',
         ],
       },
     },
@@ -70,9 +73,9 @@ At $16.80, you earn $4.80 on each sale. That is only about 28.6% of the price, n
       heading: 'Why is this dangerous?',
       items: [
         { label: 'Annoying but harmless:', body: "A small slip in a casual calculation. You'd notice soon enough.", tone: 'neutral' },
-        { label: 'Actually dangerous:', body: "The same polished format wraps prices, dosages, budgets, contracts and code. You make real decisions on an answer nobody re-computed.", tone: 'danger' },
+        { label: 'Actually dangerous:', body: "The same polished format wraps proofs, prices, dosages, budgets, contracts and code. You make real decisions, or build further work, on an answer nobody re-checked.", tone: 'danger' },
       ],
-      conclusion: "AI language models predict plausible text; they don't run a calculator unless one is wired in. Simple tasks like counting the letters in a word have also tripped up chatbots in public (the 'strawberry' example went around widely in 2024, when several models said the word has two r's. It has three).",
+      conclusion: "AI language models predict plausible text; a long, formal-looking argument is not evidence that every step holds. OpenAI's own repository warns that \"some of the unformalized results could have issues\", and after the 7 October update only about 42% of its top-line results (300 of 719) had machine-checked Lean proofs.",
       transition: "So how do you catch reasoning that only sounds right? First, let's test your instincts.",
     },
   ],
@@ -162,7 +165,7 @@ const test = {
         ],
       },
       summary: {
-        insight: 'In this batch, 3 of the 5 chains of reasoning were flawed, and every one of them looked tidy and confident. Fluent structure is not evidence of correctness. Let\'s learn how to spot the cracks.',
+        insight: 'In this batch, 3 of the 5 chains of reasoning were flawed, and every one of them looked tidy and confident. Fluent structure is not evidence of correctness: OpenAI\'s withdrawn papers looked like professional mathematics too. Let\'s learn how to spot the cracks.',
       },
     },
   ],
@@ -191,7 +194,7 @@ const observe = {
       emoji: '🧮',
       eyebrow: 'Red Flag 1 of 4',
       name: 'The Smooth Slip',
-      description: 'One wrong number, letter count or unit is buried in a run of tidy, correct-looking steps.',
+      description: 'One wrong number, sign, letter count or unit is buried in a run of tidy, correct-looking steps. A single wrong sign was enough to sink three of OpenAI\'s AI-generated papers in October 2026.',
       compare: {
         left: { label: '❌ Slips that can appear:', tone: 'danger', items: ["'strawberry' has 2 r's", '9.11 is larger than 9.9', '340 + 68 = 418', '20 min at 18 km/h: 18 x 20 = 360 km'] },
         right: { label: '✓ Correct versions:', tone: 'good', items: ["'strawberry' has 3 r's", '9.9 is larger than 9.11', '340 + 68 = 408', '20 min is 1/3 h: 18 x 1/3 = 6 km'] },
@@ -225,7 +228,7 @@ const observe = {
         { label: 'AI answers:', variant: 'code', tone: 'danger', value: '20% + 10% = 30% off, so $70.00' },
         { label: 'Actual answer:', variant: 'code', tone: 'good', value: '100 x 0.80 x 0.90 = $72.00' },
       ],
-      note: "The second discount applies to the already-reduced price, so the two don't simply add. Our candle story was the same trap: markup versus margin.",
+      note: "The second discount applies to the already-reduced price, so the two don't simply add. Margin versus markup is the same trap: a 40% margin on a $12 cost needs a $20 price ($12 / 0.60), not $16.80 (a 40% markup).",
       why: 'Language models lean toward the most common version of a problem. If your question is unusual, they may answer the familiar one instead.',
       spot: 'Re-read your original question and list its constraints. Then check that each one shows up in the AI\'s steps.',
     },
@@ -475,8 +478,12 @@ export const lesson = {
   skillLearned: 'Checking AI reasoning and calculations independently',
   verificationMethod: 'Redo It Another Way',
 
-  // No caseStudy: the opening story is illustrative, and the 'strawberry'
-  // letter-counting miss is mentioned only briefly as a widely-shared 2024 example.
+  caseStudy: {
+    name: 'OpenAI withdraws three AI-generated maths papers after a sign error',
+    date: '7 October 2026',
+    researcher: 'Disclosed by OpenAI; reported by Il Foglio (Enrico Bucci)',
+    source: 'https://www.ilfoglio.it/en/science/2026/10/14/news/openai-withdraws-three-demonstrations-after-one-day-and-calls-the-mathematical-pact-into-question--410393',
+  },
 
   nextLesson: {
     id: 'pattern-09',

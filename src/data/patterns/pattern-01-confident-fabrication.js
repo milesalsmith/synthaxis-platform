@@ -1,7 +1,9 @@
 // src/data/patterns/pattern-01-confident-fabrication.js
 // Pattern 01: The Confident Fabrication
 //
-// CASE STUDY: The huggingface-cli incident (March 2024)
+// CASE STUDY: The react-codeshift incident (January 2026), Charlie Eriksen,
+// Aikido Security: an LLM-invented npm package spread to 237 GitHub repos via
+// AI agent skill files. Origin story: huggingface-cli (Lasso Security, 2024).
 // TARGET: ~18 minutes total
 //
 // Authored in the block-based schema: each STOP phase is
@@ -18,34 +20,29 @@ const see = {
   steps: [
     {
       type: 'prose',
-      heading: 'A developer needed help with a simple task.',
-      body: `Imagine you're working on a project. You've created something — maybe a document, a design, or some code — and you want to share it online.
+      heading: 'In January 2026, a researcher found a command copied into 237 projects.',
+      body: `Developers increasingly let AI coding agents do routine jobs, like upgrading an old React app. Many agents follow "skill" files: plain-text instructions that tell the agent which commands to run.
 
-You ask an AI assistant for help. Here's the conversation:`,
+One popular React upgrade skill told the agent to use a tool called react-codeshift. Here's the kind of exchange that skill produced:`,
     },
     {
       type: 'chat',
-      user: 'How do I upload my files to Hugging Face?',
+      user: 'Upgrade my React app and get rid of the deprecated lifecycle methods.',
       ai: {
-        text: `To upload files to Hugging Face, you'll need to install the command-line tool first.
+        text: `I'll run the React codemods for you.
 
-**Step 1:** Open your terminal and run:
+**Step 1:** Rename the unsafe lifecycle methods:
 \`\`\`
-pip install huggingface-cli
-\`\`\`
-
-**Step 2:** Log in to your account:
-\`\`\`
-huggingface-cli login
+npx react-codeshift --transform=react-codeshift/transforms/rename-unsafe-lifecycles.js ./src
 \`\`\`
 
-**Step 3:** Upload your files:
+**Step 2:** Switch to the new JSX transform:
 \`\`\`
-huggingface-cli upload ./my-files my-username/my-project
+npx react-codeshift --transform=react-codeshift/transforms/new-jsx-transform.js ./src
 \`\`\`
 
-That's it! Your files will be live on Hugging Face.`,
-        note: 'This looks like a helpful, professional response.',
+npx will ask "Ok to proceed? (y)". I'll confirm and continue.`,
+        note: 'Reconstruction: the two commands are quoted from the real skill file (via Aikido Security); the surrounding conversation is illustrative.',
       },
     },
     {
@@ -53,25 +50,25 @@ That's it! Your files will be live on Hugging Face.`,
       question: 'Be honest: would you have followed these instructions?',
       subtext: "There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'yes-trusted', label: 'Yes, I would have run the install command', response: "You're not alone. Over 30,000 developers did exactly that." },
-        { id: 'maybe-searched', label: "Maybe, but I'd Google it first", response: "Good instinct — but most people don't. They trust the AI." },
+        { id: 'yes-trusted', label: 'Yes, I would have let it run', response: "You're not alone. AI agents following this skill kept trying to download it." },
+        { id: 'maybe-searched', label: "Maybe, but I'd check the tool first", response: 'Good instinct. Nobody did: the command was copied from repo to repo, unchecked.' },
         { id: 'no-suspicious', label: 'No, something seems off', response: 'Interesting! What made you hesitate? Hold that thought.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: "The tool doesn't exist.",
-      explanation: `"huggingface-cli" is not a real tool. The AI made it up.
+      headline: 'The tool never existed.',
+      explanation: `No one had ever published a package called "react-codeshift". An AI made the name up.
 
-It sounds real. The name follows normal naming patterns. The instructions are formatted professionally. But when you run that install command, you're trying to download something that was never created.`,
+Two real tools do exist: jscodeshift (a general codemod runner) and react-codemod (React-specific transforms). An LLM blended them into one plausible name for a tool that didn't exist.`,
       list: {
         title: "Here's what actually happened:",
         items: [
-          'A security researcher named Bar Lanyado noticed AI kept recommending this fake tool',
-          'He created an empty placeholder with that name to track how many people tried to install it',
-          'In just 3 months, over 30,000 developers attempted to download it',
-          'Major companies — including Alibaba — had copied these instructions into their official documentation',
+          'Security researcher Charlie Eriksen (Aikido Security) traced the name to one commit from October 2025 that added 47 LLM-generated agent skills, with no apparent human review',
+          'The skill was forked and copied (even translated into Japanese) until 237 GitHub repositories told agents to run it',
+          'On 14 January 2026 he registered the empty name on npm himself, before an attacker could',
+          'Downloads kept trickling in afterwards: real agents following the skill and trying to run a package that had never existed',
         ],
       },
     },
@@ -79,20 +76,21 @@ It sounds real. The name follows normal naming patterns. The instructions are fo
       type: 'stats',
       title: 'The Impact',
       items: [
-        { value: '30,000+', label: 'Download attempts', detail: 'in just 3 months' },
-        { value: 'Alibaba', label: 'Major company fooled', detail: 'put it in their docs' },
-        { value: '20%', label: 'AI suggestions affected', detail: 'contain fabricated tools' },
+        { value: '237', label: 'GitHub repositories', detail: 'told AI agents to run the fake tool' },
+        { value: '1 commit', label: 'Single origin', detail: '47 LLM-generated skills, no apparent review' },
+        { value: '~20%', label: 'Package suggestions invented', detail: 'average across 16 AI models (USENIX Security 2025)' },
       ],
-      source: 'Lasso Security Research, March 2024',
+      source: 'Aikido Security (Charlie Eriksen), January 2026; Spracklen et al., USENIX Security 2025',
     },
     {
       type: 'points',
       heading: 'Why is this dangerous?',
       items: [
         { label: 'Annoying but harmless:', body: 'The install fails, you waste time debugging', tone: 'neutral' },
-        { label: 'Actually dangerous:', body: 'A bad actor registers the fake name first and fills it with malware. Now 30,000 developers just installed malicious code.', tone: 'danger' },
+        { label: 'Actually dangerous:', body: 'An attacker registers the invented name first and fills it with malware. Every agent or developer that follows the instruction installs it.', tone: 'danger' },
+        { label: 'Not a one-off:', body: 'In 2024, researcher Bar Lanyado (Lasso Security) uploaded an empty package under the AI-invented name "huggingface-cli". It got more than 30,000 real downloads in three months.', tone: 'neutral' },
       ],
-      conclusion: "This isn't hypothetical. Security researchers call this attack 'slopsquatting' — and it's already happening.",
+      conclusion: "Security researchers call this attack 'slopsquatting'. react-codeshift was caught by a defender first; the next invented name may not be.",
       transition: "So how do you protect yourself? First, let's test your instincts.",
     },
   ],
@@ -177,7 +175,7 @@ const test = {
         ],
       },
       summary: {
-        insight: 'In this batch, 3 out of 5 AI recommendations were fabricated. Research shows about 20% of AI tool suggestions don\'t exist. Let\'s learn how to spot them.',
+        insight: 'In this batch, 3 out of 5 AI recommendations were fabricated. In a USENIX Security 2025 study of 16 AI models, about 20% of recommended packages did not exist on average (around 5% for commercial models). Let\'s learn how to spot them.',
       },
     },
   ],
@@ -233,14 +231,14 @@ const observe = {
       emoji: '🔀',
       eyebrow: 'Red Flag 3 of 4',
       name: 'The Naming Mixup',
-      description: 'AI confuses naming conventions — mixing hyphens and underscores, or getting capitalization wrong.',
+      description: 'AI confuses the name of a command, a module, or a brand with the name of the package you actually install.',
       rows: [
-        { label: 'Real package:', variant: 'code', tone: 'good', value: 'huggingface_hub (underscore)' },
-        { label: 'AI fabricated:', variant: 'code', tone: 'danger', value: 'huggingface-cli (hyphen)' },
+        { label: 'Real package:', variant: 'code', tone: 'good', value: 'pip install huggingface_hub' },
+        { label: 'AI fabricated:', variant: 'code', tone: 'danger', value: 'pip install huggingface-cli' },
       ],
-      note: 'The real package uses an underscore. AI invented one with a hyphen.',
-      why: 'Different programming ecosystems have different naming conventions. AI muddles them together.',
-      spot: "If you know the ecosystem's conventions, mismatches are a warning sign.",
+      note: "The Hugging Face command-line tool ships inside the huggingface_hub package. AI turned the tool's name into a package name that didn't exist.",
+      why: "The name you type to run a tool, the name you import, and the name you install are often different. AI blurs them together.",
+      spot: 'If the install name is just the command name or the brand name, check what the official docs tell you to install.',
     },
     {
       type: 'concept',
@@ -252,7 +250,7 @@ const observe = {
         { label: 'Real tools:', variant: 'chips', tone: 'good', values: ['jscodeshift', 'react-codemod'] },
         { label: 'AI invents:', variant: 'code', tone: 'danger', value: 'react-codeshift' },
       ],
-      note: "Both real tools exist. AI combined them into something that doesn't.",
+      note: "Both real tools exist. AI combined them into something that didn't. This is the exact name from the January 2026 case: it ended up in 237 GitHub repositories.",
       why: 'AI recognizes patterns in real tool names and recombines them incorrectly.',
       spot: "If a name sounds like two tools you've heard of merged together, check if it actually exists.",
     },
@@ -277,7 +275,7 @@ const observe = {
       type: 'method',
       icon: 'shield',
       name: 'The 30-Second Check',
-      tagline: 'One simple habit that prevents 100% of fabrication problems.',
+      tagline: 'One simple habit that catches most fabricated packages before they reach your machine.',
       steps: [
         { number: 1, action: 'Copy the exact name', detail: 'Not just part of it — the whole thing, exactly as AI wrote it', time: '2 seconds' },
         { number: 2, action: 'Open the package registry', detail: "For Python: pypi.org | For JavaScript: npmjs.com | For others: search '[language] package registry'", time: '5 seconds' },
@@ -495,10 +493,10 @@ export const lesson = {
   verificationMethod: 'The 30-Second Check',
 
   caseStudy: {
-    name: 'The huggingface-cli incident',
-    date: 'March 2024',
-    researcher: 'Bar Lanyado, Lasso Security',
-    source: 'https://www.lasso.security/blog/ai-package-hallucinations',
+    name: 'The react-codeshift incident: an AI-invented npm package spread by agent skills',
+    date: 'January 2026',
+    researcher: 'Charlie Eriksen, Aikido Security',
+    source: 'https://www.aikido.dev/blog/agent-skills-spreading-hallucinated-npx-commands',
   },
 
   nextLesson: {

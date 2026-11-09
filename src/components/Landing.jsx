@@ -39,70 +39,70 @@ function Landing() {
       number: '01', 
       name: 'Confident Fabrication', 
       description: 'When AI invents packages, libraries, or tools that don\'t exist',
-      realCase: '30,000 developers installed a fake package',
+      realCase: 'AI agents tried to install react-codeshift, a package that never existed (Jan 2026)',
       status: 'available'
     },
     { 
       number: '02', 
       name: 'Plausible Syntax', 
       description: 'Code that looks right but won\'t run',
-      realCase: 'Syntax errors hidden in confident responses',
+      realCase: "Moltbook's AI-built app exposed 1.5M API tokens (Feb 2026)",
       status: 'available'
     },
     { 
       number: '03', 
       name: 'Version Hallucination', 
       description: 'Deprecated APIs recommended as current',
-      realCase: 'Legacy methods breaking production code',
+      realCase: 'Top AI models pinned library versions with known security flaws (May 2026)',
       status: 'available'
     },
     { 
       number: '04', 
       name: 'Phantom Citation', 
       description: 'Academic sources that don\'t exist',
-      realCase: 'Lawyers cited fake cases in court filings',
+      realCase: "India's Supreme Court threw out a Rs 425 crore penalty built on fake cases (Sep 2026)",
       status: 'available'
     },
     { 
       number: '05', 
       name: 'Statistics Invention', 
       description: 'Made-up numbers stated with confidence',
-      realCase: 'Fabricated data in business reports',
+      realCase: 'EY pulled a report whose $200B figure meant two different things (May 2026)',
       status: 'available'
     },
     { 
       number: '06', 
       name: 'API Mirage', 
       description: 'Endpoints and methods that don\'t exist',
-      realCase: 'Integration failures from phantom APIs',
+      realCase: 'ChatGPT invented a Soundslice feature so often the founder built it (Jul 2025)',
       status: 'available'
     },
     { 
       number: '07', 
       name: 'Historical Confabulation', 
       description: 'Wrong dates, events, and attributions',
-      realCase: 'Misattributed quotes spread as fact',
+      realCase: 'A hallucinated intel report nearly sent US forces to board a Chinese ship (2026)',
       status: 'available'
     },
     { 
       number: '08', 
       name: 'Logic Phantom', 
       description: 'Reasoning that sounds valid but isn\'t',
-      realCase: 'Flawed analysis accepted as insight',
+      realCase: 'OpenAI withdrew three AI-written math papers over one sign error (Oct 2026)',
       status: 'available'
     },
     { 
       number: '09', 
       name: 'Confident Extrapolation', 
       description: 'Claims that go beyond training data',
-      realCase: 'Future predictions stated as fact',
+      realCase: 'Chatbots gave voters outdated deadlines before the 2026 midterms',
       status: 'available'
     },
     { 
       number: '10', 
       name: 'Authoritative Blend', 
       description: 'Real and fake information mixed together',
-      realCase: 'Truth and fiction woven seamlessly',
+      realCase: "An Accenture paper mixed real sources with ones that didn't exist (Nov 2026)",
       status: 'available'
     },
   ];

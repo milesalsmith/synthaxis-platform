@@ -1,9 +1,10 @@
 // src/data/patterns/pattern-05-statistics-invention.js
 // Pattern 05: Statistics Invention
 //
-// NOTE: The SEE story is ILLUSTRATIVE (no single famous incident). No caseStudy
-// is attached on purpose. Fabricated figures inside quiz items are the 'fake'
-// answers; the 'real' items cite named, checkable sources.
+// CASE STUDY: EY Canada "Points of Attack" report, investigated by GPTZero
+// (May 2026). The SEE chat is a labelled reconstruction of figures documented
+// in the report. Fabricated figures inside quiz items are the 'fake' answers;
+// the 'real' items cite named, checkable sources.
 // TARGET: ~18 minutes total
 //
 // Authored in the block-based schema: see docs/pattern-authoring-guide.md.
@@ -12,63 +13,73 @@
 // SEE (3 min): Story -> Trust check -> Reveal -> Why it matters
 // ============================================
 const see = {
-  title: 'The Study That Never Was',
+  title: 'The $200 Billion That Was Two Different Things',
   estimatedTime: 3,
   steps: [
     {
       type: 'prose',
-      heading: '"78% of users prefer..." - or do they?',
-      body: `Imagine you're a marketer finishing a pitch deck for tomorrow morning. Slide 6 needs one punchy statistic to show that customers want AI-powered support.
+      heading: 'A Big Four report, a headline number, and a famous source.',
+      body: `In late 2025, EY Canada published a 44-page cybersecurity report: *Points of Attack: Uncovering Cyber Threats and Fraud in Loyalty Systems*. It was credited to three EY Canada employees, including two partners.
 
-You ask an AI assistant for a number you can cite. (This story is illustrative, but the pattern is very real.) Here's the conversation:`,
+Its executive summary opens with the kind of figures that end up on slides: how big the loyalty economy is, and how much of it goes unused. Below are the report's key numbers and the sources it gave for them, written as an AI assistant might hand them to you:`,
     },
     {
       type: 'chat',
-      user: 'Give me a strong statistic showing that customers want AI customer support, with a source.',
+      user: 'Give me headline statistics on the loyalty-points economy and fraud for an executive summary, with sources.',
       ai: {
-        text: `According to a 2023 Gartner study, **78% of mid-sized businesses** have adopted AI-driven customer support, and **63.4% of customers** say they prefer it over waiting for a human agent.
+        text: `The global loyalty points market is worth **$200 billion**, and **30-50%** of those points go unused. *(Forbes, "The $200 Billion Loyalty Economy")*
 
-The study also found that companies using AI support reduced costs by an average of **41%** in the first year.
+There is **$200 billion** in unredeemed rewards globally. *(McKinsey & Company, "Loyalty Economics Report," 2022)*
 
-You can cite this as: *Gartner, "The State of AI Customer Service," 2023.*`,
-        note: 'Specific numbers. A famous name. A year. A citation. It reads like research.',
+**72%** of customer loyalty programs have reported theft or fraud, and loyalty fraud attacks have risen **89%** since 2019.`,
+        note: 'Reconstruction: these are the figures and sources GPTZero documented in the published EY report, arranged as a chat. It is not verbatim AI output, and EY has not said how the report was drafted.',
       },
     },
     {
       type: 'choice',
-      question: 'Be honest: would you have put this on slide 6?',
+      question: 'Be honest: would you have put these numbers in your deck?',
       subtext: "There's no wrong answer here. We're testing your instincts.",
       options: [
-        { id: 'yes-pasted', label: 'Yes, it has a source and a year - I would paste it in', response: "You're not alone. A named source plus precise numbers feels finished, so most people stop right here." },
-        { id: 'maybe-searched', label: "Maybe, but I'd search for the study first", response: "Good instinct. Searching takes a minute, but under deadline most people skip it." },
-        { id: 'no-suspicious', label: 'No, something seems off', response: 'Interesting! What made you hesitate? Hold that thought.' },
+        { id: 'yes-pasted', label: 'Yes - Forbes, McKinsey, and EY behind it. I would paste it in', response: "You're not alone. Two famous sources plus a Big Four byline feels finished, so most people stop right here." },
+        { id: 'maybe-searched', label: "Maybe, but I'd look up the McKinsey report first", response: "Good instinct. That one search would have found nothing - the report does not exist." },
+        { id: 'no-suspicious', label: 'No, something seems off', response: 'Interesting! Look at the two $200 billion figures again. Hold that thought.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'In this story, the study does not exist.',
-      explanation: `The AI did not look anything up. It generated text that *looks like* a market-research citation: a big-brand name, a year, a plausible report title, and precise percentages.
+      headline: 'Two invented citations, two incompatible numbers.',
+      explanation: `In May 2026, the AI-detection company GPTZero checked every source in the report. It found that the Forbes citation had a broken link and a title matching none of the named author's articles, and that the McKinsey "Loyalty Economics Report (2022)" does not exist. GPTZero said the report bore the marks of AI generation, including fake statistics and internal contradictions.
 
-Nothing in that answer was retrieved from a real report. The numbers were produced because precise figures are what a "good statistic" sounds like.`,
+The numbers also contradict each other, and you only need the report itself to see it. If $200 billion is the *whole* market and up to 50% goes unused, unredeemed points are at most $100 billion. For $200 billion to be the *unredeemed* part, the market would need to be at least $400 billion.`,
       list: {
-        title: "Here's how the story plays out:",
+        title: 'What GPTZero found when it traced the figures:',
         items: [
-          'You search for the report title and find nothing - or worse, you never search',
-          'The slide goes out; a sharp-eyed investor asks, "Where is that from?"',
-          'You cannot produce the report, and now every other number in the deck is in doubt',
-          'If the figure gets copied into a blog post, it starts to look "well-sourced" because it appears in more than one place',
+          'The fake McKinsey citation traced back to an obscure fintech blog post that cited the same non-existent report six months earlier',
+          'The 72% fraud figure was credited to Paystone on one page and to Forter on another; GPTZero said it seems to come from a 2017 Ipsos survey',
+          'The "89% since 2019" rise appears elsewhere in the report as a single-year rise, 2018 to 2019, from a real but out-of-date Forter index',
+          'EY Canada removed the report from its website and said it was reviewing how it was published',
         ],
       },
+    },
+    {
+      type: 'stats',
+      title: 'The Impact',
+      items: [
+        { value: '16 of 27', label: 'Cited sources', detail: 'fabricated, misattributed, or broken links' },
+        { value: '$200B', label: 'One figure', detail: 'used for both the market and the unused part of it' },
+        { value: '60+', label: 'Newspapers', detail: 'carried an article that referenced the report' },
+      ],
+      source: 'GPTZero investigation (May 2026); Computing, May 2026',
     },
     {
       type: 'points',
       heading: 'Why is this dangerous?',
       items: [
-        { label: 'Embarrassing but recoverable:', body: 'Someone asks for the source, you cannot find it, you remove the slide', tone: 'neutral' },
-        { label: 'Actually dangerous:', body: 'The invented number drives a real decision: a budget, a product bet, a headline, a medical or legal claim. Nobody checks it because it looks so precise.', tone: 'danger' },
+        { label: 'Embarrassing but recoverable:', body: 'Someone checks the sources, the report is pulled, and the firm says it is reviewing what happened.', tone: 'neutral' },
+        { label: 'Actually dangerous:', body: 'The numbers had already escaped. GPTZero found the report referenced in a Canberra Times article syndicated to more than 60 Australian newspapers, and found ChatGPT, Claude and Perplexity repeating claims from it.', tone: 'danger' },
       ],
-      conclusion: 'Precision is not evidence. A number like 63.4% feels measured, but AI can produce it as easily as it produces a round one.',
+      conclusion: 'Precision and prestige are not evidence. A Big Four byline and a McKinsey label made these numbers feel checked - and nobody had checked them.',
       transition: "So how do you tell a real statistic from a made-up one? First, let's test your instincts.",
     },
   ],
@@ -100,7 +111,7 @@ const test = {
           correct: 'verify',
           tone: 'bad',
           verdictLabel: 'Unsourced',
-          explanation: "UNSOURCED. A famous name and a year, but no report title, link, or sample. Anyone can attach 'Gartner' to a number, and AI does it constantly. Until you find the actual report, treat it as invented.",
+          explanation: "UNSOURCED. A famous name and a year, but no report title, link, or sample. Anyone can attach 'Gartner' to a number, and AI does it constantly: the EY Canada report listed a Gartner document that GPTZero found does not exist. Until you find the actual report, treat it as invented.",
           redFlag: 'Big-brand name with no checkable report',
         },
         {
@@ -230,7 +241,7 @@ const observe = {
         { label: 'Sample size mismatch:', variant: 'code', tone: 'danger', value: '47.3% of 212 people = 100.3 people' },
         { label: 'Growth mismatch:', variant: 'code', tone: 'danger', value: '$4.2B to $9.1B in 4 years is "31% a year"  (it is about 21%)' },
       ],
-      note: 'You do not need any source to catch these. A calculator is enough.',
+      note: 'You do not need any source to catch these. A calculator is enough. In the EY Canada report, $200B was the whole market on one page and only the unused part on another - a contradiction visible just by comparing the two pages.',
       why: "AI writes numbers by pattern, not by calculation. Each number looks fine alone, but they weren't computed from the same data.",
       spot: 'Check that parts sum to the whole, that percentages divide cleanly by the sample size, and that growth rates match the start and end values.',
     },
@@ -469,7 +480,12 @@ export const lesson = {
   skillLearned: 'Tracing AI-provided statistics to their primary source',
   verificationMethod: 'The Numbers Trace',
 
-  // No caseStudy: the SEE story is illustrative, not a documented incident.
+  caseStudy: {
+    name: 'EY Canada "Points of Attack" loyalty-fraud report',
+    date: 'May 2026',
+    researcher: 'Om Ogale, Paul Esau and Alex Cui, GPTZero',
+    source: 'https://gptzero.me/news/investigations/ey',
+  },
 
   nextLesson: {
     id: 'pattern-06',
