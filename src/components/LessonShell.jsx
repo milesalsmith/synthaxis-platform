@@ -15,9 +15,11 @@ import {
   Clock, 
   CheckCircle,
   ArrowRight,
-  Eye
+  Eye,
+  Award,
+  BarChart3
 } from 'lucide-react';
-import { loadPattern, savePatternProgress, getPatternByNumber } from '../utils/patternLoader';
+import { loadPattern, savePatternProgress, getPatternByNumber, isCurriculumComplete, getCompletedPatternCount, curriculumMetadata } from '../utils/patternLoader';
 import PhaseRenderer from './phases/PhaseRenderer';
 
 // ============================================
@@ -132,6 +134,7 @@ export default function LessonShell() {
         completed: true,
         completedAt: new Date().toISOString(),
         totalSeconds,
+        completedSeconds: totalSeconds,
         completedPhases: [0, 1, 2, 3]
       });
     }
@@ -195,6 +198,8 @@ export default function LessonShell() {
   // ============================================
   if (isComplete) {
     const nextPattern = getPatternByNumber(patternNum + 1);
+    const allDone = isCurriculumComplete();
+    const doneCount = getCompletedPatternCount();
     
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
@@ -242,13 +247,40 @@ export default function LessonShell() {
             </div>
           )}
 
+          {/* Course progress / certificate */}
+          {allDone ? (
+            <div className="bg-synthaxis-500/10 border border-synthaxis-500/30 rounded-xl p-5 mb-6">
+              <Award className="w-8 h-8 text-synthaxis-300 mx-auto mb-2" />
+              <p className="text-white font-semibold">You've completed all {curriculumMetadata.totalPatterns} patterns.</p>
+              <p className="text-slate-400 text-sm mb-4">Your certificate is ready.</p>
+              <button
+                onClick={() => navigate('/certificate')}
+                className="px-6 py-3 bg-synthaxis-500 hover:bg-synthaxis-400 text-white font-semibold rounded-lg transition-colors inline-flex items-center gap-2"
+              >
+                <Award className="w-4 h-4" />
+                Get your certificate
+              </button>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500 mb-6">
+              {doneCount} of {curriculumMetadata.totalPatterns} patterns complete
+            </p>
+          )}
+
           {/* Navigation */}
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={() => navigate('/')}
               className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-lg transition-colors"
             >
               Back to Home
+            </button>
+            <button
+              onClick={() => navigate('/progress')}
+              className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-lg transition-colors flex items-center gap-2"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Your Progress
             </button>
             {nextPattern && nextPattern.status === 'available' && (
               <button

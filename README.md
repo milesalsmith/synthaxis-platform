@@ -38,9 +38,9 @@ Synthaxis teaches the **10 hallucination patterns** that AI mistakes follow. Lea
 | Pattern | What It Is |
 |---------|------------|
 | **Confident Fabrication** | AI invents packages, libraries, tools that don't exist |
-| **Plausible Syntax** | Code that looks right but won't run |
+| **Plausible Syntax** | Code that looks right but isn't |
 | **Version Hallucination** | Deprecated APIs recommended as current |
-| **Phantom Citation** | Academic sources that don't exist |
+| **Phantom Citation** | Sources and cases that don't exist |
 | **Statistics Invention** | Made-up numbers stated with confidence |
 | **API Mirage** | Endpoints and methods that don't exist |
 | **Historical Confabulation** | Wrong dates, events, attributions |
@@ -346,12 +346,18 @@ synthaxis_pattern_2    // Pattern 2 progress
 - [x] Pattern 4: Phantom Citation
 - [x] Pattern 5: Statistics Invention
 
-### Phase 3: Complete Curriculum 🔲
-- [x] Patterns 6-10 (first drafts: fact-check and polish pass still to do)
-- [ ] Progress dashboard
-- [ ] Completion certificates
+### Phase 3: Complete Curriculum ✅
+- [x] Patterns 6-10
+- [x] Every pattern anchored on a real, sourced incident (2025-2026)
+- [x] Progress dashboard (`/progress`)
+- [x] Completion certificate (`/certificate`, unlocked after all 10 patterns)
 
-### Phase 4: Platform Features 🔲
+### Phase 4: The Agentic AI Era 🔲
+- [ ] 10 more patterns for AI agents: failures that happen when AI acts, not just answers
+      (e.g. hallucinated tool calls, destructive actions, prompt injection via tools,
+      agents trusting other agents, invented completion reports)
+
+### Phase 5: Platform Features 🔲
 - [ ] User accounts
 - [ ] Example database (crowdsourced hallucinations)
 - [ ] Team/organization features

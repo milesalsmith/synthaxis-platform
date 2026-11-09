@@ -2,7 +2,9 @@
 // Pattern 06: API Mirage
 //
 // The library is REAL. The method, parameter, flag, or endpoint is not.
-// Case study: Soundslice / ChatGPT "ASCII tab import" (Adrian Holovaty, July 2025).
+// Case study: OneLogin's official MCP server ships tools for a non-existent
+// /api/2/login_pages endpoint, removed as "hallucinated" (February 2026).
+// Callback: Soundslice / ChatGPT "ASCII tab import" (July 2025).
 // TARGET: ~18 minutes total
 //
 // Block-based schema: see docs/pattern-authoring-guide.md.
@@ -11,56 +13,58 @@
 // SEE (3 min): Story -> Instinct check -> Reveal -> Why it matters
 // ============================================
 const see = {
-  title: 'The Feature That Was Never There',
+  title: 'The Endpoint That Was Never There',
   estimatedTime: 3,
   steps: [
     {
       type: 'prose',
-      heading: 'This time, the product is real.',
-      body: `Soundslice is a real music-learning platform. One of its features is a sheet music scanner: upload a photo of printed music and it becomes interactive, playable notation.
+      heading: 'This time, the vendor is real.',
+      body: `OneLogin is a real identity and single sign-on platform with a documented REST API. In October 2025, an MCP server appeared in OneLogin's own verified GitHub organisation. An MCP server is a connector that lets Claude and other AI clients act on your account by calling tools. It was published on npm as @onelogin/onelogin-mcp.
 
-In 2025, founder Adrian Holovaty noticed something odd in the scanner's error logs. Instead of photos of sheet music, people were uploading screenshots of ChatGPT conversations containing ASCII tablature, a plain-text way of writing guitar music. He was mystified for weeks. Then he tried ChatGPT himself.`,
+A commit on the day of the first release was titled "complete OneLogin API coverage with 177 tools". Five of those tools managed custom login pages, so an admin could ask an AI assistant to build a branded sign-in page.`,
     },
     {
       type: 'chat',
-      user: "I've got this guitar riff as ASCII tab. How can I hear what it sounds like?",
+      user: 'Create a custom branded login page for our OneLogin tenant.',
       ai: {
-        text: `You can hear it with Soundslice:
+        text: `I can do that with the OneLogin MCP tools. I'll call create_login_page:
 
-1. Create a free Soundslice account
-2. Import your ASCII tab
-3. Press play to hear the audio playback
+POST /api/2/login_pages
+- name: "Acme branded login"
+- html_content: your form, using OneLogin's template variables {{username_field}} and {{password_field}}
+- javascript_content: calls submitLogin() on submit
 
-Soundslice will turn the tab into interactive notation you can listen to and practise along with.`,
-        note: "Reconstruction, not a verbatim transcript. Holovaty reported that ChatGPT was telling people to create a Soundslice account and import ASCII tab to hear the audio playback.",
+Then I'll return the preview_url so you can test it before enabling.`,
+        note: 'Reconstruction, not a transcript of a real session. The tool name, the /api/2/login_pages route, preview_url and the {{username_field}}, {{password_field}} and submitLogin() details come from the tool descriptions in the published npm package (versions 1.0.0 to 1.0.7).',
       },
     },
     {
       type: 'choice',
-      question: 'Soundslice is a real, well-known service. Would you follow these steps?',
-      subtext: 'The product exists, the steps are simple, and the feature sounds like something it would do.',
+      question: "The vendor is real, and the connector comes from the vendor's own GitHub organisation. Would you let the AI run this?",
+      subtext: 'The route is tidy, the description is detailed, and 170-odd sibling tools sit next to it.',
       options: [
-        { id: 'yes-ran', label: 'Yes, the service is real so the feature must be too', response: "That's the trap, and it's what many real users did. A real product makes a made-up feature feel safe." },
-        { id: 'maybe-ran', label: "I'd try it. If it fails, I'll know", response: "Here it failed loudly, so you would find out. In code, some invented options are silently ignored, and we'll get to those." },
-        { id: 'no-docs', label: "I'd check Soundslice's own docs for ASCII tab import", response: 'Good habit. Keep it for the rest of this lesson.' },
+        { id: 'yes-ran', label: 'Yes. The vendor shipped it, so the endpoint must exist', response: "That's the trap. A real vendor, a real package and many real neighbours make one invented route feel safe." },
+        { id: 'maybe-ran', label: "I'd try it. If it fails, I'll know", response: "Sometimes. But as you'll see, one of this server's made-up routes failed with a 401 that looked like a permissions problem, not a missing endpoint." },
+        { id: 'no-docs', label: "I'd look for /api/2/login_pages in OneLogin's API reference", response: 'Good habit. You would not have found it. Keep that habit for the rest of this lesson.' },
       ],
     },
     {
       type: 'reveal',
       icon: 'alert',
-      headline: 'Soundslice did not support ASCII tab.',
-      explanation: `Holovaty wrote that Soundslice had never supported ASCII tab: "ChatGPT was outright lying to people." The service was real. The capability was invented.
+      headline: 'There is no /api/2/login_pages.',
+      explanation: `On 5 February 2026, an issue on the repository asked for login-pages.js to be removed: "fantasy stuff from AI - remove it please". The fix, titled "Remove hallucinated login_pages API module", said the five tools targeted an endpoint "that does not exist in the OneLogin API v2 specification". They had been in every npm release since October 2025 and were gone in version 1.0.8 the same day.
 
-The cost landed on the vendor. In his words to TechCrunch, new users arrived with a false expectation, having been confidently told Soundslice would do something it didn't. Rather than plaster the site with disclaimers, the team built an ASCII tab importer. Holovaty believed it was the first case of a company building a feature because ChatGPT kept saying it existed.
+OneLogin's API does have a "Login Page" section, but it is in version 1 and it logs a user in (POST /api/1/login/auth). It does not store HTML pages. The AI stretched a real name into a neat create, read, update and delete resource.
 
-The same move happens in code every day. The AI knows pandas has to_csv() and to_json(), so it confidently offers df.to_markdown_table(). pandas is real. That method is not. The real one is to_markdown().`,
+It was not the only phantom. In April 2026, an issue reported that the client_app tools failed with 404 and 400, and the fix, "remove phantom client_app tools", said they hit a route that "is not a real route". In September, generate_report kept returning 401 even with "Manage All" credentials. A maintainer explained it wasn't a permissions problem: POST /api/2/reports/generate "does not exist", and production answers unknown /api/2 paths with 401.`,
       list: {
         title: "Here's what happened:",
         items: [
-          'The AI knew Soundslice turns uploaded music into playable notation',
-          'It extended that real capability to a format the product never handled',
-          'Users trusted it because the service, the account and the scanner were all real',
-          'Unlike Pattern 1, nothing was fake at the package or product level. The invention was one level deeper',
+          'The AI knew OneLogin had a real API, real branding endpoints and a v1 "Login Page" section',
+          'It extended them into a tidy REST resource: list, get, create, update and delete on /api/2/login_pages',
+          'It wrote confident details to match, such as template variables and a submitLogin() function for a route that never existed',
+          'It shipped for about three and a half months because the vendor, the package and most of the tools were real',
+          'Same shape as Soundslice in 2025, when ChatGPT told people a real product could import ASCII tab. It could not',
         ],
       },
     },
@@ -70,17 +74,17 @@ The same move happens in code every day. The AI knows pandas has to_csv() and to
       items: [
         { value: '38.58%', label: 'Valid calls to rarely used APIs', detail: 'GPT-4o on the CloudAPIBench benchmark' },
         { value: '47.94%', label: 'With API docs added to the prompt', detail: 'better, but about half still invalid' },
-        { value: '1 feature', label: 'Built to match the hallucination', detail: "Soundslice's ASCII tab importer, 2025" },
+        { value: '38 tools', label: 'Removed from the OneLogin MCP server in one day', detail: 'no public OneLogin API behind them, 2 February 2026' },
       ],
-      source: 'Jain et al., "On Mitigating Code LLM Hallucinations with API Documentation" (arXiv 2407.09726, 2024); Holovaty.com and TechCrunch, July 2025',
+      source: 'Jain et al., "On Mitigating Code LLM Hallucinations with API Documentation" (arXiv 2407.09726, 2024); github.com/onelogin/onelogin-mcp, commit 3ebd9ae and PR #29 (February 2026)',
     },
     {
       type: 'points',
       heading: 'Why is this dangerous?',
       items: [
-        { label: 'Loud failure:', body: "A made-up feature or method simply doesn't work. You lose time, and if you paste the error back to the AI, it may invent a different one.", tone: 'neutral' },
+        { label: 'Loud failure:', body: "The phantom client_app tools returned 404 and 400. You lose time, and if you paste the error back to the AI, it may invent a different route.", tone: 'neutral' },
+        { label: 'Misleading failure:', body: 'Some APIs answer unknown routes with 401. The invented reports endpoint looked like a permissions problem, so the reporter tried new credentials with "Manage All". It still failed, because the route never existed.', tone: 'danger' },
         { label: 'Silent failure:', body: "A made-up option on a real function can be ignored without any error. You believe retries, validation, or a safety setting is on when it isn't.", tone: 'danger' },
-        { label: 'Wrong endpoint:', body: "An invented REST URL may return 404, or it may hit a different real endpoint with side effects you didn't intend.", tone: 'danger' },
       ],
       conclusion: 'This is the API Mirage: real library, imaginary surface. The AI fills gaps in its memory with whatever the naming conventions suggest.',
       transition: "Let's test your instincts on some API calls.",
@@ -172,7 +176,7 @@ const test = {
         ],
       },
       summary: {
-        insight: "In this batch, 3 out of 5 calls didn't exist. Notice that the library was real every time, just as Soundslice was real. Checking the package or product isn't enough. You have to check the exact symbol.",
+        insight: "In this batch, 3 out of 5 calls didn't exist. Notice that the library was real every time, just as OneLogin's API was real. Checking the package or product isn't enough. You have to check the exact symbol.",
       },
     },
   ],
@@ -247,7 +251,7 @@ const observe = {
         { label: 'Documented (illustrative):', variant: 'chips', tone: 'good', values: ['GET /v2/users/{id}', 'POST /v2/exports'] },
         { label: 'AI invents:', variant: 'code', tone: 'danger', value: 'GET /v2/users/{id}/export' },
       ],
-      note: 'The URL is tidy and RESTful, which is exactly why it looks credible. Tidy is not the same as documented.',
+      note: "The URL is tidy and RESTful, which is exactly why it looks credible. OneLogin's MCP server shipped five tools for /api/2/login_pages, a route its API never had. Tidy is not the same as documented.",
       why: 'APIs often follow shared conventions, so the AI can generate a URL that looks right for almost any service. It cannot know which routes the vendor actually built.',
       spot: 'Find the route in the vendor\'s API reference or OpenAPI spec. A convention-shaped URL is a guess until you see it listed.',
     },
@@ -427,7 +431,7 @@ dropna(self, *, axis=0, how=..., thresh=..., subset=None, inplace=False, ...)
           ecosystem: 'web',
           command: `curl -s -o /dev/null -w '%{http_code}' https://api.example.com/v2/users/42/export`,
           output: '404',
-          whatToLookFor: "404 suggests the route doesn't exist. 401 or 403 means a route exists but needs credentials. Use only read-only requests on routes you're allowed to call, and still confirm in the vendor docs.",
+          whatToLookFor: "404 suggests the route doesn't exist. Don't treat 401 or 403 as proof that it does: some APIs, OneLogin's among them, answer unknown routes with 401. Use only read-only requests on routes you're allowed to call, and confirm in the vendor docs.",
         },
         {
           title: 'Does this JavaScript method exist?',
@@ -491,10 +495,10 @@ export const lesson = {
   verificationMethod: "Docs Or It Didn't Happen",
 
   caseStudy: {
-    name: 'Soundslice builds the ASCII tab importer ChatGPT said it had',
-    date: 'July 2025',
-    researcher: 'Adrian Holovaty, founder of Soundslice (also reported by TechCrunch)',
-    source: 'https://www.holovaty.com/writing/chatgpt-fake-feature/',
+    name: "OneLogin's official MCP server removes hallucinated tools for a /api/2/login_pages endpoint that never existed",
+    date: 'February 2026',
+    researcher: 'Reported in the onelogin/onelogin-mcp GitHub repository (issue #22, PR #29); later phantom-endpoint fixes in issues #50 and #63',
+    source: 'https://github.com/onelogin/onelogin-mcp/pull/29',
   },
 
   nextLesson: {

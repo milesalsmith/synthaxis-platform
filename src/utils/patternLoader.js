@@ -58,7 +58,7 @@ export const curriculumMetadata = {
       number: 2, 
       id: 'pattern-02', 
       title: 'Plausible Syntax', 
-      subtitle: 'Code that looks right but won\'t run',
+      subtitle: 'Code that looks right but isn\'t',
       hook: 'The AI-built app that worked fine and leaked everything',
       status: 'available',
       estimatedTime: 15
@@ -76,7 +76,7 @@ export const curriculumMetadata = {
       number: 4, 
       id: 'pattern-04', 
       title: 'Phantom Citation', 
-      subtitle: 'Academic sources that don\'t exist',
+      subtitle: 'Sources and cases that don\'t exist',
       hook: 'A Rs 425 crore penalty built on cases that never existed',
       status: 'available',
       estimatedTime: 15
@@ -216,7 +216,10 @@ export const getProgress = (type, id) => {
 };
 
 export const savePatternProgress = (patternNumber, progress) => {
-  return saveProgress('pattern', patternNumber, progress);
+  // Merge with what's stored so routine saves (phase index, timer ticks) never
+  // erase an earlier completion when a learner revisits a finished pattern.
+  const existing = getProgress('pattern', patternNumber) || {};
+  return saveProgress('pattern', patternNumber, { ...existing, ...progress });
 };
 
 export const getPatternProgress = (patternNumber) => {
@@ -288,6 +291,83 @@ export const getProgressPercentage = () => {
   const patternsDone = getCompletedPatternCount();
   const total = 1 + curriculumMetadata.totalPatterns; // foundation + patterns
   return Math.round(((foundationDone + patternsDone) / total) * 100);
+};
+
+// Per-pattern status for the progress dashboard.
+//   complete    -> finished all four STOP phases
+//   in-progress -> opened and worked on, not finished
+//   not-started -> never opened (or only glanced at)
+export const getPatternStatus = (patternNumber) => {
+  const p = getPatternProgress(patternNumber);
+  if (p?.completed === true || p?.completedPhases?.length === 4) {
+    return {
+      state: 'complete',
+      completedAt: p.completedAt || null,
+      seconds: p.completedSeconds ?? p.totalSeconds ?? null,
+    };
+  }
+  if (p && ((p.currentPhaseIndex || 0) > 0 || (p.totalSeconds || 0) > 5)) {
+    return { state: 'in-progress', phaseIndex: p.currentPhaseIndex || 0 };
+  }
+  return { state: 'not-started' };
+};
+
+export const isCurriculumComplete = () =>
+  getCompletedPatternCount() === curriculumMetadata.totalPatterns;
+
+// Latest completion date across all patterns (the certificate's issue date).
+export const getCurriculumCompletedAt = () => {
+  const dates = curriculumMetadata.patterns
+    .map((p) => getPatternProgress(p.number)?.completedAt)
+    .filter(Boolean)
+    .sort();
+  return dates.length ? dates[dates.length - 1] : null;
+};
+
+export const resetAllProgress = () => {
+  try {
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith(`${STORAGE_PREFIX}_`))
+      .forEach((k) => localStorage.removeItem(k));
+  } catch (error) {
+    console.error('Failed to reset progress:', error);
+  }
+};
+
+// ============================================
+// SECTION 5b: Certificate
+// ============================================
+
+const CERTIFICATE_NAME_KEY = `${STORAGE_PREFIX}_certificate_name`;
+
+export const getCertificateName = () => {
+  try {
+    return localStorage.getItem(CERTIFICATE_NAME_KEY) || '';
+  } catch {
+    return '';
+  }
+};
+
+export const setCertificateName = (name) => {
+  try {
+    localStorage.setItem(CERTIFICATE_NAME_KEY, name);
+  } catch (error) {
+    console.error('Failed to save certificate name:', error);
+  }
+};
+
+// Short, stable ID derived from name + completion date (FNV-1a). It is a
+// reference number only: progress lives in this browser, so it is not a
+// server-verifiable credential.
+export const getCertificateId = (name, completedAt) => {
+  const input = `${(name || '').trim().toLowerCase()}|${completedAt || ''}`;
+  let h = 0x811c9dc5;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  const hex = h.toString(16).toUpperCase().padStart(8, '0');
+  return `SX-${hex.slice(0, 4)}-${hex.slice(4)}`;
 };
 
 // ============================================

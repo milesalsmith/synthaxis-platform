@@ -16,12 +16,16 @@ import {
   Search,
   Brain,
   AlertTriangle,
-  Quote
+  Quote,
+  BarChart3
 } from 'lucide-react';
 import STOPVisualization from './StopVisualisation.jsx';
+import { isPatternComplete, getCompletedPatternCount, isFoundationComplete } from '../utils/patternLoader';
 
 function Landing() {
   const navigate = useNavigate();
+  const completedCount = getCompletedPatternCount();
+  const foundationDone = isFoundationComplete();
 
   // ============================================
   // SECTION 1: Data
@@ -45,7 +49,7 @@ function Landing() {
     { 
       number: '02', 
       name: 'Plausible Syntax', 
-      description: 'Code that looks right but won\'t run',
+      description: 'Code that looks right but isn\'t',
       realCase: "Moltbook's AI-built app exposed 1.5M API tokens (Feb 2026)",
       status: 'available'
     },
@@ -59,7 +63,7 @@ function Landing() {
     { 
       number: '04', 
       name: 'Phantom Citation', 
-      description: 'Academic sources that don\'t exist',
+      description: 'Sources and cases that don\'t exist',
       realCase: "India's Supreme Court threw out a Rs 425 crore penalty built on fake cases (Sep 2026)",
       status: 'available'
     },
@@ -131,6 +135,17 @@ function Landing() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-synthaxis-500/10 rounded-full blur-3xl" />
         
         <div className="relative max-w-5xl mx-auto px-6 pt-16 pb-20">
+          {/* Progress link */}
+          <div className="absolute top-6 right-6">
+            <button
+              onClick={() => navigate('/progress')}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-slate-100 bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-full transition-colors"
+            >
+              <BarChart3 size={14} />
+              Your progress{completedCount > 0 ? ` · ${completedCount}/10` : ''}
+            </button>
+          </div>
+
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <img 
@@ -270,6 +285,15 @@ function Landing() {
               <br />
               Each pattern teaches you to recognise and verify one type of AI mistake.
             </p>
+            {(completedCount > 0 || foundationDone) && (
+              <button
+                onClick={() => navigate('/progress')}
+                className="mt-6 inline-flex items-center gap-2 text-sm text-synthaxis-300 hover:text-synthaxis-200 transition-colors"
+              >
+                <BarChart3 size={16} />
+                {completedCount} of 10 patterns complete · View your progress
+              </button>
+            )}
           </div>
 
           <div className="grid gap-3">
@@ -328,7 +352,9 @@ function Landing() {
                     </div>
                   </div>
                   {lesson.status === 'available' && (
-                    <ArrowRight className="text-synthaxis-300 flex-shrink-0" size={20} />
+                    isPatternComplete(parseInt(lesson.number, 10))
+                      ? <CheckCircle className="text-synthaxis-300 flex-shrink-0" size={20} aria-label="Completed" />
+                      : <ArrowRight className="text-synthaxis-300 flex-shrink-0" size={20} />
                   )}
                 </div>
               </div>

@@ -77,3 +77,19 @@
     opacity: 0.7;
   }
 }
+
+/* ============================================
+   Certificate printing (/certificate)
+   Keeps the dark certificate colours and fits it on one landscape page.
+   ============================================ */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+  .certificate-sheet {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    break-inside: avoid;
+  }
+}

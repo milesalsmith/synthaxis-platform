@@ -5,6 +5,8 @@
 // /            → Landing page
 // /foundation  → Module 0: Why Smart People Get Fooled
 // /learn/:patternNumber → Pattern lesson (e.g., /learn/1)
+// /progress    → Progress dashboard
+// /certificate → Completion certificate (unlocked after all 10 patterns)
 //
 // Legacy redirects:
 // /learn/:moduleId/:lessonNumber → Redirects to /learn/:lessonNumber
@@ -14,6 +16,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'rea
 import Landing from './components/Landing';
 import FoundationShell from './components/FoundationShell';
 import LessonShell from './components/LessonShell';
+import ProgressDashboard from './components/ProgressDashboard';
+import Certificate from './components/Certificate';
 
 // ============================================
 // Legacy Route Handler
@@ -39,6 +43,10 @@ function App() {
         
         {/* Pattern lessons - new URL format */}
         <Route path="/learn/:patternNumber" element={<LessonShell />} />
+        
+        {/* Progress dashboard + certificate */}
+        <Route path="/progress" element={<ProgressDashboard />} />
+        <Route path="/certificate" element={<Certificate />} />
         
         {/* Legacy redirect - old URL format */}
         <Route path="/learn/:moduleId/:lessonNumber" element={<LegacyRedirect />} />
