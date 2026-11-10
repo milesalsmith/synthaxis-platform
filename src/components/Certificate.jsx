@@ -1,5 +1,5 @@
 // src/components/Certificate.jsx
-// /certificate — completion certificate, unlocked once all 10 patterns are
+// /certificate: completion certificate, unlocked once all 10 patterns are
 // complete. The learner enters their name; the certificate can be printed /
 // saved as PDF (browser print dialog) or shared to LinkedIn.
 //

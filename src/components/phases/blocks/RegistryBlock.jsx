@@ -7,7 +7,10 @@
 //     layout: 'single' | 'compare',
 //     heading?, subtext?,
 //     legit:      { name, version, description, stats },
-//     suspicious?: { name, version, description, stats },   // layout: 'compare'
+//     suspicious?: { name, version, description, stats,      // layout: 'compare'
+//                    illustrative?: true },                   // badge for made-up examples
+//     Use a name that does NOT exist on the registry for made-up examples, so
+//     a real project is never shown as a fake.
 //     goodSigns?:  [{ label, detail }],                     // layout: 'single'
 //     redFlags?:   { title?, items: [{ label }] } }         // layout: 'compare'
 //
@@ -103,6 +106,11 @@ export function RegistryBlock({ block }) {
             <div className="flex items-center gap-2 mb-2">
               <XCircle className="w-5 h-5 text-red-400" />
               <span className="text-red-400 font-medium">Suspicious</span>
+              {block.suspicious.illustrative && (
+                <span className="text-[11px] uppercase tracking-wider text-slate-500 border border-slate-700 rounded px-1.5 py-0.5">
+                  Illustrative
+                </span>
+              )}
             </div>
             <RegistryPreview data={block.suspicious} type="suspicious" />
           </div>

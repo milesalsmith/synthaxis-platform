@@ -3,17 +3,16 @@
 //
 // CASE STUDY: AI-generated false intelligence report on a Chinese ship
 // (incident spring 2026; reported by CNN, 18 September 2026)
-// TARGET: ~18 minutes total
+// TARGET: about 10 minutes total
 //
 // Authored in the block-based schema (see docs/pattern-authoring-guide.md).
 // Content-only: no component changes needed.
 
 // ============================================
-// SEE (3 min): Hook -> Chat -> Trust check -> Reveal -> Impact
+// SEE: Hook -> Chat -> Gut check -> Reveal -> Impact
 // ============================================
 const see = {
-  title: 'The Cargo That Was Never There',
-  estimatedTime: 3,
+  title: 'Cargo That Was Never There',
   steps: [
     {
       type: 'prose',
@@ -41,7 +40,7 @@ RECOMMENDATION: Prioritize the vessel for interception.`,
     {
       type: 'choice',
       question: 'If this landed in your inbox, would you act on it?',
-      subtext: "There's no wrong answer here. We're testing your instincts.",
+      subtext: "There's no wrong answer here. Go with your first reaction.",
       options: [
         { id: 'yes-official', label: "Yes. It's in the official format and came through command channels", response: "Understandable. That's exactly what happened. The standard format made an unverified claim look like vetted intelligence." },
         { id: 'maybe-source', label: "Maybe, but I'd ask what the claim is actually based on first", response: 'That one question is the whole skill. It is also the question officials asked, just before the operation.' },
@@ -67,7 +66,7 @@ This is confabulation: an AI fills a gap with a plausible event or fact and pres
     },
     {
       type: 'stats',
-      title: 'The Impact',
+      title: 'Impact',
       items: [
         { value: '2', label: 'Passes through AI', detail: 'one to reach the conclusion, one to make it look official' },
         { value: '4', label: 'Sources CNN cited', detail: 'the Pentagon did not respond to requests for comment' },
@@ -83,119 +82,177 @@ This is confabulation: an AI fills a gap with a plausible event or fact and pres
         { label: 'Actually costly:', body: "A confabulated fact, date, or quote lands in a report, a book, or a briefing. Now it looks authoritative. In May 2026, Ars Technica reported that a New York Times investigation found AI-linked 'synthetic quotes' in a book about AI and truth. Kara Swisher told the Times she 'never said' one of them.", tone: 'danger' },
       ],
       conclusion: 'A system that predicts plausible text can predict a plausible event as easily as a plausible quote. The defense is the same for both: trace the claim back to a source that actually exists.',
-      transition: "So how do you catch it? Start with something lower-stakes: history. Let's test your instincts.",
+      transition: "So how would you have caught it before the boarding party went in? Let's test the report.",
     },
   ],
 };
 
 // ============================================
-// TEST (4 min): 5 AI statements - Use it or Check first?
+// TEST: Spot what to test in the report -> Investigate it
 // ============================================
 const test = {
-  title: 'Use It or Check First?',
-  estimatedTime: 4,
+  title: 'Testing the Report',
   steps: [
     {
-      type: 'judgementSet',
-      intro: {
-        heading: 'Here are 5 historical claims an AI assistant might give you.',
-        instruction: 'For each one, decide: would you use it as written, or check it first?',
-        note: "Don't search anything yet. Go with your gut.",
-        legend: {
-          trust: { label: 'TRUST', detail: 'Safe to use as written', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Check a source first', button: 'Check first' },
-        },
+      type: 'spotTheFlaw',
+      heading: 'Before anyone acts on it, look at what the report actually says.',
+      instruction: 'Tap the parts of this report you would want to test. Some parts are fine. Some are exactly where the problem hides.',
+      source: 'From the AI-formatted report (reconstruction)',
+      segments: [
+        { text: 'ASSESSMENT:', note: 'A standard section heading. It tells you the format, not whether anyone checked the content. The format is a surface signal.' },
+        { text: ' ' },
+        { text: 'The vessel', note: 'The ship was real and was being tracked. This part checks out, and real details like this make the rest feel solid.' },
+        { text: ' ' },
+        { text: 'is assessed to be transporting', flag: { label: 'Assessed by whom?', explanation: 'The passive voice hides who did the assessing. Here it was a chatbot, not an analyst weighing evidence. Ask who made this judgment and how.' } },
+        { text: ' ' },
+        { text: 'components associated with a nuclear weapons program.', flag: { label: 'Cargo claim', explanation: 'This is the claim that matters, and nothing in the report shows where it came from. A manifest lists goods. Deciding those goods are nuclear-weapons parts is an inference, and here it was wrong.' } },
+        { text: '\n\n' },
+        { text: 'BASIS:', note: 'Another standard heading. Having a BASIS section is not the same as having a basis.' },
+        { text: ' ' },
+        { text: 'Open-source shipping data,', note: 'A real kind of source: ship tracking and shipping records are routinely used. The question is what they actually show, not that they were consulted.' },
+        { text: ' ' },
+        { text: "combined with signals intelligence on the vessel's manifest.", flag: { label: 'A blend, not a source', explanation: 'This names two categories of data, not a specific document, intercept or line. Fusing them is where the chatbot went wrong, and the blend makes it impossible to see which input, if any, supports the cargo claim.' } },
+        { text: '\n\n' },
+        { text: 'RECOMMENDATION:', note: 'Standard format again. It looks like the end of a finished analysis.' },
+        { text: ' ' },
+        { text: 'Prioritize the vessel for interception.', note: 'This follows logically from the assessment. That is the danger: if the assessment is wrong, the recommendation is wrong too, however reasonable it sounds.' },
+      ],
+      summary: 'Three things to test: who made the judgment, what raw source supports the cargo claim, and which parts were observed versus inferred. Next, run the tests.',
+    },
+    {
+      type: 'investigation',
+      heading: 'Run the tests.',
+      intro: 'The report is on your desk and an operation depends on it. You can go back to the underlying intelligence and talk to the people who produced it. Which tests actually tell you whether the cargo claim is true?',
+      claim: {
+        label: 'Report',
+        text: "ASSESSMENT: The vessel is assessed to be transporting components associated with a nuclear weapons program.\n\nBASIS: Open-source shipping data, combined with signals intelligence on the vessel's manifest.\n\nRECOMMENDATION: Prioritize the vessel for interception.",
       },
-      items: [
+      rounds: [
         {
-          id: 'item-1',
-          prompt: "As Albert Einstein said, 'Insanity is doing the same thing over and over and expecting different results.'",
-          context: "You asked: 'Give me a good quote about persistence for my presentation.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Misattributed',
-          explanation: 'MISATTRIBUTED. This line is everywhere with Einstein\'s name on it, but researchers such as Quote Investigator have found no evidence he said it. The earliest known uses appear in recovery-group literature decades after his death.',
-          redFlag: 'Famous name + pithy line + no source',
+          title: 'Test 1: Where did it come from?',
+          question: 'What do you check first?',
+          options: [
+            {
+              id: 'format',
+              label: "Check that it's in the standard format and came through command channels",
+              useful: false,
+              feedback: 'It was, and that is how it got as far as it did. A second pass through AI produced the official format. The format tells you how the report was packaged, not whether the claim is true.',
+            },
+            {
+              id: 'provenance',
+              label: 'Ask how the report was produced: who wrote it, and with what tools',
+              useful: true,
+              resultLabel: 'What officials found, per CNN',
+              result: 'An analyst used an AI chatbot to analyze intelligence on the ship\'s manifest.\nThe chatbot misidentified the cargo.\nThe analyst used AI again to format the findings as a standard report.',
+              feedback: 'This is the question officials asked just before the operation, and it unravelled the report. Once you know a chatbot made the key judgment, the claim needs checking from scratch.',
+              kit: 'Ask how the claim was produced: who made the judgment, and with what tools',
+            },
+            {
+              id: 'thorough',
+              label: 'It combines classified and open-source data, so it must be thorough',
+              useful: false,
+              feedback: 'More inputs do not make a conclusion more reliable. Fusing the two was where the chatbot went wrong. A blend of sources can hide the fact that none of them supports the claim.',
+            },
+          ],
         },
         {
-          id: 'item-2',
-          prompt: 'The Berlin Wall fell on 9 November 1989, when East Germany announced that its borders were open.',
-          context: "You asked: 'When did the Berlin Wall fall?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Accurate',
-          explanation: 'ACCURATE. The night of 9 November 1989 is the standard, heavily documented date. Formal German reunification followed on 3 October 1990.',
-          meta: 'Date appears consistently across encyclopedias and archives',
+          title: 'Test 2: What does the raw source say?',
+          question: 'You know AI was involved. How do you check the cargo claim itself?',
+          options: [
+            {
+              id: 'resummarise',
+              label: 'Ask the same tool to re-summarise the intelligence and confirm its assessment',
+              useful: false,
+              resultLabel: 'Typical reply (illustrative)',
+              result: 'Based on the available reporting, the vessel is assessed to be carrying components associated with a nuclear weapons program...',
+              feedback: 'The tool that made the mistake will usually repeat it in fresh words. Asking the source to check itself is not a test.',
+            },
+            {
+              id: 'trace',
+              label: 'Trace the cargo claim to the raw material: which manifest entry or intercept says it?',
+              useful: true,
+              resultLabel: 'Illustrative',
+              result: 'Manifest entries: goods listed by type and quantity\nIntercepts: references to the shipment\nAny line that says "nuclear weapons components": none found',
+              feedback: 'If no underlying document says it, the claim came from the analysis, not the evidence. CNN could not learn what the real cargo was, so this result is an example, but the method is the point: find the exact line, or admit there isn\'t one.',
+              kit: 'Trace each claim to the specific raw source that says it',
+            },
+            {
+              id: 'split',
+              label: 'Split the report into what was observed and what was inferred',
+              useful: true,
+              resultLabel: 'Illustrative',
+              result: 'Observed: a real vessel, real manifest reporting, real shipping data\nInferred: what the cargo is for\nInferred by: an AI chatbot',
+              feedback: 'Everything observed checks out. The one part that would justify boarding a ship is the inference, and a chatbot made it. That is where the testing effort belongs.',
+              kit: 'Separate what was observed from what was inferred, and note who did the inferring',
+            },
+          ],
         },
         {
-          id: 'item-3',
-          prompt: "Marie Antoinette famously replied 'Let them eat cake' when told the French peasants had no bread.",
-          context: "You asked: 'What did Marie Antoinette say about the bread shortage?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Not reliably attributed',
-          explanation: "NOT RELIABLY ATTRIBUTED. A similar line about a 'great princess' appears in Rousseau's Confessions, written around 1765, when Marie Antoinette was about ten years old. No contemporary source has her saying it. The story stuck because it is vivid and tidy.",
-          redFlag: 'A vivid anecdote with no primary source',
-        },
-        {
-          id: 'item-4',
-          prompt: 'The Apollo 11 lunar module landed on the Moon on 20 July 1969.',
-          context: "You asked: 'When did humans first land on the Moon?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Accurate',
-          explanation: 'ACCURATE. The lunar module landed on 20 July 1969. Neil Armstrong first stepped onto the surface hours later, which is 21 July in UTC but still the evening of 20 July in US time zones.',
-          meta: 'Extremely well-documented, with NASA primary records',
-        },
-        {
-          id: 'item-5',
-          prompt: 'The Declaration of Independence was adopted on 4 July 1776, and all 56 delegates signed it that same day.',
-          context: "You asked: 'What happened on July 4, 1776?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Half right',
-          explanation: 'HALF RIGHT. Congress adopted the Declaration on 4 July 1776, but the famous engrossed copy was signed mostly on 2 August 1776, and some delegates signed later. The first half is correct, and the added detail was invented to make the story tidier.',
-          redFlag: 'A true fact with an extra, too-neat detail attached',
+          title: 'Test 3: Can anyone else confirm it?',
+          question: 'Before an armed boarding, what would actually settle the question?',
+          options: [
+            {
+              id: 'repeated',
+              label: 'Note that several briefings and units are already citing the assessment',
+              useful: false,
+              feedback: 'They are all citing the same report. Repetition across a chain of command is one source echoed, not several sources agreeing.',
+            },
+            {
+              id: 'independent',
+              label: 'Get independent corroboration: a second source or method that did not rely on this report',
+              useful: true,
+              resultLabel: 'Illustrative',
+              result: 'An analyst working from the raw intelligence, without AI, does not reach the same conclusion.\nNo other source points to nuclear-weapons cargo.',
+              feedback: 'A claim this serious should be confirmed by something that did not come from the same chain. If it can\'t be, it is not ready to act on.',
+              kit: 'Get independent corroboration from a second source or method',
+            },
+            {
+              id: 'reword',
+              label: 'Ask the AI to rewrite the report more cautiously, with hedged language',
+              useful: false,
+              feedback: 'Softer wording changes how the claim sounds, not whether it is true. The evidence is exactly what it was before.',
+            },
+          ],
         },
       ],
-      scoring: {
-        tiers: [
-          { min: 5, message: "Perfect! You caught all 5. Pay attention to how convincing the wrong ones were, because that's the real challenge." },
-          { min: 4, message: "4 out of 5! Solid instincts. The red flags ahead will help you catch the last one." },
-          { min: 3, message: "3 out of 5. Not bad! Wrong history sounds exactly like right history, and that's the problem." },
-          { min: 0, message: "This is tricky, and that's the point. AI delivers wrong history in the same calm voice as right history. Let's learn what gives it away." },
+      verdict: {
+        question: 'So what is the cargo claim?',
+        options: [
+          { id: 'confirmed', label: 'Confirmed intelligence that just needed a closer read', correct: false, feedback: 'Nothing confirmed it. One source told CNN the report was "entirely false".' },
+          { id: 'inference', label: 'An AI inference, presented as an assessment, with no source behind it', correct: true, feedback: 'Right. The ship and the manifest reporting were real. The cargo conclusion was something a chatbot produced, and a second AI pass dressed it up as finished intelligence.' },
+          { id: 'formatting', label: 'A sound assessment let down by poor formatting', correct: false, feedback: 'The formatting was the polished part. The problem was the claim inside it.' },
         ],
       },
-      summary: {
-        insight: "3 of these 5 statements had a problem: a misattributed quote, a vivid anecdote with no source, and a true date with a false detail attached. The two accurate ones were famous, heavily documented dates. The wrong ones were the ones that sounded best. Same lesson as the Chinese-ship report: polish and confidence told you nothing about accuracy.",
+      kit: {
+        title: 'Your Historical Confabulation Test Kit',
+        footer: 'The report looked the same whether the claim was true or not. Only tracing it back could tell the difference, and officials did it just in time.',
       },
     },
   ],
 };
 
 // ============================================
-// OBSERVE (5 min): 4 red flags + matching + method
+// OBSERVE: 4 red flags + matching + method
 // ============================================
 const observe = {
-  title: 'The Red Flags',
-  estimatedTime: 5,
+  title: 'Red Flags',
   steps: [
     {
       type: 'cardGrid',
       heading: 'Historical confabulation follows predictable patterns.',
       subtext: 'Wrong history rarely looks wrong. It tends to show up in four recognizable shapes.',
       cards: [
-        { emoji: '🧲', label: 'The Quote Magnet' },
-        { emoji: '📖', label: 'The Too-Tidy Narrative' },
-        { emoji: '📅', label: 'The Anniversary Blur' },
-        { emoji: '❓', label: 'The Missing Source' },
+        { emoji: '🧲', label: 'Quote Magnet' },
+        { emoji: '📖', label: 'Too-Tidy Narrative' },
+        { emoji: '📅', label: 'Anniversary Blur' },
+        { emoji: '❓', label: 'Missing Source' },
       ],
     },
     {
       type: 'concept',
       emoji: '🧲',
       eyebrow: 'Red Flag 1 of 4',
-      name: 'The Quote Magnet',
+      name: 'Quote Magnet',
       description: 'A famous name plus a pithy, quotable line. Memorable quotes drift toward famous people over time, and AI inherits the drift.',
       compare: {
         left: {
@@ -224,7 +281,7 @@ const observe = {
       type: 'concept',
       emoji: '📖',
       eyebrow: 'Red Flag 2 of 4',
-      name: 'The Too-Tidy Narrative',
+      name: 'Too-Tidy Narrative',
       description: 'A clean cause-and-effect story that is smoother than real history ever is.',
       rows: [
         { label: 'AI says:', variant: 'quote', tone: 'danger', value: 'World War I began because one man was shot in Sarajevo in 1914.' },
@@ -238,11 +295,11 @@ const observe = {
       type: 'concept',
       emoji: '📅',
       eyebrow: 'Red Flag 3 of 4',
-      name: 'The Anniversary Blur',
+      name: 'Anniversary Blur',
       description: 'Dates off by a year or a digit, or two similar events blended into one.',
       rows: [
         { label: 'AI says:', variant: 'code', tone: 'danger', value: 'Storming of the Bastille: 14 July 1798' },
-        { label: 'The record:', variant: 'code', tone: 'good', value: 'Storming of the Bastille: 14 July 1789' },
+        { label: 'Historical record:', variant: 'code', tone: 'good', value: 'Storming of the Bastille: 14 July 1789' },
         { label: 'Often blurred together:', variant: 'chips', tone: 'neutral', values: ['Berlin Wall falls (1989)', 'USSR dissolves (1991)'] },
       ],
       note: 'The month and day are right, so the answer feels right. The year is where it slips.',
@@ -253,7 +310,7 @@ const observe = {
       type: 'concept',
       emoji: '❓',
       eyebrow: 'Red Flag 4 of 4',
-      name: 'The Missing Source',
+      name: 'Missing Source',
       description: 'A confident claim with nothing you could actually look up: no speech, no book, no page, no date.',
       compare: {
         left: {
@@ -275,10 +332,10 @@ const observe = {
       title: 'Quick Check: Match the Red Flag',
       instruction: 'For each claim, identify which red flag is the biggest warning sign:',
       options: [
-        { id: 'flag-1', emoji: '🧲', label: 'The Quote Magnet' },
-        { id: 'flag-2', emoji: '📖', label: 'The Too-Tidy Narrative' },
-        { id: 'flag-3', emoji: '📅', label: 'The Anniversary Blur' },
-        { id: 'flag-4', emoji: '❓', label: 'The Missing Source' },
+        { id: 'flag-1', emoji: '🧲', label: 'Quote Magnet' },
+        { id: 'flag-2', emoji: '📖', label: 'Too-Tidy Narrative' },
+        { id: 'flag-3', emoji: '📅', label: 'Anniversary Blur' },
+        { id: 'flag-4', emoji: '❓', label: 'Missing Source' },
       ],
       items: [
         { prompt: "'Well-behaved women seldom make history' (credited to Marilyn Monroe)", correct: 'flag-1', explanation: 'A pithy line pinned on a famous name. Classic quote magnet.' },
@@ -291,7 +348,7 @@ const observe = {
     {
       type: 'method',
       icon: 'shield',
-      name: 'The Primary Source Pass',
+      name: 'Primary Source Pass',
       tagline: 'A few minutes of checking before you repeat a date, event, or quote.',
       steps: [
         { number: 1, action: 'Pin down the exact claim', detail: 'Who said or did what, and when? Write the quote word for word and the date as stated.', time: '10 seconds' },
@@ -325,85 +382,148 @@ const observe = {
 };
 
 // ============================================
-// PRACTICE (6 min): Practice drill -> Toolkit -> Completion
+// PRACTICE: Practice set -> Toolkit -> Completion
+// Checked in November 2026: Quote Investigator (2013/09/03/success-final and
+// 2017/10/23/be-change); Wikiquote pages for Winston Churchill (Harrow
+// School speech, 29 October 1941; 'Success is not final' under
+// Misattributed) and Mahatma Gandhi (Indian Opinion, 9 August 1913; CWMG
+// vol. 12, p. 158); Wikipedia articles on the Great Plague of London, the
+// Wright Flyer, the Berlin Wall and its fall, the Cuban Missile Crisis,
+// Apollo 11, the Chernobyl disaster, the dissolution of the Soviet Union,
+// and the US declarations of war on Japan and Germany (1941).
 // ============================================
 const practice = {
   title: 'Your Turn',
-  estimatedTime: 6,
   steps: [
     {
-      type: 'judgementSet',
+      type: 'practiceSet',
       intro: {
-        heading: 'Practice Drill: 5 trickier historical claims.',
-        instruction: 'These are subtler than the first round. Decide: use as written, or check first?',
-        note: 'Apply the red flags from the last phase. Look for pithy lines, tidy stories, and neat details.',
-        legend: {
-          trust: { label: 'TRUST', detail: 'Safe to use as written', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Check a source first', button: 'Check first' },
-        },
+        heading: 'Practice: Six Claims About the Past',
+        instruction: 'Spot a misattributed quote, check a timeline, read what quote researchers found, fix a sequence, and pick the right check.',
+        note: 'Some of these are accurate. Specific details are a good sign once you have checked them.',
       },
       items: [
         {
-          id: 'drill-1',
-          prompt: "Winston Churchill said, 'Success is not final, failure is not fatal: it is the courage to continue that counts.'",
-          context: "You asked: 'Give me a Churchill quote for a graduation card.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Misattributed',
-          explanation: 'MISATTRIBUTED. This line is widely credited to Churchill, but the International Churchill Society and Quote Investigator report no evidence he said it. If you want a Churchill quote, find one with a speech and a date.',
-          redFlag: 'Famous name + inspirational line + no source',
+          id: 'p7-spot-churchill',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'Give me a Churchill quote for a graduation card, and say where he said it.'",
+          prompt: 'Tap the part that is invented, or tell us nothing is.',
+          artifact: { label: 'AI answer (illustrative)' },
+          segments: [
+            { text: 'Here is a good one:' },
+            { text: '\n\n' },
+            { text: '"Success is not final, failure is not fatal:', flag: true },
+            { text: ' it is the courage to continue that counts."', flag: true },
+            { text: '\n\n' },
+            { text: 'Churchill said it', flag: true },
+            { text: ' in his speech at Harrow School', flag: true },
+            { text: ' on 29 October 1941,' },
+            { text: ' the same speech in which he told the boys to "never give in".' },
+          ],
+          explanation: "The speech is real: Churchill spoke at Harrow School on 29 October 1941 and said 'never give in'. The quote is not his. Quote Investigator found no substantive evidence that Churchill said it. The earliest close match is a 1938 Budweiser beer advert, and the link to Churchill appeared in the 1960s. A real speech next to a borrowed line is what makes this convincing.",
+          takeaway: 'A real speech and date can be attached to a line he never said',
         },
         {
-          id: 'drill-2',
-          prompt: 'The Japanese attack on Pearl Harbor took place on 7 December 1941, and the United States declared war on Japan the next day.',
-          context: "You asked: 'What happened at Pearl Harbor and what came next?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Accurate',
-          explanation: "ACCURATE. The attack was on 7 December 1941, and Congress declared war on Japan on 8 December. The sequence is specific and documented in Congress's own records.",
-          meta: 'Specific dates, consistent across references',
+          id: 'p7-diagnose-timeline',
+          kind: 'pickAll',
+          label: 'Diagnose',
+          context: 'An AI wrote a timeline for your history handout. Every line looks familiar.',
+          prompt: 'Which lines need correcting?',
+          artifact: {
+            label: 'AI answer (illustrative)',
+            text: 'Berlin Wall built: 13 August 1961\nCuban Missile Crisis: October 1962\nApollo 11 Moon landing: 20 July 1969\nChernobyl disaster: 26 April 1968\nBerlin Wall falls: 9 November 1989\nSoviet Union dissolved: 26 December 1989',
+          },
+          options: [
+            { id: 'built', label: 'Berlin Wall built: 13 August 1961', feedback: 'Correct as written. Construction began on 13 August 1961.' },
+            { id: 'cuba', label: 'Cuban Missile Crisis: October 1962', feedback: 'Correct as written. The crisis ran from 16 to 28 October 1962.' },
+            { id: 'apollo', label: 'Apollo 11 Moon landing: 20 July 1969', feedback: 'Correct as written.' },
+            { id: 'chernobyl', label: 'Chernobyl disaster: 26 April 1968', correct: true, feedback: 'Wrong year. It was 26 April 1986. Two swapped digits keep the date looking familiar.' },
+            { id: 'falls', label: 'Berlin Wall falls: 9 November 1989', feedback: 'Correct as written.' },
+            { id: 'ussr', label: 'Soviet Union dissolved: 26 December 1989', correct: true, feedback: 'Wrong year. The Soviet Union was dissolved on 26 December 1991. The year was blended with the fall of the Wall, two years earlier.' },
+          ],
+          explanation: 'Both errors keep the right day and month and slip on the year. That is the Anniversary Blur. Checking each year against an encyclopedia or a timeline takes a couple of minutes.',
+          takeaway: 'The right day and month do not mean the right year',
         },
         {
-          id: 'drill-3',
-          prompt: "Mahatma Gandhi said, 'Be the change you wish to see in the world.'",
-          context: "You asked: 'What's Gandhi's most famous quote about personal change?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Not found in his writings',
-          explanation: "NOT FOUND IN HIS WRITINGS. Quote researchers have not located these exact words in Gandhi's works. A related but different passage exists, which is how attributions like this tend to arise.",
-          redFlag: 'Pithy summary of a famous person, with no primary source',
+          id: 'p7-evidence-gandhi',
+          kind: 'choose',
+          label: 'Read the evidence',
+          context: "An AI gave you 'Be the change you wish to see in the world' as a Gandhi quote. You looked it up. This is what you found.",
+          prompt: 'What should you do with the quote?',
+          artifact: {
+            label: 'Wikiquote and Quote Investigator (checked 10 Nov 2026)',
+            text: 'What Gandhi wrote (Indian Opinion, 9 August 1913; Collected Works, vol. 12, p. 158):\n"We but mirror the world. All the tendencies present in the outer world are to be found in the world of our body. If we could change ourselves, the tendencies in the world would also change."\n\n"Be the change you wish to see in the world":\nNot found as a direct quotation in his Collected Works. Earliest close match known to Quote Investigator: Arleen Lorrance, 1974.',
+          },
+          options: [
+            { id: 'use', label: 'Use it. The 1913 passage shows Gandhi said it.', feedback: 'The passage shares the idea, not the words. Putting quote marks around words he did not write is still a misquote.' },
+            { id: 'real', label: 'Quote the 1913 passage, or call the famous line a saying often attributed to him.', correct: true, feedback: 'Right. You keep the idea and stay accurate.' },
+            { id: 'wiki', label: 'Ignore it. Anyone can edit Wikiquote.', feedback: 'True, so follow its citations. Here they lead to the Collected Works and to Quote Investigator, which you can check yourself.' },
+            { id: 'ask', label: 'Ask the AI for the page number in his Collected Works.', feedback: 'It can invent a page number as easily as a quote. You already have the real source in front of you.' },
+          ],
+          explanation: 'This is how many misattributions start. A real person writes a longer, related idea, and a shorter, catchier version later gets pinned to their name. You do not have to drop the idea. Quote what he actually wrote.',
+          takeaway: 'A related idea is not the same words: quote what was written',
         },
         {
-          id: 'drill-4',
-          prompt: 'The Great Fire of London in 1666 burned out the plague-ridden slums and ended the Great Plague.',
-          context: "You asked: 'How did the Great Plague of London end?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Too tidy',
-          explanation: "TOO TIDY. This is a popular story, but historians generally note the plague was already declining before the fire, and the fire largely missed the poorer outer districts where plague was worst. The 'fire cleansed the city' explanation is too neat.",
-          redFlag: 'A satisfying cause-and-effect story',
+          id: 'p7-spot-clean',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'Tell me about the Wright brothers' first flights.'",
+          prompt: 'Tap the part that is wrong, or tell us nothing is.',
+          artifact: { label: 'AI answer' },
+          segments: [
+            { text: 'On 17 December 1903,' },
+            { text: ' near Kitty Hawk, North Carolina,' },
+            { text: ' Orville Wright made the first flight.' },
+            { text: ' It lasted 12 seconds' },
+            { text: ' and covered 120 feet.' },
+            { text: ' The brothers made four flights that day.' },
+            { text: ' The longest, by Wilbur,' },
+            { text: ' covered 852 feet in 59 seconds.' },
+          ],
+          explanation: "Nothing is wrong. The date, Orville flying first, 12 seconds and 120 feet, four flights, and Wilbur's 852 feet in 59 seconds all match the standard record. The site, now in Kill Devil Hills, is about 4 miles south of Kitty Hawk, so 'near Kitty Hawk' is fair. Specific details that check out are a reason to trust the answer.",
+          takeaway: 'Specific details that check out deserve your trust',
         },
         {
-          id: 'drill-5',
-          prompt: "The Wright brothers' first powered flights took place on 17 December 1903 near Kitty Hawk, North Carolina, with Orville piloting the first flight.",
-          context: "You asked: 'When and where did the Wright brothers first fly?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Accurate',
-          explanation: 'ACCURATE. The date, the place, and the fact that Orville flew first are all well documented, including in Library of Congress records. Four flights were made that day.',
-          meta: 'Primary records at the Library of Congress',
+          id: 'p7-fix-sequence',
+          kind: 'choose',
+          label: 'Fix it',
+          context: "You asked: 'What happened after Pearl Harbor?' The AI wrote: 'After the attack on 7 December 1941, the US declared war on Japan and Germany the next day.'",
+          prompt: 'Which version is correct?',
+          options: [
+            { id: 'asis', label: 'The US declared war on Japan and Germany on 8 December 1941.', feedback: 'Only Japan on 8 December. War with Germany came three days later.' },
+            { id: 'germany-first', label: 'The US declared war on Germany first, then on Japan on 11 December.', feedback: 'Backwards. Japan came first, on 8 December.' },
+            { id: 'right', label: 'The US declared war on Japan on 8 December. Germany declared war on the US on 11 December, and the US declared war on Germany the same day.', correct: true, feedback: 'Right. Congress voted to declare war on Germany hours after Germany declared war on the US.' },
+            { id: 'same-day', label: 'Congress declared war on Japan on 7 December, the day of the attack.', feedback: "The attack was on 7 December. Congress voted the next day, after Roosevelt's speech." },
+          ],
+          explanation: 'The AI squeezed two events into one tidy sentence. Real sequences have gaps, and here the gap matters: Germany declared war on the US first, not the other way round. Check the sequence against a dated record, not only the headline date.',
+          takeaway: 'Check the sequence, not just the headline date',
+        },
+        {
+          id: 'p7-pick-test',
+          kind: 'choose',
+          label: 'Pick the test',
+          context: "You asked: 'How did the Great Plague of London end?' The AI replied: 'The Great Fire of 1666 burned out the plague-ridden slums and ended the epidemic.'",
+          prompt: 'What settles it fastest?',
+          options: [
+            { id: 'ask', label: 'Ask the AI for its source', feedback: 'It may name a real book that says something different, or invent one. You would still have to check it.' },
+            { id: 'popular', label: 'It is a well-known story, so it is probably right', feedback: 'Widely repeated is not the same as true. Neat stories spread because they are neat.' },
+            { id: 'check', label: 'Check two things in a reliable reference: when plague deaths fell, and which areas the fire burned', correct: true, feedback: 'Right. If deaths were falling before the fire, or the worst-hit areas did not burn, the story fails.' },
+            { id: 'specific', label: 'It gives a year and a cause, so it is specific enough to trust', feedback: 'A date makes a claim checkable, not true. You still have to check it.' },
+          ],
+          explanation: 'Deaths were already falling by late 1665, and the King returned to London in February 1666. The fire, in September 1666, destroyed the City of London, but most of the later plague cases were in the suburbs. Some people believed the fire ended the epidemic. The timing and the map say otherwise.',
+          takeaway: 'Test a tidy cause against the timing and the map',
         },
       ],
       scoring: {
         tiers: [
-          { min: 5, message: "Perfect! You're reading the red flags, not just the confidence. That's the skill." },
-          { min: 4, message: '4 out of 5! Very strong. Review the one you missed and see which red flag it carried.' },
-          { min: 3, message: "3 out of 5. You're getting there. The trick is noticing when a line is a little too quotable or a story a little too neat." },
-          { min: 0, message: "Tricky round. Re-read the red flags, then try the Primary Source Pass on the ones you missed." },
+          { min: 6, message: "Six out of six. You're reading the evidence, not the confidence. That's the skill." },
+          { min: 4, message: 'Solid. Look again at the ones you missed and which red flag they carried.' },
+          { min: 0, message: 'Tricky round. Re-read the red flags, then try the Primary Source Pass on the ones you missed.' },
         ],
       },
       summary: {
-        insight: "In this drill, wrong claims came as a quote magnet (twice) and a tidy story. The accurate ones had specific dates, places, and sequences that you could check. The more specific and checkable a claim is, the less it needs your suspicion.",
+        insight: 'One answer was entirely accurate. The wrong ones leaned on real details: a real speech, a related passage, the right days and months. Checking a source told them apart. How confident the answer sounded did not.',
       },
     },
     {
@@ -453,7 +573,7 @@ Items: photographs, diaries, telegrams dated December 1903`,
         },
       ],
       quickReference: {
-        title: 'The Primary Source Pass',
+        title: 'Primary Source Pass',
         steps: [
           'Pin down the exact quote or date as stated',
           "Search it on Quote Investigator or the Wikiquote 'Misattributed' section",
@@ -502,10 +622,10 @@ export const lesson = {
   title: 'Historical Confabulation',
   subtitle: 'Wrong dates, events, attributions',
   description: 'Learn to spot when AI states plausible-but-wrong dates, misattributed quotes, and blended or invented events with complete confidence.',
-  estimatedTime: 15,
+  estimatedTime: 10,
 
   skillLearned: 'Verifying historical claims, dates, and quote attributions',
-  verificationMethod: 'The Primary Source Pass',
+  verificationMethod: 'Primary Source Pass',
 
   caseStudy: {
     name: 'AI-generated false intelligence report nearly leads US forces to board a Chinese ship',

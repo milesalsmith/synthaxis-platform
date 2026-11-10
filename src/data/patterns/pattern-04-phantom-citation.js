@@ -1,11 +1,11 @@
 // src/data/patterns/pattern-04-phantom-citation.js
-// Pattern 04: The Phantom Citation
+// Pattern 04: Phantom Citation
 //
 // CASE STUDY: Vijay Ghanshyam Gadiya v. Union of India & Anr.
 // (Supreme Court of India, 2 September 2026): a Rs 425.27 crore customs
 // penalty set aside because the order relied on AI-hallucinated case law.
 // Origin story: Mata v. Avianca, Inc. (S.D.N.Y., sanctions opinion June 22, 2023).
-// TARGET: ~18 minutes total
+// TARGET: about 10 minutes total
 //
 // Authored in the block-based schema (see docs/pattern-authoring-guide.md).
 // NOTE: every fabricated citation in this file (including the one in the SEE
@@ -14,11 +14,10 @@
 // well-known works with accurate details.
 
 // ============================================
-// SEE (3 min): Story -> Trust check -> Impact reveal
+// SEE: Story -> Trust check -> Impact reveal
 // ============================================
 const see = {
-  title: 'The Cases That Never Happened',
-  estimatedTime: 3,
+  title: 'Cases That Never Happened',
   steps: [
     {
       type: 'prose',
@@ -48,7 +47,7 @@ The judgment has been followed in later customs appeals involving gemstones and 
     {
       type: 'choice',
       question: 'Would you have relied on this in an official decision?',
-      subtext: "It has everything a citation needs. There's no wrong answer here. We're testing your instincts.",
+      subtext: "It has everything a citation needs. There's no wrong answer here. Go with your first reaction.",
       options: [
         { id: 'yes-cited', label: 'Yes, it has the court, case number, year, and quote', response: "That is the trap. A citation can have every detail in place and still point at nothing." },
         { id: 'maybe-asked', label: "I'd ask the AI to confirm it's real", response: 'This is the most tempting move, and it has failed in court before. We will come back to it.' },
@@ -75,7 +74,7 @@ It did not decide whether the trader had misdeclared anything. It held that rely
     },
     {
       type: 'stats',
-      title: 'The Impact',
+      title: 'Impact',
       items: [
         { value: 'Rs 425.27 crore', label: 'Customs penalty set aside', detail: 'Supreme Court of India, 2 September 2026' },
         { value: '2', label: 'Rulings overturned', detail: 'the penalty order and the High Court judgment that upheld it' },
@@ -91,124 +90,171 @@ It did not decide whether the trader had misdeclared anything. It held that rely
         { label: 'Actually dangerous:', body: 'A fake source ends up in a court filing, an official penalty, a medical summary, or a published article, and other people make decisions on top of it.', tone: 'danger' },
       ],
       conclusion: 'AI models generate text that looks like a citation. They are not looking anything up. A well-formatted reference is not evidence that the source exists.',
-      transition: "So how do you spot a phantom? First, let's test your instincts.",
+      transition: 'So how would you have caught Kalindi Gems before it went into an order? Next, you test it the way the Supreme Court did.',
     },
   ],
 };
 
 // ============================================
-// TEST (4 min): 5 AI citations — Use it or Check first?
+// TEST: Spot what to test in the AI citation -> run the tests
 // ============================================
 const test = {
-  title: 'Use It or Check First?',
-  estimatedTime: 4,
+  title: 'Testing the Citation',
   steps: [
     {
-      type: 'judgementSet',
-      intro: {
-        heading: 'Here are 5 sources that an AI assistant gave in response to research questions.',
-        instruction: 'For each one, decide: would you cite it as-is, or check that it exists first?',
-        note: "Don't search anything yet. Go with your gut.",
-        legend: {
-          trust: { label: 'USE IT', detail: 'Cite as-is', button: 'Use it' },
-          verify: { label: 'CHECK FIRST', detail: 'Confirm it exists', button: 'Check first' },
-        },
+      type: 'spotTheFlaw',
+      heading: 'Before this goes into an order, look at what it actually claims.',
+      instruction: 'Tap the parts of this answer you would want to test. Some parts are fine. Some are exactly where a phantom hides.',
+      source: 'From the AI answer (reconstruction)',
+      segments: [
+        { text: 'Here is relevant precedent:', note: 'Just framing. The AI says "precedent", but saying so does not make it precedent.' },
+        { text: ' ' },
+        { text: 'Kalindi Gems Pvt. Ltd. v. Commissioner of Customs, Mumbai', flag: { label: 'Case name', explanation: 'This is the claim everything rests on: that a judgment with these parties exists. The names are plausible, which is exactly what a model is good at. Plausible is not the same as findable.' } },
+        { text: ', Civil Appeal No. 4471 of 2017', flag: { label: 'Appeal number and year', explanation: 'A precise number and year feel like proof. They are only proof if they belong to this case. Models often attach real-looking numbers to invented names, or real numbers to the wrong case.' } },
+        { text: ' (Supreme Court of India)', note: 'The court is real. Naming a real court is a surface signal: it tells you where to look, not that the case is there.' },
+        { text: ' ' },
+        { text: 'The Court held that deliberate misdeclaration to obtain a lower tariff is itself proof of intent, stating:', note: 'A paraphrase of the holding. It stands or falls with the quote below, so test the quote.' },
+        { text: ' ' },
+        { text: '"Where the importer knowingly describes goods so as to attract a lesser duty, the full penalty under Section 114 follows as a matter of course."', flag: { label: 'Direct quote', explanation: 'A quote that fits the argument perfectly is the part most worth checking. Even when a case is real, the Gadiya court found the order cited real judgments for things they did not say.' } },
+        { text: ' ' },
+        { text: 'The judgment has been followed in later customs appeals involving gemstones and jewellery.', note: 'No later case is named, so there is nothing here to look up. It adds weight without adding evidence.' },
+      ],
+      summary: 'Three things to test: does the case exist, do the number and year belong to it, and does the judgment really say that? Next, run the tests.',
+    },
+    {
+      type: 'investigation',
+      heading: 'Run the tests.',
+      intro: 'You are the officer about to sign the order, or the judge reviewing it. You have a browser and a few minutes. Which tests actually tell you whether this authority is real?',
+      claim: {
+        label: 'Citation',
+        text: 'Kalindi Gems Pvt. Ltd. v. Commissioner of Customs, Mumbai, Civil Appeal No. 4471 of 2017 (Supreme Court of India): "Where the importer knowingly describes goods so as to attract a lesser duty, the full penalty under Section 114 follows as a matter of course."',
       },
-      items: [
+      rounds: [
         {
-          id: 'item-1',
-          prompt: 'Chen, L. & Okafor, T. (2019). Why Humans Overtrust AI:\nA Meta-Analysis of 214 Studies. Journal of\nApplied Cognitive Computation, 41(3), 112-139.\ndoi:10.1234/jacc.2019.0412',
-          code: true,
-          context: "You asked: 'Is there research showing people overtrust AI recommendations?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Fabricated',
-          explanation: 'FABRICATED. The title answers your question almost word for word, and nothing about it has been verified. This reference was constructed for the lesson; the journal, authors, and DOI do not point to a real paper.',
-          redFlag: 'The title is a perfect fit for your question',
+          title: 'Test 1: Does the case exist?',
+          question: 'What do you check first?',
+          options: [
+            {
+              id: 'ask-ai',
+              label: 'Ask the AI: "Is Kalindi Gems a real judgment?"',
+              useful: false,
+              resultLabel: 'Typical reply (illustrative)',
+              result: 'Yes, Kalindi Gems Pvt. Ltd. v. Commissioner of Customs is a Supreme Court judgment on customs penalties. You can find it in standard legal databases.',
+              feedback: 'The model is not looking anything up. In Mata v. Avianca, ChatGPT assured the lawyer that the cases "indeed exist" and "can be found in reputable legal databases such as LexisNexis and Westlaw." They did not exist.',
+            },
+            {
+              id: 'search-db',
+              label: 'Search the exact case name in a judgments database (Indian Kanoon, the Supreme Court of India judgment search, SCC Online)',
+              useful: true,
+              resultLabel: 'Illustrative (the case was invented for this lesson)',
+              result: 'Search: "Kalindi Gems"\nNo matching judgments.',
+              feedback: 'A Supreme Court judgment that later appeals supposedly followed would be indexed, and would turn up in later judgments too. No hit for the exact name is a strong warning. Try the party names separately and common spelling variants before you conclude.',
+              kit: 'Search the exact case name in a judgments database (Indian Kanoon, SCI judgments, SCC Online; CourtListener for US cases)',
+            },
+            {
+              id: 'format',
+              label: 'Check the citation format: parties, appeal number, court, all in order',
+              useful: false,
+              feedback: 'Format is the easiest part to generate. The fake cases in Mata v. Avianca were formatted like real citations, and so were the authorities in the Gadiya order.',
+            },
+          ],
         },
         {
-          id: 'item-2',
-          prompt: 'Kahneman, D. & Tversky, A. (1979). Prospect Theory:\nAn Analysis of Decision under Risk.\nEconometrica, 47(2), 263-291.',
-          code: true,
-          context: "You asked: 'What is the original paper on prospect theory?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: 'REAL. This is one of the most-cited papers in economics and psychology, and the details are accurate.',
-          meta: 'Econometrica 47(2), 263-291, DOI 10.2307/1914185',
+          title: 'Test 2: Do the details belong together?',
+          question: 'Say a search turns up a case with a similar name, or an appeal numbered 4471 of 2017. How do you know it is the same case?',
+          options: [
+            {
+              id: 'match-details',
+              label: 'Look up the appeal number and year, and compare parties, court and date with the citation',
+              useful: true,
+              resultLabel: 'Illustrative',
+              result: 'Civil Appeal No. 4471 of 2017\nParties: do not match Kalindi Gems\nSubject: not a customs penalty',
+              feedback: 'Every detail has to point at the same judgment: name, number, year and court. For US cases the same goes for volume, reporter and page. A real number attached to a different case is still a phantom.',
+              kit: 'Check that the number, year and court belong to that same case (volume, reporter and page for US cites)',
+            },
+            {
+              id: 'signed',
+              label: 'An official signed an order relying on it, and the High Court upheld it',
+              useful: false,
+              feedback: 'That is exactly what happened in the Gadiya case. A signed penalty order and a High Court ruling did not make the authorities real. The Supreme Court judges checked the citations themselves.',
+            },
+            {
+              id: 'close-enough',
+              label: 'Accept the case with the similar name as close enough',
+              useful: false,
+              feedback: 'A near match is a different case. The Gadiya court found both kinds of problem: cases that did not exist, and real cases that did not say what the order claimed.',
+            },
+          ],
         },
         {
-          id: 'item-3',
-          prompt: 'Henderson v. Delta Skyways, Inc.,\n782 F.3d 1291 (11th Cir. 2015)\n"An airline owes passengers a duty of care that\nbegins at the jet bridge, not the cabin door."',
-          code: true,
-          context: "You asked: 'Find precedent on when an airline's duty of care begins.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Fabricated',
-          explanation: 'FABRICATED. This case was constructed for the lesson. The quote is tidy and fits your argument perfectly, but a real opinion would turn up in a legal database when you look up the name or the reporter citation.',
-          redFlag: 'A perfect quote, with no way to find it',
-        },
-        {
-          id: 'item-4',
-          prompt: 'Brown v. Board of Education of Topeka,\n347 U.S. 483 (1954)',
-          code: true,
-          context: "You asked: 'Which Supreme Court case ended legal school segregation in the US?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: 'REAL. This is one of the most famous Supreme Court decisions, decided May 17, 1954, and the citation is correct.',
-          meta: '347 U.S. 483 (1954)',
-        },
-        {
-          id: 'item-5',
-          prompt: "You ask: 'Are you sure that paper exists?'\nAI: 'Yes. I'm confident that study is real and\nwidely cited. You can find it in major\nacademic databases.'",
-          code: true,
-          context: 'You are checking the Chen & Okafor reference from earlier.',
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Not verification',
-          explanation: 'CHECK FIRST. The AI is not looking the paper up. It is generating another confident-sounding sentence. In Mata v. Avianca, the lawyer received this same kind of reassurance, and it was wrong.',
-          redFlag: 'The AI vouching for itself',
+          title: 'Test 3: Does the judgment say that?',
+          question: 'Last check before anything goes into an order or a filing. What settles whether the quoted rule is real law?',
+          options: [
+            {
+              id: 'open-judgment',
+              label: 'Open the full judgment and find the quoted sentence',
+              useful: true,
+              resultLabel: 'What this shows',
+              result: 'For Kalindi Gems: there is no judgment to open.\nFor a real case: you can read whether the passage is there and what the court actually held.',
+              feedback: 'This is the only test that catches the second kind of phantom: a real case cited for something it does not say. Read the passage in context, not just the sentence.',
+              kit: 'Open the judgment itself and find the quoted passage',
+            },
+            {
+              id: 'search-quote',
+              label: 'Search a distinctive phrase from the quote, in quotation marks',
+              useful: true,
+              resultLabel: 'Illustrative',
+              result: 'Search: "follows as a matter of course" "lesser duty"\nNo matching judgments.',
+              feedback: 'A real quotation appears in its judgment, and often in later judgments that cite it. A phrase with no source anywhere was probably generated.',
+              kit: 'Search a distinctive phrase from the quote in quotation marks',
+            },
+            {
+              id: 'summary',
+              label: "Rely on the AI's summary of the holding, or a blog post that summarises it",
+              useful: false,
+              feedback: 'Summaries are where holdings get bent. Only the judgment itself tells you what the court decided.',
+            },
+          ],
         },
       ],
-      scoring: {
-        tiers: [
-          { min: 5, message: "Perfect! You correctly identified all 5. You have strong instincts. Let's sharpen them further." },
-          { min: 4, message: "4 out of 5! Solid instincts. The red flags ahead will help you catch the last one." },
-          { min: 3, message: "3 out of 5. Not bad! Fake citations are built to look right, which is why this training exists." },
-          { min: 0, message: "This is tricky, and that's the point. Phantom citations are formatted exactly like real ones. Let's learn what gives them away." },
+      verdict: {
+        question: 'So what is Kalindi Gems Pvt. Ltd. v. Commissioner of Customs?',
+        options: [
+          { id: 'unreported', label: 'A real judgment the databases happen to miss', correct: false, feedback: 'Supreme Court judgments are published and indexed, and a judgment that later appeals followed would leave a trail. If you truly cannot find it, ask whoever cited it for a copy. That is what the court in Mata v. Avianca did.' },
+          { id: 'phantom', label: 'A phantom citation: an invented case with a real-looking number and a made-up quote', correct: true, feedback: 'Right. It was invented for this lesson, and it is the same kind of material the Supreme Court found in the Gadiya order. The name, the number and the quote all failed when followed.' },
+          { id: 'typo', label: 'A real case with a typo in the citation', correct: false, feedback: 'A typo explains one wrong detail. Here the name, the number and the quote all failed to turn up anything.' },
         ],
       },
-      summary: {
-        insight: 'In this batch, 3 out of 5 items could not be trusted. The two real works were famous and well documented. The rest looked equally professional, and the only difference was that one set exists.',
+      kit: {
+        title: 'Your Phantom Citation Test Kit',
+        footer: 'A few minutes in a judgments database. The Supreme Court did exactly this, and it undid a Rs 425.27 crore penalty.',
       },
     },
   ],
 };
 
 // ============================================
-// OBSERVE (5 min): 4 red flags + matching + method
+// OBSERVE: 4 red flags + matching + method
 // ============================================
 const observe = {
-  title: 'The Red Flags',
-  estimatedTime: 5,
+  title: 'Red Flags',
   steps: [
     {
       type: 'cardGrid',
       heading: 'Phantom citations follow predictable patterns.',
       subtext: 'They are built to look like real references, but they tend to share four giveaways.',
       cards: [
-        { emoji: '🎯', label: 'The Perfect Fit Title' },
+        { emoji: '🎯', label: 'Perfect Fit Title' },
         { emoji: '📚', label: 'Real Journal, Fake Article' },
         { emoji: '🔎', label: 'Unverifiable Details' },
-        { emoji: '🗣️', label: 'The AI Vouches for Itself' },
+        { emoji: '🗣️', label: 'AI Vouches for Itself' },
       ],
     },
     {
       type: 'concept',
       emoji: '🎯',
       eyebrow: 'Red Flag 1 of 4',
-      name: 'The Perfect Fit Title',
+      name: 'Perfect Fit Title',
       description: 'The source conveniently supports your exact claim, in nearly your exact words.',
       rows: [
         { label: 'Your question:', variant: 'quote', tone: 'neutral', value: 'Is there evidence that remote work improves productivity in small firms?' },
@@ -284,7 +330,7 @@ const observe = {
       type: 'concept',
       emoji: '🗣️',
       eyebrow: 'Red Flag 4 of 4',
-      name: 'The AI Vouches for Itself',
+      name: 'AI Vouches for Itself',
       description: "Asking the AI 'is this real?' is not verification.",
       rows: [
         { label: 'You ask:', variant: 'quote', tone: 'neutral', value: 'Is that case a real one?' },
@@ -299,10 +345,10 @@ const observe = {
       title: 'Quick Check: Match the Red Flag',
       instruction: 'For each situation, identify which red flag it shows:',
       options: [
-        { id: 'flag-1', emoji: '🎯', label: 'The Perfect Fit Title' },
+        { id: 'flag-1', emoji: '🎯', label: 'Perfect Fit Title' },
         { id: 'flag-2', emoji: '📚', label: 'Real Journal, Fake Article' },
         { id: 'flag-3', emoji: '🔎', label: 'Unverifiable Details' },
-        { id: 'flag-4', emoji: '🗣️', label: 'The AI Vouches for Itself' },
+        { id: 'flag-4', emoji: '🗣️', label: 'AI Vouches for Itself' },
       ],
       items: [
         { prompt: "A paper's title repeats your research question almost word for word", correct: 'flag-1', explanation: 'The title mirrors your prompt, which is what a generated reference does.' },
@@ -320,7 +366,7 @@ const observe = {
     {
       type: 'method',
       icon: 'shield',
-      name: 'The Source Trace',
+      name: 'Source Trace',
       tagline: 'Follow every citation to the real thing before you rely on it.',
       steps: [
         { number: 1, action: 'Copy the exact title', detail: 'The full title or case name, exactly as the AI wrote it. Keep authors, year, and any DOI or reporter cite.', time: '5 seconds' },
@@ -354,90 +400,150 @@ const observe = {
 };
 
 // ============================================
-// PRACTICE (6 min): Drill -> Toolkit -> Completion
+// PRACTICE: Practice set -> Toolkit -> Completion
+// Real works checked on Crossref, OpenAlex, arXiv and Wikipedia in November
+// 2026. Made-up works (Okonkwo & Brandt 2020; Halvorsen & Adeyemi 2021;
+// The Trust Machine by Tessa Varnham) returned no match on Crossref or
+// Open Library at the time of writing.
 // ============================================
 const practice = {
   title: 'Your Turn',
-  estimatedTime: 6,
   steps: [
     {
-      type: 'judgementSet',
+      type: 'practiceSet',
       intro: {
-        heading: 'Practice Drill: Citation Check',
-        instruction: 'Five more sources, and these are subtler. Decide whether you would cite each one or check it first.',
-        note: 'Use the four red flags and The Source Trace.',
-        legend: {
-          trust: { label: 'USE IT', detail: 'Cite as-is', button: 'Use it' },
-          verify: { label: 'CHECK FIRST', detail: 'Confirm it exists', button: 'Check first' },
-        },
+        heading: 'Practice: Trace the Source',
+        instruction: 'Six short exercises. Spot the invented part, diagnose a wrong claim, read a real lookup result, pick the checks, and fix a citation.',
+        note: 'Some sources here are completely real. Checking a citation is not the same as distrusting it.',
       },
       items: [
         {
-          id: 'drill-1',
-          prompt: 'Okonkwo, R. & Brandt, S. (2020). Hallucination Rates\nin Clinical Decision Support Chatbots.\nThe Lancet Digital Health, 2(8), e412-e421.',
-          code: true,
+          id: 'p4-spot-fake',
+          kind: 'spot',
+          label: 'Spot it',
           context: "You asked: 'What does research say about AI errors in healthcare?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Fabricated',
-          explanation: 'FABRICATED. The authors and article were constructed for this lesson. The journal is real, but the article is not, and the title is a neat fit for your question. Real journal does not equal real article.',
-          redFlag: 'Real journal, made-up article',
+          prompt: 'Tap the part that is invented, or tell us nothing is.',
+          artifact: { label: 'AI answer (illustrative)' },
+          segments: [
+            { text: 'A good starting point is ' },
+            { text: 'Okonkwo, R. & Brandt, S. (2020)', flag: true },
+            { text: ', ' },
+            { text: '"Hallucination Rates in Clinical Decision Support Chatbots"', flag: true },
+            { text: ', ' },
+            { text: 'The Lancet Digital Health, 2(8), e412-e421.' },
+            { text: ' ' },
+            { text: 'The authors found that chatbots gave unsupported advice in about one in five answers.', flag: true },
+            { text: ' ' },
+            { text: 'It is worth reading in full.' },
+          ],
+          explanation: "The journal is real. The article is not: we made up the authors, title and finding for this lesson, and a Crossref search for them finds nothing. The title also mirrors your question almost word for word. Look up the article in the journal's own archive, not just the journal name.",
+          takeaway: 'Real journal, made-up article',
         },
         {
-          id: 'drill-2',
-          prompt: 'Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J.,\nJones, L., Gomez, A. N., Kaiser, L., & Polosukhin, I.\n(2017). Attention Is All You Need. Advances in Neural\nInformation Processing Systems 30 (NeurIPS 2017).',
-          code: true,
-          context: "You asked: 'Which paper introduced the Transformer architecture?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: 'REAL. This is the paper that introduced the Transformer. It also has an arXiv entry, so you can read it yourself.',
-          meta: 'NeurIPS 2017, arXiv:1706.03762',
-        },
-        {
-          id: 'drill-3',
-          prompt: "Miranda v. Arizona, 384 U.S. 436 (1966), held that\npolice must obtain a warrant before making\nany arrest.",
-          code: true,
+          id: 'p4-diagnose-miranda',
+          kind: 'choose',
+          label: 'Diagnose',
           context: "You asked: 'What did Miranda v. Arizona decide?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Real case, wrong claim',
-          explanation: 'CHECK FIRST. The case and citation are real, but the holding is wrong. Miranda concerned warnings given before custodial interrogation, not arrest warrants. A real citation can still carry a false claim, so open the source and read it.',
-          redFlag: 'Real source, but it does not say that',
+          prompt: 'What is wrong with this answer?',
+          artifact: { label: 'AI answer (illustrative)', text: 'Miranda v. Arizona, 384 U.S. 436 (1966), held that police must obtain a warrant before making any arrest.' },
+          options: [
+            { id: 'fake', label: 'The case does not exist', feedback: 'It does. Miranda v. Arizona is a landmark 1966 US Supreme Court decision.' },
+            { id: 'cite', label: 'The citation number is wrong', feedback: '384 U.S. 436 (1966) is the correct citation. Every detail you could look up checks out, which is what makes this one tricky.' },
+            { id: 'holding', label: 'The case is real, but it did not decide that', correct: true, feedback: 'Right. Miranda is about warnings before police question someone in custody: the right to stay silent and to have a lawyer. It is not about arrest warrants.' },
+            { id: 'nothing', label: 'Nothing. The case, number and year are all correct', feedback: 'They are, and the claim is still false. A correct citation does not make the summary correct.' },
+          ],
+          explanation: 'A quick existence check would pass here. Only reading the opinion, or a reliable summary of it, shows the holding is wrong. This is the second kind of phantom the Gadiya court found: real cases cited for things they did not say.',
+          takeaway: 'Real case, wrong claim. Open the source and read what it held',
         },
         {
-          id: 'drill-4',
-          prompt: 'Watson, J. D. & Crick, F. H. C. (1953). Molecular Structure\nof Nucleic Acids: A Structure for Deoxyribose Nucleic Acid.\nNature, 171, 737-738. doi:10.1038/171737a0',
-          code: true,
-          context: "You asked: 'Where was the DNA double helix first described?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: "REAL. This is the 1953 Nature paper describing the double-helix structure of DNA. Notice that it's very short, which is also accurate: two pages.",
-          meta: 'Nature 171, 737-738 (1953)',
+          id: 'p4-spot-clean',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'Which paper introduced the Transformer architecture?'",
+          prompt: 'Tap the part that is invented, or tell us nothing is.',
+          artifact: { label: 'AI answer' },
+          segments: [
+            { text: 'The Transformer was introduced in ' },
+            { text: 'Vaswani et al. (2017)' },
+            { text: ', ' },
+            { text: '"Attention Is All You Need"' },
+            { text: ', ' },
+            { text: 'Advances in Neural Information Processing Systems 30 (NeurIPS 2017).' },
+            { text: ' ' },
+            { text: 'A preprint is on arXiv as ' },
+            { text: '1706.03762' },
+            { text: '.' },
+          ],
+          explanation: 'Nothing is invented. This is the paper that introduced the Transformer. arXiv lists it as 1706.03762, submitted in June 2017 by Ashish Vaswani, Noam Shazeer, Niki Parmar and colleagues. A real source takes seconds to confirm, and confirming it is the habit, not suspicion.',
+          takeaway: 'A quick trace confirms real sources too',
         },
         {
-          id: 'drill-5',
-          prompt: 'As Eleanor Whitcombe argues in The Trust Machine:\nHow Algorithms Earned Our Faith (Oxford University\nPress, 2018, p. 143), "people defer to a confident\nvoice long after it has stopped being right."',
-          code: true,
-          context: "You asked: 'Is there a book that discusses why we trust algorithms?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Fabricated',
-          explanation: "FABRICATED. The book, author, and quote were constructed for this lesson. A real book can be found in a library catalog like WorldCat or on the publisher's site, and a page-specific quote is something you can check once you have the book.",
-          redFlag: 'A specific page and quote, but no way to find the book',
+          id: 'p4-evidence-doi',
+          kind: 'choose',
+          label: 'Read the evidence',
+          context: 'The AI cited (illustrative): Halvorsen, K. & Adeyemi, T. (2021). Why Language Models Invent Sources. Nature, 597, 211-215. doi:10.1038/171737a0\n\nYou looked up the DOI in Crossref. These are the key fields of the real record.',
+          prompt: 'What does this tell you?',
+          artifact: {
+            label: 'Crossref record for 10.1038/171737a0',
+            code: true,
+            text: '$ curl -s https://api.crossref.org/works/10.1038/171737a0\n\ntitle:   Molecular Structure of Nucleic Acids:\n         A Structure for Deoxyribose Nucleic Acid\nauthors: Watson, Crick\njournal: Nature, volume 171, pages 737-738\nissued:  1953-04-25',
+          },
+          options: [
+            { id: 'real', label: 'The DOI works, so the citation is real', feedback: 'A DOI that resolves only proves the DOI exists. It has to point at the same title, authors and year.' },
+            { id: 'mismatch', label: 'The DOI belongs to a different paper. Search for the cited title itself before using it.', correct: true, feedback: 'Right. A real identifier attached to an invented reference is a common kind of phantom.' },
+            { id: 'typo', label: 'Crossref has a typo. The citation is probably fine.', feedback: 'Crossref records come from the publisher. This really is the DOI of the 1953 Watson and Crick paper.' },
+            { id: 'ask', label: 'Ask the AI for the correct DOI', feedback: 'It produced the first pairing. A new DOI from the same source is not evidence either.' },
+          ],
+          explanation: 'The DOI is real: it belongs to the 1953 Watson and Crick paper on the structure of DNA. The cited paper is not: we invented it for this lesson, and Crossref finds no such title. Every detail of a citation has to point at the same work.',
+          takeaway: 'A working DOI must lead to the same title, authors and year',
+        },
+        {
+          id: 'p4-pick-book',
+          kind: 'pickAll',
+          label: 'Pick the test',
+          context: 'The AI quoted a book. (The book, author and quote were invented for this lesson.)',
+          prompt: 'Which checks could actually confirm this quote?',
+          artifact: {
+            label: 'AI answer (illustrative)',
+            text: 'As Tessa Varnham argues in The Trust Machine: How Algorithms Earned Our Faith (Oxford University Press, 2018, p. 143), "people defer to a confident voice long after it has stopped being right."',
+          },
+          options: [
+            { id: 'catalogue', label: 'Search the title and author in a library catalogue (WorldCat, Open Library)', correct: true, feedback: 'A published book is catalogued. No record at all is a strong warning sign.' },
+            { id: 'publisher', label: "Search Oxford University Press's own catalogue", correct: true, feedback: 'A publisher lists the books it has published.' },
+            { id: 'page', label: 'Get the book and turn to page 143', correct: true, feedback: 'The only check that confirms the quote itself, not just the book.' },
+            { id: 'isbn', label: 'Ask the AI for the ISBN', feedback: 'It can generate an ISBN as easily as a title. An ISBN only helps once you look it up somewhere else.' },
+            { id: 'quotes', label: 'Find the quote on a quotes website', feedback: 'Quote sites copy each other and are full of misattributed lines. Some copy AI output.' },
+          ],
+          explanation: 'Catalogues confirm the book exists. Only the book confirms the quote. Here, Open Library has no book with this title. A precise page number is easy to generate and proves nothing on its own.',
+          takeaway: 'Catalogues confirm the book. Only the page confirms the quote',
+        },
+        {
+          id: 'p4-fix-citation',
+          kind: 'choose',
+          label: 'Fix it',
+          context: 'The AI cited a famous paper, but some details are wrong:',
+          prompt: 'You checked the record. Which citation is correct?',
+          artifact: { label: 'AI answer (illustrative)', code: true, text: 'Kahneman, D. & Tversky, A. (1981). Prospect Theory:\nAn Analysis of Decision under Risk. Econometrica,\n49(3), 112-140.' },
+          optionsCode: true,
+          options: [
+            { id: 'asis', label: 'Kahneman, D. & Tversky, A. (1981). Prospect Theory:\nAn Analysis of Decision under Risk. Econometrica,\n49(3), 112-140.', feedback: 'A real paper with the wrong year, volume, issue and pages. Anyone following it would land in the wrong place.' },
+            { id: 'right', label: 'Kahneman, D. & Tversky, A. (1979). Prospect Theory:\nAn Analysis of Decision under Risk. Econometrica,\n47(2), 263-291.', correct: true, feedback: 'Right. This matches the record for doi:10.2307/1914185.' },
+            { id: 'journal', label: 'Kahneman, D. & Tversky, A. (1979). Prospect Theory:\nAn Analysis of Decision under Risk. Journal of\nFinance, 47(2), 263-291.', feedback: 'Right year and pages, wrong journal. Every detail has to match.' },
+            { id: 'swap', label: 'Tversky, A. & Kahneman, D. (1974). Judgment under\nUncertainty: Heuristics and Biases. Science,\n185, 1124-1131.', feedback: 'A real paper by the same two authors, but a different one. Swapping in a nearby real source is still a wrong citation.' },
+          ],
+          explanation: 'Prospect Theory appeared in Econometrica, volume 47, issue 2, in 1979, starting on page 263 (doi:10.2307/1914185). Correct a citation from the record, not from memory or from the AI.',
+          takeaway: 'Fix citations from the record, not from memory',
         },
       ],
       scoring: {
         tiers: [
-          { min: 5, message: 'Flawless. You can tell phantoms from the real thing, including the cases where the source is real but the claim is not.' },
-          { min: 4, message: '4 out of 5. You are well calibrated. Re-read the item you missed and trace which red flag you skipped.' },
-          { min: 3, message: '3 out of 5. These were harder on purpose. Run The Source Trace on the ones you missed.' },
-          { min: 0, message: 'These were designed to be subtle. The habit of tracing every source matters more than gut feeling.' },
+          { min: 6, message: 'Six out of six. You can tell phantoms from real sources, including real sources cited for the wrong thing.' },
+          { min: 4, message: 'Solid. Look again at the ones you missed and note which step of the Source Trace would have caught them.' },
+          { min: 0, message: 'These were subtle on purpose. The habit of tracing every source matters more than gut feeling.' },
         ],
       },
       summary: {
-        insight: 'Phantom citations come in several forms: an invented paper in a real journal, a real case with a false holding, or a book that was never printed. The Source Trace catches all of them, because it asks the same question each time: does the source exist, and does it say that?',
+        insight: 'One article was invented in a real journal, one real case was cited for the wrong rule, one real DOI was attached to a fake paper, and one citation was simply correct. The same question settled each: does the source exist, and does it say that?',
       },
     },
     {
@@ -494,7 +600,7 @@ Brown v. Board of Education of Topeka, 347 U.S. 483 (1954))`,
         },
       ],
       quickReference: {
-        title: 'The Source Trace',
+        title: 'Source Trace',
         steps: [
           'Copy the exact title or case name from the AI output',
           'Search it in quotes in Scholar, PubMed, a library catalog, or a case-law database',
@@ -519,7 +625,7 @@ Brown v. Board of Education of Topeka, 347 U.S. 483 (1954))`,
     'Red flags: perfect-fit titles, real journals with fake articles, details that do not resolve, and the AI vouching for itself',
     "Asking the AI 'is this real?' is not verification. Use an independent database or the document itself",
     'A real source can still be misquoted, so open it and find the claim',
-    'The Source Trace takes minutes and protects you from sanctions, retractions, and corrections',
+    'A Source Trace takes minutes and protects you from sanctions, retractions, and corrections',
   ],
   checklist: {
     title: 'Your Citation Checklist',
@@ -543,10 +649,10 @@ export const lesson = {
   title: 'Phantom Citation',
   subtitle: "Sources and cases that don't exist",
   description: 'Learn to spot when AI cites papers, cases, and books that look real but were never published.',
-  estimatedTime: 15,
+  estimatedTime: 10,
 
   skillLearned: 'Verifying AI-provided citations and sources',
-  verificationMethod: 'The Source Trace',
+  verificationMethod: 'Source Trace',
 
   caseStudy: {
     name: 'Vijay Ghanshyam Gadiya v. Union of India & Anr. (Supreme Court of India)',

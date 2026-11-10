@@ -19,19 +19,19 @@
 
 ---
 
-## The Problem
+## Problem
 
 AI gives plausible answers. Not always correct ones.
 
-- **30,000 developers** installed a package that didn't exist
-- **Lawyers cited fake cases** in federal court filings  
-- **Researchers quoted fabricated statistics** in published work
+- **AI agents** tried to install a package that never existed
+- **India's Supreme Court** threw out a Rs 425 crore penalty built on fake cases
+- **A Big Four report's** headline figure meant two different things
 
 The AI sounded confident every time. The humans trusted it every time.
 
-**Discernment** — the ability to verify AI output — is now the most important skill for anyone using AI professionally. Yet it's the most undersupported competency in AI literacy training.
+**Discernment**, the ability to verify AI output, is now the most important skill for anyone using AI professionally. Yet it's the most undersupported competency in AI literacy training.
 
-## The Solution
+## Solution
 
 Synthaxis teaches the **10 hallucination patterns** that AI mistakes follow. Learn to recognize them, spot them forever.
 
@@ -48,54 +48,54 @@ Synthaxis teaches the **10 hallucination patterns** that AI mistakes follow. Lea
 | **Confident Extrapolation** | Claims beyond training data |
 | **Authoritative Blend** | Real and fake mixed together |
 
-## The Method
+## Method
 
-### The STOP Protocol
+### STOP Protocol
 
-Every pattern lesson follows the same 15-minute structure:
+Every pattern lesson follows the same structure and takes about 10 minutes:
 
 ```
-S — See      (3 min)  See the AI output that fooled real people
-T — Test     (4 min)  Test yourself — can you spot the problem?
-O — Observe  (5 min)  Observe the pattern + learn verification techniques  
-P — Practice (6 min)  Practice on fresh examples, no scaffolding
+S  See       See the AI output that fooled real people
+T  Test      Spot what's worth testing in that output, run real checks, reach a verdict
+O  Observe   Observe the pattern + learn verification techniques
+P  Practice  Varied exercises on fresh examples: spot it, read the evidence, pick the test, fix it
 ```
 
-### The Curriculum
+### Curriculum
 
 ```
 Module 0: Why Smart People Get Fooled     10 min   ✅ Available
-├── The Trust Test
+├── Trust Test
 ├── Three Cognitive Biases
-├── The AI Persuasion Formula
+├── AI Persuasion Formula
 └── Transition to Patterns
 
-Pattern 1: Confident Fabrication          15 min   ✅ Available
-Pattern 2: Plausible Syntax               15 min   ✅ Available
-Pattern 3: Version Hallucination          15 min   ✅ Available
-Pattern 4: Phantom Citation               15 min   ✅ Available
-Pattern 5: Statistics Invention           15 min   ✅ Available
-Pattern 6: API Mirage                     15 min   ✅ Available
-Pattern 7: Historical Confabulation       15 min   ✅ Available
-Pattern 8: Logic Phantom                  15 min   ✅ Available
-Pattern 9: Confident Extrapolation        15 min   ✅ Available
-Pattern 10: Authoritative Blend           15 min   ✅ Available
+Pattern 1: Confident Fabrication          10 min   ✅ Available
+Pattern 2: Plausible Syntax               10 min   ✅ Available
+Pattern 3: Version Hallucination          10 min   ✅ Available
+Pattern 4: Phantom Citation               10 min   ✅ Available
+Pattern 5: Statistics Invention           10 min   ✅ Available
+Pattern 6: API Mirage                     10 min   ✅ Available
+Pattern 7: Historical Confabulation       10 min   ✅ Available
+Pattern 8: Logic Phantom                  10 min   ✅ Available
+Pattern 9: Confident Extrapolation        10 min   ✅ Available
+Pattern 10: Authoritative Blend           10 min   ✅ Available
 
-Total: ~3 hours to AI discernment
+Total: 10 lessons x 10 minutes, under 2 hours to AI discernment
 ```
 
 ## Built On Research
 
-Synthaxis is grounded in the **AI Fluency Framework** — developed by researchers at Ringling College, University College Cork, and Anthropic — which identifies four core competencies:
+Synthaxis is grounded in the **AI Fluency Framework** (developed by researchers at Ringling College, University College Cork, and Anthropic), which identifies four core competencies:
 
 | Competency | Focus | Synthaxis Coverage |
 |------------|-------|-------------------|
-| Delegation | When to use AI | — |
-| Description | How to prompt | — |
+| Delegation | When to use AI | Not covered |
+| Description | How to prompt | Not covered |
 | **Discernment** | **Verify outputs** | **✅ Full focus** |
-| Diligence | Ethics & safety | — |
+| Diligence | Ethics & safety | Not covered |
 
-Everyone teaches prompting. Almost nobody teaches verification. Synthaxis focuses entirely on **Discernment** — the skill that separates AI-fluent professionals from everyone else.
+Everyone teaches prompting. Almost nobody teaches verification. Synthaxis focuses entirely on **Discernment**, the skill that separates AI-fluent professionals from everyone else.
 
 ---
 
@@ -198,29 +198,31 @@ App.jsx (Router)
         └── PhaseRenderer.jsx  (thin delegate)
             └── StepFlow.jsx   (reads phase.steps; progress, gating, nav)
                 └── BlockRenderer.jsx  (block.type → component)
-                    └── blocks/*  (prose, chat, judgementSet, registry,
-                                   drill → DrillMode.jsx, completion, …)
+                    └── blocks/*  (prose, chat, spotTheFlaw, investigation,
+                                   practiceSet, registry, completion, …)
 ```
 
 ### Lesson engine (block-based)
 
 Lessons are **pure data**. A pattern file exports four phases (`see`, `test`,
-`observe`, `practice`); each phase is `{ title, estimatedTime, steps: [...] }`, and
-each step is one **block** — `{ type, ...props }` — rendered full-screen.
+`observe`, `practice`); each phase is `{ title, steps: [...] }`, and
+each step is one **block** (`{ type, ...props }`) rendered full-screen.
 
 ```
-phase = { title, estimatedTime, steps: [ block, block, ... ] }
+phase = { title, steps: [ block, block, ... ] }
 block = { type: 'prose' | 'chat' | 'reveal' | 'stats' | 'points'
                 | 'cardGrid' | 'concept' | 'method' | 'commands' | 'registry'
-                | 'choice' | 'matching'          // single-screen interactive
-                | 'judgementSet' | 'drill' | 'completion',  // self-navigating
+                | 'completion'
+                | 'choice' | 'matching' | 'spotTheFlaw'        // single-screen interactive
+                | 'investigation' | 'practiceSet'              // self-navigating
+                | 'judgementSet' | 'drill',                    // legacy, unused
           ...props }
 ```
 
 `StepFlow` renders the steps, draws progress dots, **gates** the Continue button on
 single-screen interactive blocks, and **hands navigation** to self-navigating blocks.
 Adding a new block type = one component + one line in `BlockRenderer`'s registry.
-Adding a whole pattern = **no code** — just a data file. See
+Adding a whole pattern = **no code**, just a data file. See
 [`docs/pattern-authoring-guide.md`](docs/pattern-authoring-guide.md).
 
 ---
@@ -267,17 +269,17 @@ When active (dev only):
 - Jump directly to any phase for testing
 - DEV badge shows in header
 
-No manual toggling needed — production builds ship with it off.
+No manual toggling needed: production builds ship with it off.
 
 ### Adding a New Pattern
 
-Patterns are **pure content** — no engine code changes. Two ways:
+Patterns are **pure content**, with no engine code changes. Two ways:
 
-**Fastest — hand off a rough draft.** Copy `content-drafts/_DRAFT_TEMPLATE.md`,
+**Fastest: hand off a rough draft.** Copy `content-drafts/_DRAFT_TEMPLATE.md`,
 brain-dump the lesson (link to the real hallucination + rough questions/red flags),
 and it gets converted into a validated, registered pattern file.
 
-**By hand — from the template:**
+**By hand, from the template:**
 
 1. **Create the data file** from the scaffold:
    ```bash
@@ -303,8 +305,8 @@ and it gets converted into a validated, registered pattern file.
 5. **Flip status in `src/components/Landing.jsx`** (it has its own `lessons` array).
 
 > Keep `keyTakeaways` + `checklist` on the `practice` phase (LessonShell renders the
-> final summary from them). Don't also put a `checklist` on the `completion` block —
-> it would render twice.
+> final summary from them). Don't also put a `checklist` on the `completion` block,
+> or it renders twice.
 
 ### Progress Storage
 
@@ -352,7 +354,7 @@ synthaxis_pattern_2    // Pattern 2 progress
 - [x] Progress dashboard (`/progress`)
 - [x] Completion certificate (`/certificate`, unlocked after all 10 patterns)
 
-### Phase 4: The Agentic AI Era 🔲
+### Phase 4: Agentic AI Era 🔲
 - [ ] 10 more patterns for AI agents: failures that happen when AI acts, not just answers
       (e.g. hallucinated tool calls, destructive actions, prompt injection via tools,
       agents trusting other agents, invented completion reports)
@@ -369,10 +371,10 @@ synthaxis_pattern_2    // Pattern 2 progress
 
 ### Hallucination Research
 
-- **USENIX Security 2025** — 576,000 code samples, 16 models, ~20% hallucination rate
-- **Socket Security** — 38% conflations, 13% typo variants, 51% pure fabrications
-- **Lasso Security** — huggingface-cli incident, 30,000+ downloads
-- **Seth Larson (PSF)** — Coined "slopsquatting" term
+- **USENIX Security 2025:** 576,000 code samples, 16 models, ~20% hallucination rate
+- **Socket Security:** 38% conflations, 13% typo variants, 51% pure fabrications
+- **Lasso Security:** huggingface-cli incident, 30,000+ downloads
+- **Seth Larson (PSF):** coined "slopsquatting" term
 
 ### Framework
 
@@ -385,7 +387,7 @@ Built on concepts from the **AI Fluency Framework**:
 
 > "The ones who thrive won't be the ones who know the most about AI… They'll be the ones who know when to trust it, when to challenge it, and when to rely on themselves instead."
 > 
-> — A.J. Juliani, "Discernment: The Most Important Skill in an AI World"
+> A.J. Juliani, "Discernment: The Most Important Skill in an AI World"
 
 ---
 
@@ -403,13 +405,13 @@ Contributions are welcome! Please read our contributing guidelines before submit
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## Contact
 
-**Synthaxis** — AI Discernment Training
+**Synthaxis** · AI Discernment Training
 
 - Website: [synthaxis.ai](https://synthaxis.ai)
 - GitHub: [@synthaxis-ai](https://github.com/synthaxis-ai)

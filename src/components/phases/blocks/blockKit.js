@@ -48,6 +48,7 @@ export function resolveIcon(name, fallback = null) {
 export const INTERACTIVE_TYPES = new Set([
   'choice',
   'matching',
+  'spotTheFlaw',
 ]);
 
 // Self-navigating blocks run their own multi-screen internal flow (e.g. walking
@@ -56,6 +57,8 @@ export const INTERACTIVE_TYPES = new Set([
 export const SELF_NAV_TYPES = new Set([
   'judgementSet',
   'drill',
+  'investigation',
+  'practiceSet',
 ]);
 
 export function isInteractive(type) {

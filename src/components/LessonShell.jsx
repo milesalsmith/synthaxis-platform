@@ -1,5 +1,5 @@
 // src/components/LessonShell.jsx
-// Simple shell for pattern lessons — PhaseRenderer owns the experience
+// Simple shell for pattern lessons. PhaseRenderer owns the experience
 //
 // This component handles:
 // - Loading pattern data
@@ -298,7 +298,7 @@ export default function LessonShell() {
   }
 
   // ============================================
-  // Main Render — Header + PhaseRenderer
+  // Main Render: Header + PhaseRenderer
   // ============================================
   return (
     <div className="min-h-screen bg-slate-950">
@@ -375,7 +375,7 @@ export default function LessonShell() {
         </div>
       </header>
 
-      {/* Phase content — PhaseRenderer owns everything below the header */}
+      {/* Phase content: PhaseRenderer owns everything below the header */}
       <div className="pt-16">
         <PhaseRenderer
           phase={currentPhase}

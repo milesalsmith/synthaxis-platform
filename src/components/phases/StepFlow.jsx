@@ -1,18 +1,18 @@
 // src/components/phases/StepFlow.jsx
-// Generic, data-driven phase renderer. A phase is just { title, estimatedTime,
+// Generic, data-driven phase renderer. A phase is just { title,
 // steps: [block, ...] } and each block is one full-screen step. This replaces
-// the four hand-written phase components — every pattern reuses this engine and
+// the four hand-written phase components. Every pattern reuses this engine and
 // only supplies data.
 //
 // Navigation rules (see blockKit):
-//   - self-navigating blocks (judgementSet, drill) own their footer; we hide
-//     ours and hand them onComplete/onBack.
-//   - single-screen interactive blocks (choice, matching) gate our Continue
-//     until they call onResolved.
+//   - self-navigating blocks (judgementSet, drill, investigation) own their
+//     footer; we hide ours and hand them onComplete/onBack.
+//   - single-screen interactive blocks (choice, matching, spotTheFlaw) gate our
+//     Continue until they call onResolved.
 //   - everything else advances freely.
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BlockRenderer from './blocks/BlockRenderer';
 import { isInteractive, ownsNavigation } from './blocks/blockKit';
 import { PHASE_CONFIG } from './phaseConfig';
@@ -55,12 +55,6 @@ export default function StepFlow({ phase, content, onComplete, onBack }) {
                 <h1 className="text-xl font-semibold text-white">{content.title}</h1>
               </div>
             </div>
-            {content.estimatedTime != null && (
-              <div className="flex items-center gap-2 text-slate-400 text-sm">
-                <Clock className="w-4 h-4" />
-                <span>{content.estimatedTime} min</span>
-              </div>
-            )}
           </div>
         </div>
       </div>

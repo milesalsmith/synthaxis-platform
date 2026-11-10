@@ -1,5 +1,5 @@
 // src/components/ProgressDashboard.jsx
-// /progress — the learner's progress across the foundation module and the
+// /progress: the learner's progress across the foundation module and the
 // 10 patterns. Progress is stored in this browser (localStorage) by
 // LessonShell / FoundationShell; this page only reads it.
 

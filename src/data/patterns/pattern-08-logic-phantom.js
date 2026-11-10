@@ -1,8 +1,8 @@
 // src/data/patterns/pattern-08-logic-phantom.js
-// Pattern 08: The Logic Phantom
+// Pattern 08: Logic Phantom
 //
 // Hook: "When the math doesn't math"
-// TARGET: ~18 minutes total
+// TARGET: about 10 minutes total
 //
 // Anchor incident (real): on 7 October 2026 OpenAI withdrew three of the 722
 // AI-generated maths manuscripts it had published the day before, after a sign
@@ -12,11 +12,10 @@
 // as the "verify" answers.
 
 // ============================================
-// SEE (3 min): Story -> Gut check -> Reveal -> Why it matters
+// SEE: Story -> Gut check -> Reveal -> Why it matters
 // ============================================
 const see = {
   title: 'When the Math Doesn\'t Math',
-  estimatedTime: 3,
   steps: [
     {
       type: 'prose',
@@ -44,7 +43,7 @@ Less than a day later, OpenAI withdrew three of them. The cause was not a wild l
     {
       type: 'choice',
       question: 'Be honest: would you have accepted that the k terms cancel?',
-      subtext: "There's no wrong answer here. We're testing your instincts.",
+      subtext: "There's no wrong answer here. Go with your first reaction.",
       options: [
         { id: 'yes-trusted', label: 'Yes, every step looks fine', response: "That's the trap. Checking that steps look fine is not the same as checking the answer." },
         { id: 'maybe-recalc', label: "Maybe, but I'd plug in a number first", response: 'Good instinct. Testing it a different way is exactly the habit this lesson builds.' },
@@ -76,115 +75,170 @@ OpenAI's real slip was the same kind of error at research level. On 7 October 20
         { label: 'Actually dangerous:', body: "The same polished format wraps proofs, prices, dosages, budgets, contracts and code. You make real decisions, or build further work, on an answer nobody re-checked.", tone: 'danger' },
       ],
       conclusion: "AI language models predict plausible text; a long, formal-looking argument is not evidence that every step holds. OpenAI's own repository warns that \"some of the unformalized results could have issues\", and after the 7 October update only about 42% of its top-line results (300 of 719) had machine-checked Lean proofs.",
-      transition: "So how do you catch reasoning that only sounds right? First, let's test your instincts.",
+      transition: "So how do you catch reasoning that only sounds right? Start with this one: find the step worth testing, then test it.",
     },
   ],
 };
 
 // ============================================
-// TEST (4 min): 5 AI claims — Use it or Check first?
+// TEST: Spot the step worth testing, then test it
 // ============================================
 const test = {
-  title: 'Use It or Check First?',
-  estimatedTime: 4,
+  title: 'Testing the Derivation',
   steps: [
     {
-      type: 'judgementSet',
-      intro: {
-        heading: 'Here are 5 pieces of reasoning an AI assistant might give you.',
-        instruction: 'For each one, decide: would you use the answer as given, or check it first?',
-        note: 'Go with your gut. You can use a pencil, but no calculators yet.',
-        legend: {
-          trust: { label: 'TRUST', detail: 'Reasoning holds up', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Something may be off', button: 'Check first' },
-        },
+      type: 'spotTheFlaw',
+      heading: 'Before you accept the answer, find the step it all rests on.',
+      instruction: 'Tap the parts of this derivation you would want to test. Most lines are fine. One small part decides everything.',
+      source: 'From the AI answer',
+      code: true,
+      segments: [
+        { text: "Let's work through it step by step.", note: 'A friendly opener. It promises care but checks nothing. Step-by-step layout is a surface signal, not evidence.' },
+        { text: '\n\n' },
+        { text: 'Step 1: Remove the brackets: ', note: 'The right first move. Removing brackets is exactly how you would start.' },
+        { text: '10 - 4 - 2k + 2k', flag: { label: 'Sign inside the brackets', explanation: 'A minus in front of brackets flips every sign inside. 10 - (4 - 2k) becomes 10 - 4 + 2k, not 10 - 4 - 2k. This one character is where the derivation goes wrong.' } },
+        { text: '\n\n' },
+        { text: 'Step 2: The k terms cancel: -2k + 2k = 0.', flag: { label: 'Cancellation that everything rests on', explanation: 'The arithmetic on this line is correct, but it only works if Step 1 was right. The whole result rests on this cancellation, so it is the step to check most carefully.' } },
+        { text: '\n\n' },
+        { text: 'Step 3: Subtract: 10 - 4 = 6.', note: 'Correct. If you spot-check this line, it passes. That is part of the trap: most lines really are fine.' },
+        { text: '\n\n' },
+        { text: 'Therefore: ', note: '"Therefore" signals logic. It does not supply any.' },
+        { text: 'the expression equals 6 for every value of k.', flag: { label: 'A claim you can test in seconds', explanation: '"For every value of k" is a strong claim. One value of k that gives something other than 6 is enough to disprove it.' } },
+        { text: ' The k terms cancel.', note: 'This just repeats Step 2. Saying it twice does not make it more true.' },
+      ],
+      summary: 'Three things to test: the sign in Step 1, the cancellation that depends on it, and the claim that the answer is 6 for every k. Next, run the tests.',
+    },
+    {
+      type: 'investigation',
+      heading: 'Run the tests.',
+      intro: 'You have a pencil, a calculator and a couple of minutes. Which tests actually tell you whether the k terms cancel?',
+      claim: {
+        label: 'What the AI claims',
+        text: '10 - (4 - 2k) + 2k = 6 for every value of k',
+        code: true,
       },
-      items: [
+      rounds: [
         {
-          id: 'item-1',
-          prompt: 'Total is $1.10. The bat costs $1.00 more than the ball.\nSo the bat is $1.00 and the ball is $0.10.\nCheck: $1.00 + $0.10 = $1.10.\nTherefore the ball costs $0.10.',
-          code: true,
-          context: "You asked: 'A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much is the ball?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Flawed',
-          explanation: "FLAWED. The total checks out, but the other constraint doesn't: $1.00 is only $0.90 more than $0.10. The correct answer is $0.05 (ball $0.05, bat $1.05). The AI 'verified' just one of the two conditions.",
-          redFlag: 'Checked only half the constraints',
+          title: 'Test 1: Does the answer survive a number?',
+          question: 'What do you check first?',
+          options: [
+            {
+              id: 'ask-ai',
+              label: 'Ask the model to re-check its own working',
+              useful: false,
+              resultLabel: 'Typical reply (illustrative)',
+              result: 'I have re-checked each step. Removing the brackets gives 10 - 4 - 2k + 2k, the k terms cancel, and the result is 6.',
+              feedback: 'A re-check by the same model tends to repeat the same reasoning, slip included. It reads the steps again; it does not test them.',
+            },
+            {
+              id: 'plug-in',
+              label: 'Plug in k = 1 and compute the original expression',
+              useful: true,
+              resultLabel: 'Computed with python3',
+              result: '10 - (4 - 2*1) + 2*1 = 10 - 2 + 2 = 10\nClaimed answer: 6',
+              feedback: 'One number settles it. If the expression were 6 for every k, it would be 6 at k = 1. It is 10, so the claim is false.',
+              kit: 'Plug a simple value into the original expression and compare with the claimed answer',
+            },
+            {
+              id: 'neat',
+              label: 'Read the steps again: they are short and neatly laid out',
+              useful: false,
+              feedback: 'Neat layout is how both right and wrong derivations look. Rereading the same lines in the same order tends to miss the same slip.',
+            },
+          ],
         },
         {
-          id: 'item-2',
-          prompt: 'A $50 jacket is 20% off.\n20% of $50 = $10.\n$50 - $10 = $40.\nThe sale price is $40.',
-          code: true,
-          context: "You asked: 'What is the sale price of a $50 jacket at 20% off?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Sound',
-          explanation: 'SOUND. 20% of 50 is 10, and 50 - 10 = 40. It answers the question asked, every step follows from the last, and it is easy to confirm on any calculator.',
-          meta: 'Simple, checkable, answers the actual question',
+          title: 'Test 2: Where does it break?',
+          question: 'The claim is wrong. How do you find the faulty step and the right answer?',
+          options: [
+            {
+              id: 'redo',
+              label: 'Redo the bracket step yourself, without looking at the AI\'s line',
+              useful: true,
+              resultLabel: 'Your own working',
+              result: '-(4 - 2k) = -4 + 2k\n10 - 4 + 2k + 2k = 6 + 4k',
+              feedback: 'Done independently, the sign flips and the k terms add instead of cancelling. Step 1 is where it went wrong, and the true answer is 6 + 4k.',
+              kit: 'Redo the key step yourself from the original, not from the AI\'s intermediate line',
+            },
+            {
+              id: 'k-zero',
+              label: 'Check k = 0 to confirm',
+              useful: false,
+              resultLabel: 'Computed with python3',
+              result: 'k = 0: original = 6, claimed = 6',
+              feedback: 'It matches, but only by luck. At k = 0 every k term vanishes, so the error cannot show up. Pick test values that make the suspicious part matter.',
+            },
+            {
+              id: 'several',
+              label: 'Compare the original with 6 + 4k at a few values',
+              useful: true,
+              resultLabel: 'Computed with python3',
+              result: 'k    original   6 + 4k   AI says\n-1   2          2        6\n 1   10         10       6\n 2   14         14       6',
+              feedback: 'Your corrected answer matches the original at every value tried. The AI\'s 6 matches none of these.',
+              kit: 'Check your corrected answer against the original at a few values, avoiding ones that hide the error',
+            },
+          ],
         },
         {
-          id: 'item-3',
-          prompt: "Counting letters in 'strawberry': s-t-r-a-w-b-e-r-r-y.\nThe letter 'r' appears 2 times.",
-          code: true,
-          context: "You asked: 'How many r's are in the word strawberry?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Miscount',
-          explanation: "MISCOUNT. The AI even spelled the word out, then miscounted: there is one r in 'str' and two in 'rr', so 3 in total. Models read text in chunks (tokens), not letter by letter, so counting letters is a known weak spot.",
-          redFlag: 'Confident count with no real counting',
-        },
-        {
-          id: 'item-4',
-          prompt: 'Every square is a rectangle.\nShape A is a square.\nTherefore, Shape A is a rectangle.',
-          code: true,
-          context: "You asked: 'If all squares are rectangles and Shape A is a square, what can I say about Shape A?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Valid',
-          explanation: 'VALID. This follows the form "All S are R; A is an S; so A is an R". The conclusion is forced by the premises. Compare it to the reversed version (A is a rectangle, so A is a square), which would not follow.',
-          meta: 'Conclusion is forced by the premises',
-        },
-        {
-          id: 'item-5',
-          prompt: 'We changed the logo in March.\nSales rose 12% in April.\nTherefore, the new logo caused the 12% increase.',
-          code: true,
-          context: "You asked: 'Did our new logo boost sales?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Non sequitur',
-          explanation: "NON SEQUITUR. 'After' is not 'because'. Seasonality, a promotion or a price change could explain it just as well. The steps give timing, not a cause, so the 'Therefore' does not follow.",
-          redFlag: "'Therefore' with no link between the steps",
+          title: 'Test 3: What else rests on it?',
+          question: 'In OpenAI\'s case the slip sat inside a research paper. How do you judge a result like that?',
+          options: [
+            {
+              id: 'top-lab',
+              label: 'It came from a top AI lab, so it was surely checked',
+              useful: false,
+              feedback: 'Three papers were withdrawn within a day, and OpenAI\'s own repository warns that some unformalized results could have issues. Who published it tells you nothing about a single sign.',
+            },
+            {
+              id: 'lean',
+              label: 'Check whether a formal (Lean) proof covers this exact result',
+              useful: true,
+              resultLabel: 'Reported by Il Foglio, 14 Oct 2026',
+              result: 'At release: 162 of 722 main results formalized in Lean\nAfter 7 Oct update: 300 of 719 (about 42%)\nWithdrawn or heavily revised papers: almost all outside the Lean-verified part',
+              feedback: 'A machine-checked proof covers every step it contains. Most of the catalogue had none. Even then, Lean only checks what is written in the code, so someone still has to confirm the formal statement matches the theorem claimed.',
+              kit: 'Check whether a formal or independent check covers this exact step, not just the collection',
+            },
+            {
+              id: 'depends',
+              label: 'Trace what depends on the flawed step',
+              useful: true,
+              resultLabel: 'From OpenAI\'s 7 Oct change log, as reported',
+              result: 'Weil classes paper: sign error invalidates a cancellation argument\nIts construction was used by 2 other papers\nAll 3 withdrawn, including the rational Hodge conjecture for products of K3 surfaces',
+              feedback: 'One wrong sign did not just spoil one line. Anything built on the broken step falls with it, so check the step before you build on it.',
+              kit: 'Ask what the conclusion, and any later work, depends on, then check that step first',
+            },
+          ],
         },
       ],
-      scoring: {
-        tiers: [
-          { min: 5, message: "Perfect! You correctly judged all 5. You have strong instincts. Let's sharpen them further." },
-          { min: 4, message: "4 out of 5! Solid instincts. The red flags ahead will help you catch the last one." },
-          { min: 3, message: "3 out of 5. Not bad! Flawed reasoning is tricky because it's formatted like good reasoning." },
-          { min: 0, message: "This is tricky, and that's the point. Neat steps feel trustworthy even when they aren't. Let's learn the patterns that give them away." },
+      verdict: {
+        question: 'So what does 10 - (4 - 2k) + 2k equal?',
+        options: [
+          { id: 'six', label: '6, because the k terms cancel', correct: false, feedback: 'k = 1 gives 10, not 6. The cancellation only happens because Step 1 dropped a sign.' },
+          { id: 'six-plus', label: '6 + 4k. Step 1 missed the sign flip, so the k terms add', correct: true, feedback: 'Right. -(4 - 2k) is -4 + 2k. The k terms add to 4k, and the answer is 6 + 4k. One plugged-in number exposed it, and redoing the step showed where.' },
+          { id: 'mostly', label: 'Usually 6. It only differs for some values of k', correct: false, feedback: 'It is 6 only when k = 0. For every other value the AI\'s answer is wrong, so "6 for every value of k" is false.' },
         ],
       },
-      summary: {
-        insight: 'In this batch, 3 of the 5 chains of reasoning were flawed, and every one of them looked tidy and confident. Fluent structure is not evidence of correctness: OpenAI\'s withdrawn papers looked like professional mathematics too. Let\'s learn how to spot the cracks.',
+      kit: {
+        title: 'Your Logic Phantom Test Kit',
+        footer: 'Under a minute with a pencil or one line of code. The derivation looked equally tidy either way. Only testing it showed the difference.',
       },
     },
   ],
 };
 
 // ============================================
-// OBSERVE (5 min): 4 red flags + matching + method
+// OBSERVE: 4 red flags + matching + method
 // ============================================
 const observe = {
-  title: 'The Red Flags',
-  estimatedTime: 5,
+  title: 'Red Flags',
   steps: [
     {
       type: 'cardGrid',
       heading: 'Phantom logic follows predictable patterns.',
       subtext: 'Flawed reasoning tends to fail in a handful of recognizable ways. Learn these 4 and you can spot most of it.',
       cards: [
-        { emoji: '🧮', label: 'The Smooth Slip' },
-        { emoji: '🦘', label: 'The Leap' },
+        { emoji: '🧮', label: 'Smooth Slip' },
+        { emoji: '🦘', label: 'Leap' },
         { emoji: '🎯', label: 'Wrong Question, Right Answer' },
         { emoji: '🔗', label: 'Correlation Dressed as Cause' },
       ],
@@ -193,7 +247,7 @@ const observe = {
       type: 'concept',
       emoji: '🧮',
       eyebrow: 'Red Flag 1 of 4',
-      name: 'The Smooth Slip',
+      name: 'Smooth Slip',
       description: 'One wrong number, sign, letter count or unit is buried in a run of tidy, correct-looking steps. A single wrong sign was enough to sink three of OpenAI\'s AI-generated papers in October 2026.',
       compare: {
         left: { label: '❌ Slips that can appear:', tone: 'danger', items: ["'strawberry' has 2 r's", '9.11 is larger than 9.9', '340 + 68 = 418', '20 min at 18 km/h: 18 x 20 = 360 km'] },
@@ -206,7 +260,7 @@ const observe = {
       type: 'concept',
       emoji: '🦘',
       eyebrow: 'Red Flag 2 of 4',
-      name: 'The Leap',
+      name: 'Leap',
       description: 'The conclusion starts with "therefore" or "so", but nothing in the steps actually leads to it.',
       rows: [
         { label: 'AI steps:', variant: 'quote', tone: 'neutral', value: 'All dogs are mammals. Rex is a mammal.' },
@@ -252,8 +306,8 @@ const observe = {
       title: 'Quick Check: Match the Red Flag',
       instruction: 'For each flawed claim, identify which red flag gives it away:',
       options: [
-        { id: 'flag-1', emoji: '🧮', label: 'The Smooth Slip' },
-        { id: 'flag-2', emoji: '🦘', label: 'The Leap' },
+        { id: 'flag-1', emoji: '🧮', label: 'Smooth Slip' },
+        { id: 'flag-2', emoji: '🦘', label: 'Leap' },
         { id: 'flag-3', emoji: '🎯', label: 'Wrong Question, Right Answer' },
         { id: 'flag-4', emoji: '🔗', label: 'Correlation Dressed as Cause' },
       ],
@@ -302,90 +356,146 @@ const observe = {
 };
 
 // ============================================
-// PRACTICE (6 min): Drill -> Toolkit -> Completion
+// PRACTICE: Practice set -> Toolkit -> Completion
+// All AI answers in the practice set are illustrative; every number in them
+// (right and wrong) was recomputed with python3.
 // ============================================
 const practice = {
   title: 'Your Turn',
-  estimatedTime: 6,
   steps: [
     {
-      type: 'judgementSet',
+      type: 'practiceSet',
       intro: {
-        heading: 'Practice Drill: 5 shorter claims, subtler slips.',
-        instruction: 'Use the Redo It Another Way method. Decide for each claim: use it as given, or check it first?',
-        note: 'Pencil and paper are fair game this time.',
-        legend: {
-          trust: { label: 'TRUST', detail: 'Computes and follows', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Something is off', button: 'Check first' },
-        },
+        heading: 'Practice: Check the Working',
+        instruction: 'Six short exercises. Find the step that slipped, read a recomputed result, name the flaw, pick the fastest test and fix a unit mix-up.',
+        note: 'Some AI answers here are correct. Redoing the working is how you find out, not an accusation.',
       },
       items: [
         {
-          id: 'drill-1',
-          prompt: '15% off $80:\n0.15 x 80 = 12\n80 - 12 = 68\nYou pay $68.',
-          code: true,
-          context: "You asked: 'What do I pay for an $80 item with 15% off?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Correct',
-          explanation: 'CORRECT. 15% of 80 is 12, and 80 - 12 = 68. Equivalent check: 80 x 0.85 = 68.',
-          meta: 'Two routes (subtract vs. multiply by 0.85) agree',
+          id: 'p8-spot-slip',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'The annual plan is $240 a year and the monthly plan is $22 a month. How much does the annual plan save me?'",
+          prompt: 'Tap the step that is wrong, or tell us nothing is.',
+          artifact: { label: 'AI answer (illustrative)', code: true },
+          segments: [
+            { text: 'Annual plan: $240 a year.' },
+            { text: '\n' },
+            { text: 'Per month, that is 240 / 12 = $20.' },
+            { text: '\n' },
+            { text: 'Monthly plan for a year: 22 x 12 = $254.', flag: true },
+            { text: '\n' },
+            { text: 'Difference: 254 - 240 = $14.' },
+            { text: '\n\n' },
+            { text: 'So the annual plan saves you $14 a year.', flag: true },
+          ],
+          explanation: '22 x 12 is 264, not 254. Every other line is fine, and 254 - 240 = 14 is even correct arithmetic, which is why the slip hides. The real saving is 264 - 240 = $24. A second route confirms it: you save $2 a month (22 - 20), and 2 x 12 = 24.',
+          takeaway: 'One wrong product in a row of right ones. Cross-check by a second route',
         },
         {
-          id: 'drill-2',
-          prompt: '17 x 24:\n17 x 20 = 340\n17 x 4 = 68\n340 + 68 = 418',
-          code: true,
-          context: "You asked: 'What is 17 x 24? Show your steps.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Slip',
-          explanation: 'SLIP. Both partial products are right (340 and 68), but 340 + 68 = 408, not 418. A last-step slip like this is easy to miss because everything before it was correct.',
-          redFlag: 'Correct steps, wrong final sum',
+          id: 'p8-evidence-interest',
+          kind: 'pickAll',
+          label: 'Read the evidence',
+          context: "You asked: 'I put $5,000 in savings at 4% a year, compounded annually. What will I have after each of the next 3 years?' You recomputed the AI's answer with one line of Python.",
+          prompt: 'Which lines of the AI answer are wrong?',
+          artifact: {
+            label: 'AI answer (illustrative), then your check',
+            code: true,
+            text: 'Year 1: $5,200\nYear 2: $5,400\nYear 3: $5,600\nTotal interest: $600\n\n$ python3 -c "print([round(5000*1.04**n, 2) for n in (1, 2, 3)])"\n[5200.0, 5408.0, 5624.32]',
+          },
+          options: [
+            { id: 'y1', label: 'Year 1: $5,200', feedback: 'This line matches. In the first year, simple and compound interest give the same result, so it cannot reveal the error.' },
+            { id: 'y2', label: 'Year 2: $5,400', correct: true, feedback: 'Python says $5,408. In year 2 you also earn interest on the $200 from year 1.' },
+            { id: 'y3', label: 'Year 3: $5,600', correct: true, feedback: 'Python says $5,624.32. The gap grows every year.' },
+            { id: 'total', label: 'Total interest: $600', correct: true, feedback: 'That is simple interest: 5,000 x 4% x 3. With compounding it is $624.32.' },
+          ],
+          explanation: 'The AI answered an easier question: simple interest instead of compound. Year 1 matching is luck, like testing k = 0 earlier in this lesson. Check where the error would show, here year 2 or later.',
+          takeaway: 'A first line that matches proves nothing. Check where the error would show',
         },
         {
-          id: 'drill-3',
-          prompt: 'A cyclist rides at 18 km/h.\nIn 20 minutes:\n18 x 20 = 360\nThe cyclist covers 360 km.',
-          code: true,
-          context: "You asked: 'How far does a cyclist go in 20 minutes at 18 km/h?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Unit swap',
-          explanation: 'UNIT SWAP. The speed is per hour but the time was multiplied in minutes. 20 minutes is 1/3 of an hour, so the distance is 18 x 1/3 = 6 km. A rough estimate catches it: 360 km in 20 minutes would be far faster than any cyclist.',
-          redFlag: 'Minutes multiplied by a per-hour speed',
+          id: 'p8-diagnose-cause',
+          kind: 'choose',
+          label: 'Diagnose',
+          context: 'You asked an AI to look at your app data. Part of its answer:',
+          prompt: 'What is wrong with this reasoning?',
+          artifact: {
+            label: 'AI answer (illustrative)',
+            text: 'Users who switched on dark mode stayed subscribed 30% longer than users who did not. Therefore, making dark mode the default will cut cancellations by about 30%.',
+          },
+          options: [
+            { id: 'maths', label: 'An arithmetic slip in the 30%', feedback: 'Nothing here is computed. The 30% may well be accurate. The problem is what it is taken to mean.' },
+            { id: 'cause', label: 'It treats a pattern as a cause', correct: true, feedback: 'Right. Users who dig into settings may be more engaged to begin with. Engagement could explain both.' },
+            { id: 'question', label: 'It answers a different question from the one asked', feedback: 'It does address your data. The flaw is the link from the data to the conclusion.' },
+            { id: 'fine', label: 'Nothing. The data supports the conclusion', feedback: 'The data shows two things moving together. It does not show that changing one changes the other.' },
+          ],
+          explanation: '"Therefore" joins an observation to a promise the data cannot make. To find out whether dark mode reduces cancellations, test it: turn it on by default for a random half of new users and compare.',
+          takeaway: 'Moving together is not causing. Ask what else explains both',
         },
         {
-          id: 'drill-4',
-          prompt: 'All dogs are mammals.\nRex is a mammal.\nTherefore, Rex is a dog.',
-          code: true,
-          context: "You asked: 'Rex is a mammal. Is Rex a dog?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Invalid',
-          explanation: "INVALID. This is affirming the consequent. Cats are mammals too, so Rex could be a cat. True premises, unforced conclusion. The honest answer is 'not enough information'.",
-          redFlag: "'Therefore' that doesn't follow",
-        },
-        {
-          id: 'drill-5',
-          prompt: '2 h at 45 km/h = 90 km.\n3 h at 60 km/h = 180 km.\nTotal: 270 km in 5 h.\nAverage speed: 270 / 5 = 54 km/h.',
-          code: true,
+          id: 'p8-spot-clean',
+          kind: 'spot',
+          label: 'Spot it',
           context: "You asked: 'I drive 2 hours at 45 km/h, then 3 hours at 60 km/h. What is my average speed?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Correct',
-          explanation: 'CORRECT. Average speed is total distance over total time: 270 / 5 = 54 km/h. Note it is not (45 + 60) / 2 = 52.5, because more time was spent at the faster speed. The AI used the right method.',
-          meta: 'Total distance / total time, with consistent units',
+          prompt: 'Tap the step that is wrong, or tell us nothing is.',
+          artifact: { label: 'AI answer (illustrative)', code: true },
+          segments: [
+            { text: 'First leg: 2 x 45 = 90 km.' },
+            { text: '\n' },
+            { text: 'Second leg: 3 x 60 = 180 km.' },
+            { text: '\n' },
+            { text: 'Total: 90 + 180 = 270 km' },
+            { text: ' ' },
+            { text: 'in 2 + 3 = 5 hours.' },
+            { text: '\n' },
+            { text: 'Average speed: 270 / 5 = 54 km/h.' },
+            { text: '\n\n' },
+            { text: 'Not (45 + 60) / 2 = 52.5, because you spent longer at the faster speed.' },
+          ],
+          explanation: 'Every step holds. Average speed is total distance over total time, the units stay in km and hours throughout, and the last line even heads off the common shortcut. The check took seconds, and the answer is safe to use.',
+          takeaway: 'Correct working exists too. Checking tells you which kind you have',
+        },
+        {
+          id: 'p8-pick-test',
+          kind: 'choose',
+          label: 'Pick the test',
+          context: "An AI tells you: 'The sum of the first 50 odd numbers is 2,550.'",
+          prompt: 'What settles it fastest?',
+          options: [
+            { id: 'ask', label: 'Ask the AI to double-check its answer', feedback: 'The same model often repeats the same reasoning. A second confident reply is not a second source.' },
+            { id: 'search', label: 'Search the web to see whether 2,550 is the usual answer', feedback: 'Even if many pages say it, that shows it is repeated, not that it fits your question.' },
+            { id: 'code', label: 'Run one line: python3 -c "print(sum(range(1, 100, 2)))"', correct: true, feedback: 'It prints 2500. range(1, 100, 2) is 1, 3, 5 ... 99: exactly the first 50 odd numbers.' },
+            { id: 'formula', label: 'Trust it if the AI shows a neat formula', feedback: 'A neat formula can be the right formula for the wrong question. Layout is not evidence.' },
+          ],
+          explanation: 'The answer is 2,500. The sum of the first n odd numbers is n x n (try it small: 1 + 3 + 5 = 9). 2,550 is the sum of the first 50 even numbers, so the AI answered a nearby question.',
+          takeaway: 'Recompute it yourself. A second AI opinion is not a test',
+        },
+        {
+          id: 'p8-fix-units',
+          kind: 'choose',
+          label: 'Fix it',
+          context: "You asked: 'How long does a 1.2 GB download take on a 50 Mbps connection?'",
+          prompt: 'Which is the corrected working?',
+          artifact: { label: 'AI answer (illustrative)', code: true, text: '1.2 GB = 1,200 MB\n1,200 / 50 = 24\nAbout 24 seconds.' },
+          optionsCode: true,
+          options: [
+            { id: 'asis', label: '1,200 MB / 50 Mbps = 24 seconds', feedback: 'MB is megabytes, Mbps is megabits per second. The units do not match, so the division means nothing.' },
+            { id: 'div8', label: '1,200 / 50 / 8 = 3 seconds', feedback: 'Right idea, wrong direction. A byte is 8 bits, so the file is more megabits than megabytes, not fewer.' },
+            { id: 'right', label: '1,200 MB x 8 = 9,600 Mb\n9,600 / 50 = 192 s (about 3 min 12 s)', correct: true, feedback: 'Right. Convert to bits first, then divide. Megabits over megabits per second gives seconds.' },
+            { id: 'minutes', label: '1,200 / 50 = 24 minutes', feedback: 'Swapping seconds for minutes does not fix the units. It just moves the error.' },
+          ],
+          explanation: 'A lower-case b means bits, an upper-case B means bytes, and 1 byte is 8 bits. Writing the unit next to every number shows the mismatch at once. Real downloads are usually a little slower again, because of network overhead.',
+          takeaway: 'Write the units on every line. Bits and bytes differ by 8',
         },
       ],
       scoring: {
         tiers: [
-          { min: 5, message: 'Flawless. You are checking the method, not just the formatting.' },
-          { min: 4, message: 'Strong. One slipped by, which is why an independent recompute is the habit to build.' },
-          { min: 3, message: 'Decent. Try the 90-second routine on every claim: constraints, estimate, recompute, counterexample.' },
-          { min: 0, message: 'These are subtle on purpose. Re-run each one with a calculator and notice where the steps and the truth part ways.' },
+          { min: 6, message: 'Six out of six. You check the answer, not the formatting.' },
+          { min: 4, message: 'Solid. Redo the ones you missed with a calculator and notice where the steps and the truth part ways.' },
+          { min: 0, message: 'These are subtle on purpose. Go back over the explanations, then try the 90-second routine on each one.' },
         ],
       },
       summary: {
-        insight: 'Half the battle is simply not letting tidy formatting stand in for checking. Every flaw here was findable in under a minute with a calculator, a rough estimate, or one counterexample.',
+        insight: 'One answer was correct. The others slipped a product, used the wrong formula, answered a nearby question, confused bits with bytes, or turned a pattern into a cause. Each took under a minute to settle by redoing it another way.',
       },
     },
     {
@@ -473,7 +583,7 @@ export const lesson = {
   title: 'Logic Phantom',
   subtitle: "Reasoning that sounds valid but isn't",
   description: 'Learn to spot AI step-by-step reasoning that reads as rigorous but hides an arithmetic slip, a logical fallacy, or a conclusion that does not follow.',
-  estimatedTime: 15,
+  estimatedTime: 10,
 
   skillLearned: 'Checking AI reasoning and calculations independently',
   verificationMethod: 'Redo It Another Way',

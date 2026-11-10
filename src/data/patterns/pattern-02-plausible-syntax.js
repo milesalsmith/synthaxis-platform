@@ -2,18 +2,17 @@
 // Pattern 02: Plausible Syntax
 //
 // SEE phase anchored on the Moltbook database exposure (Wiz Research, Feb 2026).
-// TARGET: ~18 minutes total
+// TARGET: about 10 minutes total
 //
 // Authored in the block-based schema: each STOP phase is
-// { title, estimatedTime, steps: [block, ...] } and every block is one screen.
+// { title, steps: [block, ...] } and every block is one screen.
 // See docs/pattern-authoring-guide.md for the block vocabulary.
 
 // ============================================
-// SEE (3 min): Story -> Trust check -> Reveal
+// SEE: Story -> Trust check -> Reveal
 // ============================================
 const see = {
-  title: 'The Code That Looked Perfect',
-  estimatedTime: 3,
+  title: 'Code That Looked Perfect',
   steps: [
     {
       type: 'prose',
@@ -47,7 +46,7 @@ This gives you the agent's full record, ready to render.`,
     {
       type: 'choice',
       question: 'Would this code pass your glance review?',
-      subtext: "There's no wrong answer. We're testing your instincts.",
+      subtext: "There's no wrong answer. Go with your first reaction.",
       options: [
         { id: 'yes-pasted', label: "Yes, it looks fine. I'd ship it", response: "You're in good company. It's tidy, it uses the official client library, and it works when you run it." },
         { id: 'maybe-ran', label: "Probably, but I'd run it once first", response: 'Good habit, but here running it would pass. It loads the profile perfectly. The question is who else can run it.' },
@@ -73,7 +72,7 @@ That key is meant to be public, but only when Row Level Security (RLS) rules dec
     },
     {
       type: 'stats',
-      title: 'The Impact',
+      title: 'Impact',
       items: [
         { value: '1.5M', label: 'API tokens exposed', detail: 'enough to take over any agent account' },
         { value: '35,000', label: 'Email addresses exposed', detail: 'plus private messages between agents' },
@@ -89,124 +88,177 @@ That key is meant to be public, but only when Row Level Security (RLS) rules dec
         { label: 'What AI cannot do by default:', body: 'Execute the code, check types, confirm a function\'s real signature, or notice a safeguard it never wrote. Subtle breakage reads exactly like correct code.', tone: 'danger' },
       ],
       conclusion: "Plausible is not the same as correct. The only way to know is to run it, check it, or test it.",
-      transition: "Let's test your eye for broken code before we learn the red flags.",
+      transition: "So how would you have caught it? Let's go back to that code and test it properly.",
     },
   ],
 };
 
 // ============================================
-// TEST (4 min): 5 code snippets — Trust or Verify?
+// TEST: Spot what to test in the Supabase code -> run the tests
 // ============================================
 const test = {
-  title: 'Run It or Check It?',
-  estimatedTime: 4,
+  title: 'Testing the Code',
   steps: [
     {
-      type: 'judgementSet',
-      intro: {
-        heading: 'Here are 5 snippets an AI assistant might hand you.',
-        instruction: 'For each one, decide: would it work as written, or does it need checking first?',
-        note: "Don't run anything yet. Read like you normally would and go with your gut.",
-        legend: {
-          trust: { label: 'TRUST', detail: 'Looks like it will work', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Something may be broken', button: 'Check first' },
-        },
+      type: 'spotTheFlaw',
+      heading: 'It runs. So what is there to test?',
+      instruction: 'Tap the parts of this code you would want to test before shipping it. Most of it is fine. The risk is in what it trusts.',
+      source: 'From the AI answer',
+      code: true,
+      segments: [
+        { text: "import { createClient } from '@supabase/supabase-js';", note: 'The official Supabase client library, imported the documented way. Nothing to worry about here.' },
+        { text: '\n\n' },
+        { text: 'const supabase = createClient(SUPABASE_URL, ', note: 'The project URL. It is public by design: every visitor\'s browser needs it to reach the database.' },
+        { text: 'SUPABASE_KEY', flag: { label: 'A key shipped to every browser', explanation: 'This code runs in the frontend, so whatever key goes here ends up in the public JavaScript. Two questions to test: which key is it, and what can anyone holding it do?' } },
+        { text: ');', note: 'Standard client setup.' },
+        { text: '\n\n' },
+        { text: 'const { data: agent, error } = await supabase', note: 'Correct async usage: the query is awaited and the error is captured. This is the part people usually check, and it is fine.' },
+        { text: '\n  ' },
+        { text: ".from('agents')", note: 'The table name. Normal.' },
+        { text: '\n  ' },
+        { text: ".select('*')", flag: { label: 'Every column, including secrets', explanation: 'select * returns the whole row. If the agents table holds API keys or tokens, they come back too, to anyone who asks. In Moltbook, it did.' } },
+        { text: '\n  ' },
+        { text: ".eq('name', agentName)", flag: { label: 'A filter is not a permission', explanation: 'This limits the result to one agent, but the filter runs in code the user controls. Anyone can change agentName or drop the filter. Only database rules (Row Level Security) decide who may see which rows.' } },
+        { text: '\n  ' },
+        { text: '.single();', note: 'Returns one row instead of an array. Fine.' },
+      ],
+      summary: 'Three things to test: what the public key can reach, whether Row Level Security is on, and what a stranger gets if they skip your filter. Next, run the tests.',
+    },
+    {
+      type: 'investigation',
+      heading: 'Run the tests.',
+      intro: 'The page loads the right profile, so "does it work?" already passes. You need a different question: what can someone who is not this agent do with the same code and key?',
+      claim: {
+        label: 'Code',
+        text: "const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);\n\nconst { data: agent, error } = await supabase\n  .from('agents')\n  .select('*')\n  .eq('name', agentName)\n  .single();",
+        code: true,
       },
-      items: [
+      rounds: [
         {
-          id: 'item-1',
-          code: true,
-          prompt: "const res = fetch('/api/orders').json();\nconsole.log(res.length);",
-          context: "You asked: 'How do I load orders from my API in JavaScript?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Broken',
-          explanation: "BROKEN. fetch() returns a Promise, and a Promise has no .json() method. This throws a TypeError. The code needs await (or .then) before .json().",
-          redFlag: 'A promise-returning call used with no await',
+          title: 'Test 1: Where does the key live?',
+          question: 'What do you check first?',
+          options: [
+            {
+              id: 'it-works',
+              label: 'Open the app and confirm the profile loads',
+              useful: false,
+              feedback: 'It does load. Moltbook loaded perfectly too. This tests the feature, not who else can use it.',
+            },
+            {
+              id: 'bundle',
+              label: 'Open the deployed site\'s JavaScript and search for the Supabase URL and key',
+              useful: true,
+              resultLabel: 'What Wiz found in Moltbook\'s JS (31 Jan 2026), key shortened',
+              result: 'File: /_next/static/chunks/18e24eafc444b2b9.js\nproject: ehxbxtjliybbloantpwq.supabase.co\nkey:     sb_publishable_4Zai...',
+              feedback: 'Wiz found it within minutes, just by browsing. Anything the frontend uses is public. It is a publishable key, which is allowed to be public, so the real question is what it unlocks.',
+              kit: 'Find the key in the shipped JavaScript and note which kind it is (publishable or secret)',
+            },
+            {
+              id: 'docs-key',
+              label: 'Read the Supabase docs on what a publishable key can do',
+              useful: true,
+              resultLabel: 'Supabase Row Level Security docs (November 2026)',
+              result: '"A table in an exposed schema without RLS is readable and writable by any role with a grant on it."\n\n"Once RLS is enabled, no data is accessible through the API when using a publishable key, until you create policies."',
+              feedback: 'The key is only safe because of RLS. Without it, the same key that loads one profile can read and write whole tables.',
+              kit: 'Check the official docs: a public key is only safe when RLS is on',
+            },
+          ],
         },
         {
-          id: 'item-2',
-          code: true,
-          prompt: 'scores = [88, 92, 75]\naverage = sum(scores) / len(scores)\nprint(f"Average: {average:.1f}")',
-          context: "You asked: 'How do I average a list of numbers in Python?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Works',
-          explanation: 'WORKS. sum() and len() are built-ins used correctly, and this prints "Average: 85.0".',
-          meta: 'Built-ins with the right argument types',
+          title: 'Test 2: Is Row Level Security on?',
+          question: 'The key is public. How do you find out whether the database protects the agents table?',
+          options: [
+            {
+              id: 'ask-ai',
+              label: 'Ask the AI: "Is this code secure?"',
+              useful: false,
+              resultLabel: 'Typical reply (illustrative)',
+              result: 'Yes, this uses the official Supabase client and the public key, which is designed to be used in the browser...',
+              feedback: 'Half true and no help. The AI cannot see your database settings, and the code alone cannot tell you whether RLS is on.',
+            },
+            {
+              id: 'filter',
+              label: 'Check that the query filters by agentName, so users only get their own row',
+              useful: false,
+              feedback: 'The filter lives in code the visitor controls. An attacker does not use your page. They call the API directly with the key and ask for whatever they like.',
+            },
+            {
+              id: 'rls-check',
+              label: 'Check RLS on the table, in the dashboard or with SQL',
+              useful: true,
+              resultLabel: 'Illustrative output for an unprotected project',
+              result: "select tablename, rowsecurity\nfrom pg_tables where schemaname = 'public';\n\n tablename      | rowsecurity\n agents         | f\n owners         | f\n agent_messages | f",
+              feedback: 'f means RLS is off. Every table in this list is open to anyone with the publishable key. Moltbook\'s agents, owners and agent_messages tables were all reachable this way.',
+              kit: 'Check that RLS is enabled on every table in an exposed schema (dashboard or pg_tables)',
+            },
+          ],
         },
         {
-          id: 'item-3',
-          code: true,
-          prompt: "tags = ('python', 'ai')\ntags.append('testing')\nprint(tags)",
-          context: "You asked: 'How do I add a tag to my list of tags?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Broken',
-          explanation: "BROKEN. Parentheses make a tuple, and tuples are immutable. They have no .append(). Python raises AttributeError. Square brackets would have made a list.",
-          redFlag: 'A list method called on a tuple',
-        },
-        {
-          id: 'item-4',
-          code: true,
-          prompt: 'const results = await Promise.all(\n  ids.map((id) => fetch(`/api/users/${id}`).then((r) => r.json()))\n);\nconsole.log(results.length);',
-          context: "You asked: 'How do I fetch many users in parallel and wait for all of them?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Works',
-          explanation: 'WORKS. map() creates an array of promises and Promise.all() waits for all of them. This is the standard fix for the common forEach(async ...) mistake, where forEach does not wait for the async callbacks.',
-          meta: 'Assumes it runs inside an async function or an ES module with top-level await',
-        },
-        {
-          id: 'item-5',
-          code: true,
-          prompt: 'import re\ntext = "Order #4821 shipped"\nmatch = re.search(text, r"\\d+")\nprint(match.group())',
-          context: "You asked: 'How do I pull the order number out of a string in Python?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Broken',
-          explanation: "BROKEN. re.search takes the pattern first and the string second. These are swapped, so Python searches the string \"\\d+\" for the text 'Order #4821 shipped', finds nothing, and match is None. Then match.group() raises AttributeError.",
-          redFlag: 'Arguments in the wrong order for a real function',
+          title: 'Test 3: What can a stranger do?',
+          question: 'Prove it. How do you see what someone outside the app could actually get?',
+          options: [
+            {
+              id: 'env-var',
+              label: 'Move the key into an environment variable so it is hidden',
+              useful: false,
+              feedback: 'Frontend environment variables are baked into the JavaScript at build time. The key ends up in the same public file. It also misses the point: this key is meant to be public, and RLS is what protects the data.',
+            },
+            {
+              id: 'curl-other',
+              label: 'On your own staging project, call the API with only the public key and ask for other users\' rows',
+              useful: true,
+              resultLabel: 'Wiz\'s request against Moltbook (31 Jan 2026), redacted',
+              result: 'curl ".../rest/v1/agents?select=name,api_key&limit=3" \\\n  -H "apikey: <publishable key>"\n\n-> names and full api_key values of the top agents\n\nWith RLS on and no policy, the same request returns []',
+              feedback: 'This is the test that matters. Wiz expected an empty array or an error. Instead they got live API keys, enough to take over any agent. A follow-up PATCH request let them edit a live post.',
+              kit: 'With only the public key, try to read and write another user\'s row (on your own project)',
+            },
+            {
+              id: 'own-ui',
+              label: 'Log in as a test user and check the page only shows your own profile',
+              useful: false,
+              feedback: 'The page shows what the frontend asks for. That proves nothing about what the API hands to someone who asks for more.',
+            },
+          ],
         },
       ],
-      scoring: {
-        tiers: [
-          { min: 5, message: 'Perfect! You told working code from broken code in every case. Keep that skepticism.' },
-          { min: 4, message: "4 out of 5! Strong eye. The red flags ahead will help you catch the one that slipped by." },
-          { min: 3, message: "3 out of 5 is not bad. Broken code that looks clean is hard to spot, which is exactly why this training exists." },
-          { min: 0, message: "That's tricky, and that's the point. AI code reads like correct code even when it isn't. Let's learn what to look for." },
+      verdict: {
+        question: 'So what was wrong with the code?',
+        options: [
+          { id: 'syntax', label: 'A bug in the query itself', correct: false, feedback: 'No. Every line is valid and the query returns exactly the right profile. That is why reading it and running it both passed.' },
+          { id: 'missing-rls', label: 'Nothing in the lines themselves. The access rules were missing, so the public key opened every row', correct: true, feedback: 'Right. The code assumed RLS would decide who sees what, and RLS was never set up. Moltbook fixed it by enabling RLS policies table by table, within hours of Wiz\'s report.' },
+          { id: 'leaked-key', label: 'A secret key was leaked; hiding it would have fixed everything', correct: false, feedback: 'The key was a publishable key, meant to sit in the browser. Hiding it is not possible in a frontend app. Row Level Security is the fix.' },
         ],
       },
-      summary: {
-        insight: "In this batch, 3 of the 5 snippets would have failed on first run, and none of them looked wrong at a glance. The fastest way to find out is usually to run them. But remember Moltbook: its code ran perfectly. Running code tells you it works, not that it is safe.",
+      kit: {
+        title: 'Your Plausible Syntax Test Kit',
+        footer: 'A few minutes of checking. The app worked the same either way. Only testing it as a stranger showed the difference.',
       },
     },
   ],
 };
 
 // ============================================
-// OBSERVE (5 min): 4 red flags + matching + method
+// OBSERVE: 4 red flags + matching + method
 // ============================================
 const observe = {
-  title: 'The Red Flags',
-  estimatedTime: 5,
+  title: 'Red Flags',
   steps: [
     {
       type: 'cardGrid',
       heading: 'Plausible code breaks in predictable ways.',
       subtext: 'Four kinds of subtle breakage show up again and again in AI-written code.',
       cards: [
-        { emoji: '⏳', label: 'The Forgotten Await' },
-        { emoji: '🔀', label: 'The Wrong Signature' },
-        { emoji: '🧩', label: 'The Wrong-Type Method' },
-        { emoji: '🔁', label: 'The Quiet Loop Bug' },
+        { emoji: '⏳', label: 'Forgotten Await' },
+        { emoji: '🔀', label: 'Wrong Signature' },
+        { emoji: '🧩', label: 'Wrong-Type Method' },
+        { emoji: '🔁', label: 'Quiet Loop Bug' },
       ],
     },
     {
       type: 'concept',
       emoji: '⏳',
       eyebrow: 'Red Flag 1 of 4',
-      name: 'The Forgotten Await',
+      name: 'Forgotten Await',
       description: 'Async code that is missing an await, or uses forEach with an async callback. It runs without errors but works with a Promise instead of the real value.',
       rows: [
         { label: 'AI writes:', variant: 'code', tone: 'danger', value: 'const user = fetch(url).json();' },
@@ -221,7 +273,7 @@ const observe = {
       type: 'concept',
       emoji: '🔀',
       eyebrow: 'Red Flag 2 of 4',
-      name: 'The Wrong Signature',
+      name: 'Wrong Signature',
       description: 'A real function, called with its arguments in the wrong order or with the wrong shape. The name exists, so the call looks right.',
       compare: {
         left: {
@@ -242,10 +294,10 @@ const observe = {
       type: 'concept',
       emoji: '🧩',
       eyebrow: 'Red Flag 3 of 4',
-      name: 'The Wrong-Type Method',
+      name: 'Wrong-Type Method',
       description: "A method that exists, just not on the type of value you actually have. It's a real method on the wrong object.",
       rows: [
-        { label: 'The value:', variant: 'code', tone: 'neutral', value: "tags = ('python', 'ai')   # a tuple" },
+        { label: 'Value:', variant: 'code', tone: 'neutral', value: "tags = ('python', 'ai')   # a tuple" },
         { label: 'AI calls:', variant: 'code', tone: 'danger', value: "tags.append('testing')" },
         { label: 'List-only methods:', variant: 'chips', tone: 'neutral', values: ['append', 'extend', 'remove', 'sort'] },
       ],
@@ -257,7 +309,7 @@ const observe = {
       type: 'concept',
       emoji: '🔁',
       eyebrow: 'Red Flag 4 of 4',
-      name: 'The Quiet Loop Bug',
+      name: 'Quiet Loop Bug',
       description: 'Loops and slices that are off by one, or that change a collection while walking through it. They often run without raising any error.',
       rows: [
         { label: 'Off by one:', variant: 'code', tone: 'danger', value: 'for (let i = 0; i <= items.length; i++)' },
@@ -273,10 +325,10 @@ const observe = {
       title: 'Quick Check: Match the Red Flag',
       instruction: 'For each snippet, identify which red flag gives it away:',
       options: [
-        { id: 'flag-1', emoji: '⏳', label: 'The Forgotten Await' },
-        { id: 'flag-2', emoji: '🔀', label: 'The Wrong Signature' },
-        { id: 'flag-3', emoji: '🧩', label: 'The Wrong-Type Method' },
-        { id: 'flag-4', emoji: '🔁', label: 'The Quiet Loop Bug' },
+        { id: 'flag-1', emoji: '⏳', label: 'Forgotten Await' },
+        { id: 'flag-2', emoji: '🔀', label: 'Wrong Signature' },
+        { id: 'flag-3', emoji: '🧩', label: 'Wrong-Type Method' },
+        { id: 'flag-4', emoji: '🔁', label: 'Quiet Loop Bug' },
       ],
       items: [
         { prompt: 'const user = fetch(url).json();', correct: 'flag-1', explanation: 'fetch() returns a Promise, and nothing awaits it.' },
@@ -323,90 +375,145 @@ const observe = {
 };
 
 // ============================================
-// PRACTICE (6 min): Drill -> Toolkit -> Completion
+// PRACTICE: Practice set -> Toolkit -> Completion
+// Code behaviour checked by running it (Python 3.9 and 3.12, Node 26)
+// in November 2026.
 // ============================================
 const practice = {
   title: 'Your Turn',
-  estimatedTime: 6,
   steps: [
     {
-      type: 'judgementSet',
+      type: 'practiceSet',
       intro: {
-        heading: 'Practice Drill: Subtler Code',
-        instruction: 'These 5 snippets are harder. Some look suspicious but are fine, and some look fine but are broken.',
-        note: 'Apply the red flags: await, signatures, types, and loop boundaries. Think about what the code actually does.',
-        legend: {
-          trust: { label: 'TRUST', detail: 'Works as written', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Likely broken or risky', button: 'Check first' },
-        },
+        heading: 'Practice: Code That Reads Well',
+        instruction: 'Six short exercises. Read a real test result, spot the broken line, pick the right test, and choose a fix.',
+        note: 'Some of this code is correct. Checking code is not the same as distrusting it.',
       },
       items: [
         {
-          id: 'drill-1',
-          code: true,
-          prompt: "for user in users:\n    if user['inactive']:\n        users.remove(user)",
-          context: "You asked: 'Remove all inactive users from my list in Python.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Buggy',
-          explanation: "BUGGY. Removing from a list while looping over it shifts the remaining items, so the loop skips the element right after each removal. Some inactive users will stay. Build a new list: users = [u for u in users if not u['inactive']].",
-          redFlag: 'Mutating a collection while iterating over it',
+          id: 'p2-evidence-loop',
+          kind: 'choose',
+          label: 'Read the evidence',
+          context: 'You asked the AI to remove inactive users from a list. Before using its loop, you ran it on three test users: ana and ben are inactive, cy is active. This is the real output.',
+          prompt: 'What does this tell you?',
+          artifact: {
+            label: 'Terminal',
+            code: true,
+            text: "# clean.py\nfor user in users:\n    if user['inactive']:\n        users.remove(user)\nprint(users)\n\n$ python3 clean.py\n[{'name': 'ben', 'inactive': True}, {'name': 'cy', 'inactive': False}]",
+          },
+          options: [
+            { id: 'data', label: "Ben's record must be wrong. Check the input data.", feedback: 'Ben is marked inactive in the input. The data is fine. The loop is not.' },
+            { id: 'skip', label: 'The loop skipped ben. Removing ana shifted the list, so the loop jumped over the next item.', correct: true, feedback: 'Right. Each removal moves the remaining items up one place, and the loop moves on past the one that slid into the gap.' },
+            { id: 'fine', label: 'There was no error, so the code works. Run it on the real list.', feedback: 'No error is the trap. It finishes cleanly and gives the wrong answer. On the real list, some inactive users would stay.' },
+            { id: 'version', label: 'It is a Python bug. Try a newer version.', feedback: 'This is how looping over a list works in every Python version. Changing the list while you walk through it is the bug.' },
+          ],
+          explanation: "A three-item test caught a bug that reading missed. Removing items from a list while looping over it makes Python skip the item after each removal, and nothing warns you. Build a new list instead: users = [u for u in users if not u['inactive']].",
+          takeaway: 'A tiny test input exposes quiet bugs that raise no error',
         },
         {
-          id: 'drill-2',
-          code: true,
-          prompt: "SELECT region, COUNT(*) AS n\nFROM orders\nWHERE status = 'paid'\nGROUP BY region\nHAVING COUNT(*) > 10;",
+          id: 'p2-spot-foreach',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'Save every user in the list, then log when it's done.'",
+          prompt: 'Tap the part that is broken, or tell us nothing is.',
+          artifact: { label: 'AI answer (illustrative)', code: true },
+          segments: [
+            { text: 'async function saveAll(ids) {' },
+            { text: '\n  ' },
+            { text: 'ids.forEach(async (id) => {', flag: true },
+            { text: '\n    ' },
+            { text: 'await saveUser(id);' },
+            { text: '\n  ' },
+            { text: '});' },
+            { text: '\n  ' },
+            { text: "console.log('All users saved');" },
+            { text: '\n' },
+            { text: '}' },
+          ],
+          explanation: "forEach ignores the promises its async callbacks return, so saveAll does not wait for anything. We ran it: 'All users saved' printed first, and the three saves finished afterwards. Any code after saveAll(ids) runs before the data is saved. Use for (const id of ids) { await saveUser(id); }, or await Promise.all(ids.map(saveUser)).",
+          takeaway: 'forEach does not wait for async callbacks',
+        },
+        {
+          id: 'p2-pick-regex',
+          kind: 'choose',
+          label: 'Pick the test',
+          context: 'The AI wrote this to pull a date out of a line such as "Invoice date: 2026-03-14":',
+          prompt: 'What settles whether this is right, fastest?',
+          artifact: { label: 'AI answer (illustrative)', code: true, text: "import re\n\nmatch = re.search(line, r'\\d{4}-\\d{2}-\\d{2}')" },
+          options: [
+            { id: 'ask', label: 'Ask the AI: "Is the argument order correct?"', feedback: 'It chose the order in the first place. It may agree with itself, or change it. Neither answer is evidence.' },
+            { id: 'compile', label: 'Run python -m py_compile on the file', feedback: 'It passes. The syntax is valid and both arguments are strings. A syntax check cannot see swapped arguments.' },
+            { id: 'help', label: 'Check the signature with help(re.search), then try it on one sample line', correct: true, feedback: 'Right. help shows search(pattern, string, flags=0), so the pattern goes first. On the sample line, the AI version returns None instead of a match.' },
+            { id: 'looks', label: 'It uses the standard re module and a raw string, so it is fine', feedback: 'A real module and a real function, called in the wrong order. That is exactly the Wrong Signature red flag.' },
+          ],
+          explanation: 're.search(line, pattern) raises no error. It treats your invoice line as the pattern, finds nothing, and returns None, so the date quietly goes missing. The signature takes ten seconds to check, and one sample input confirms it.',
+          takeaway: 'A syntax check passes swapped arguments. Check the signature and try one input',
+        },
+        {
+          id: 'p2-spot-clean',
+          kind: 'spot',
+          label: 'Spot it',
           context: "You asked: 'Which regions have more than 10 paid orders?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Works',
-          explanation: 'WORKS. The clause order is correct (SELECT, FROM, WHERE, GROUP BY, HAVING), and HAVING is the right way to filter on an aggregate.',
-          meta: 'WHERE filters rows first; HAVING filters the groups',
+          prompt: 'Tap the part that is broken, or tell us nothing is.',
+          artifact: { label: 'AI answer', code: true },
+          segments: [
+            { text: 'SELECT region, COUNT(*) AS n' },
+            { text: '\n' },
+            { text: 'FROM orders' },
+            { text: '\n' },
+            { text: "WHERE status = 'paid'" },
+            { text: '\n' },
+            { text: 'GROUP BY region' },
+            { text: '\n' },
+            { text: 'HAVING COUNT(*) > 10;' },
+          ],
+          explanation: 'Nothing is wrong. The clauses are in the required order (SELECT, FROM, WHERE, GROUP BY, HAVING). WHERE filters rows before grouping, and HAVING filters the groups, which is the right way to filter on COUNT(*). We ran it on a small test table and it returned only the region with 11 paid orders.',
+          takeaway: 'WHERE filters rows, HAVING filters groups. Plenty of AI code is correct',
         },
         {
-          id: 'drill-3',
-          code: true,
-          prompt: 'SELECT customer_id, SUM(total)\nFROM orders\nGROUP BY customer_id\nWHERE total > 100;',
-          context: "You asked: 'Total spend per customer, only counting orders over 100.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Broken',
-          explanation: 'BROKEN. SQL clauses must appear in a fixed order, and WHERE comes before GROUP BY. The database will reject this with a syntax error.',
-          redFlag: 'Clauses in the wrong order',
+          id: 'p2-diagnose',
+          kind: 'pickAll',
+          label: 'Diagnose',
+          context: 'Five lines from different AI answers.',
+          prompt: 'Which ones will fail or give a wrong result?',
+          optionsCode: true,
+          options: [
+            { id: 'timeout', label: 'setTimeout(() => save(draft), 500);', feedback: 'Callback first, delay second. This one is correct.' },
+            { id: 'max', label: 'const top = Math.max(prices);  // prices = [4, 9, 2]', correct: true, feedback: 'Math.max takes separate numbers, not an array. This returns NaN, with no error. Use Math.max(...prices).' },
+            { id: 'set', label: 'seen = {"a", "b"}\nfirst = seen[0]', correct: true, feedback: "seen is a set, and sets have no positions. Python raises TypeError: 'set' object is not subscriptable." },
+            { id: 'json', label: 'const data = await res.json();', feedback: 'res.json() returns a Promise, and it is awaited. This one is correct.' },
+            { id: 'index', label: 'last = items[len(items)]', correct: true, feedback: 'Positions run from 0 to len(items) - 1, so this raises IndexError. Use items[-1].' },
+          ],
+          explanation: 'Three broken lines: a wrong signature, the wrong type (indexing a set as if it were a list), and an off-by-one. Each reads smoothly. Math.max is the worst of the three, because it fails silently and hands NaN to the rest of your code.',
+          takeaway: 'Ask what type you have and what the function really accepts',
         },
         {
-          id: 'drill-4',
-          code: true,
-          prompt: 'for (let i = 0; i <= items.length; i++) {\n  console.log(items[i].name);\n}',
-          context: "You asked: 'Print the name of every item in this array.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Broken',
-          explanation: "BROKEN. i <= items.length runs one step too far. On the last pass items[i] is undefined, so reading .name throws a TypeError. Use i < items.length, or a for...of loop.",
-          redFlag: 'Off-by-one boundary (<= instead of <)',
-        },
-        {
-          id: 'drill-5',
-          code: true,
-          prompt: 'def add_item(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    bucket.append(item)\n    return bucket',
-          context: "You asked: 'Write a Python function that adds an item to a list, creating the list if needed.'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Works',
-          explanation: "WORKS. It looks like extra ceremony, but defaulting to None and creating a fresh list inside avoids Python's shared mutable default argument trap. This is the recommended pattern.",
-          meta: 'Unusual-looking does not mean wrong',
+          id: 'p2-fix-loop',
+          kind: 'choose',
+          label: 'Fix it',
+          context: "You asked: 'Print the name of every item.' The AI wrote:",
+          prompt: 'Which version should you use?',
+          artifact: { label: 'AI answer (illustrative)', code: true, text: 'for (let i = 0; i <= items.length; i++) {\n  console.log(items[i].name);\n}' },
+          optionsCode: true,
+          options: [
+            { id: 'optional', label: 'for (let i = 0; i <= items.length; i++) {\n  console.log(items[i]?.name);\n}', feedback: 'This hides the crash instead of fixing it. The loop still runs one step too far and prints undefined at the end.' },
+            { id: 'forof', label: 'for (const item of items) {\n  console.log(item.name);\n}', correct: true, feedback: 'Right. for...of visits each item exactly once, with no index to get wrong.' },
+            { id: 'start1', label: 'for (let i = 1; i <= items.length; i++) {\n  console.log(items[i].name);\n}', feedback: 'Now it skips the first item and still crashes on the last pass.' },
+            { id: 'forin', label: 'for (const i in items) {\n  console.log(i.name);\n}', feedback: "for...in gives you the positions as strings ('0', '1'), not the items. i.name is undefined, so every line prints undefined." },
+          ],
+          explanation: 'The original throws a TypeError on the last pass, because items[items.length] is undefined. A fix that only silences the error, like ?., is worse: the bug is still there and now it is quiet. We ran all four versions on a two-item array to check.',
+          takeaway: 'Fix the boundary, not the symptom. for...of avoids it entirely',
         },
       ],
       scoring: {
         tiers: [
-          { min: 5, message: "Flawless. You read for behavior, not just appearance. That's the skill." },
-          { min: 4, message: "4 out of 5. Sharp. One subtle one got through, which is why running code matters." },
-          { min: 3, message: "3 out of 5. You're catching the loud bugs. Keep practicing the quiet ones: loop boundaries and clause order." },
-          { min: 0, message: 'These were designed to be tricky. Review the four red flags and try reading the code as if you were the computer.' },
+          { min: 6, message: 'Six out of six. You judge code by what it does, not by how tidy it looks.' },
+          { min: 4, message: 'Solid. Look again at the ones you missed: they are the bugs that get through review.' },
+          { min: 0, message: 'These were tricky on purpose. Go back over the explanations, and run the next snippet before you trust it.' },
         ],
       },
       summary: {
-        insight: "The mutating loop fails quietly, with no error at all, and the off-by-one only fails on the last pass. Meanwhile one correct snippet looked unusual. Don't judge code by whether it looks tidy. Judge it by what it does.",
+        insight: 'Two bugs raised no error at all, one quietly returned None, and one piece of code was simply correct. Reading alone did not separate them. A signature check and one tiny input did, in under a minute.',
       },
     },
     {
@@ -498,7 +605,7 @@ export const lesson = {
   title: 'Plausible Syntax',
   subtitle: "Code that looks right but isn't",
   description: 'Learn to spot AI-written code that looks clean and idiomatic but contains subtle bugs: missing awaits, wrong arguments, wrong types, and quiet loop errors.',
-  estimatedTime: 15,
+  estimatedTime: 10,
 
   skillLearned: 'Spotting and verifying subtly broken AI-generated code',
   verificationMethod: 'Run It Before You Trust It',

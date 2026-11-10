@@ -3,18 +3,17 @@
 //
 // CASE STUDY: EY Canada "Points of Attack" report, investigated by GPTZero
 // (May 2026). The SEE chat is a labelled reconstruction of figures documented
-// in the report. Fabricated figures inside quiz items are the 'fake' answers;
-// the 'real' items cite named, checkable sources.
-// TARGET: ~18 minutes total
+// in the report. TEST works through those same figures. In the practice
+// set, the 'real' items cite named, checkable sources.
+// TARGET: about 10 minutes total
 //
 // Authored in the block-based schema: see docs/pattern-authoring-guide.md.
 
 // ============================================
-// SEE (3 min): Story -> Trust check -> Reveal -> Why it matters
+// SEE: Story -> Trust check -> Reveal -> Why it matters
 // ============================================
 const see = {
-  title: 'The $200 Billion That Was Two Different Things',
-  estimatedTime: 3,
+  title: 'One $200 Billion, Two Different Things',
   steps: [
     {
       type: 'prose',
@@ -38,10 +37,10 @@ There is **$200 billion** in unredeemed rewards globally. *(McKinsey & Company, 
     {
       type: 'choice',
       question: 'Be honest: would you have put these numbers in your deck?',
-      subtext: "There's no wrong answer here. We're testing your instincts.",
+      subtext: "There's no wrong answer here. Go with your first reaction.",
       options: [
-        { id: 'yes-pasted', label: 'Yes - Forbes, McKinsey, and EY behind it. I would paste it in', response: "You're not alone. Two famous sources plus a Big Four byline feels finished, so most people stop right here." },
-        { id: 'maybe-searched', label: "Maybe, but I'd look up the McKinsey report first", response: "Good instinct. That one search would have found nothing - the report does not exist." },
+        { id: 'yes-pasted', label: 'Yes. Forbes, McKinsey, and EY behind it. I would paste it in', response: "You're not alone. Two famous sources plus a Big Four byline feels finished, so most people stop right here." },
+        { id: 'maybe-searched', label: "Maybe, but I'd look up the McKinsey report first", response: "Good instinct. That one search would have found nothing, because the report does not exist." },
         { id: 'no-suspicious', label: 'No, something seems off', response: 'Interesting! Look at the two $200 billion figures again. Hold that thought.' },
       ],
     },
@@ -64,7 +63,7 @@ The numbers also contradict each other, and you only need the report itself to s
     },
     {
       type: 'stats',
-      title: 'The Impact',
+      title: 'Impact',
       items: [
         { value: '16 of 27', label: 'Cited sources', detail: 'fabricated, misattributed, or broken links' },
         { value: '$200B', label: 'One figure', detail: 'used for both the market and the unused part of it' },
@@ -79,120 +78,178 @@ The numbers also contradict each other, and you only need the report itself to s
         { label: 'Embarrassing but recoverable:', body: 'Someone checks the sources, the report is pulled, and the firm says it is reviewing what happened.', tone: 'neutral' },
         { label: 'Actually dangerous:', body: 'The numbers had already escaped. GPTZero found the report referenced in a Canberra Times article syndicated to more than 60 Australian newspapers, and found ChatGPT, Claude and Perplexity repeating claims from it.', tone: 'danger' },
       ],
-      conclusion: 'Precision and prestige are not evidence. A Big Four byline and a McKinsey label made these numbers feel checked - and nobody had checked them.',
-      transition: "So how do you tell a real statistic from a made-up one? First, let's test your instincts.",
+      conclusion: 'Precision and prestige are not evidence. A Big Four byline and a McKinsey label made these numbers feel checked, and nobody had checked them.',
+      transition: "So how would you have caught it before the numbers reached a slide? Let's test the report.",
     },
   ],
 };
 
 // ============================================
-// TEST (4 min): 5 AI claims - Use it or Check first?
+// TEST: Spot what to test in the EY figures -> run the tests
 // ============================================
 const test = {
-  title: 'Use It or Check First?',
-  estimatedTime: 4,
+  title: 'Testing the Report',
   steps: [
     {
-      type: 'judgementSet',
-      intro: {
-        heading: 'Here are 5 statistics an AI assistant might hand you.',
-        instruction: 'For each one, decide: would you use it as-is, or check it first?',
-        note: "Don't actually search anything yet - go with your gut.",
-        legend: {
-          trust: { label: 'TRUST', detail: 'Use it as written', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Check the source first', button: 'Check first' },
-        },
+      type: 'spotTheFlaw',
+      heading: 'Before these numbers go in a deck, look at what is actually being claimed.',
+      instruction: 'Tap the parts you would want to test. Some parts are fine or only look convincing. A few are where the problem hides.',
+      source: "From the report's headline figures",
+      segments: [
+        { text: 'The global loyalty points market is worth $200 billion, and 30-50% of those points go unused.', note: 'A headline market size and a wide range, which sounds honest. On its own you cannot judge it yet, but keep both numbers in mind: they let you check the other figures with simple arithmetic.' },
+        { text: ' ' },
+        { text: '(Forbes, "The $200 Billion Loyalty Economy")', note: 'A famous publisher and a title that repeats the number. That is a surface signal, not a check. (GPTZero later found this link broken and no Forbes article by the named author with this title.)' },
+        { text: '\n\n' },
+        { text: 'There is $200 billion in unredeemed rewards globally.', flag: { label: 'Same $200 billion, different thing', explanation: 'Two sentences ago, $200 billion was the whole market. Here it is only the unused part. Both cannot be true, and you can catch it without opening a single source.' } },
+        { text: ' ' },
+        { text: '(McKinsey & Company, "Loyalty Economics Report," 2022)', flag: { label: 'A named report you can look for', explanation: 'A specific title, publisher and year. That makes it checkable: if the report is real, it will be on McKinsey\'s own site. If it is not there, the figure has no source.' } },
+        { text: '\n\n' },
+        { text: '72% of customer loyalty programs have reported theft or fraud,', flag: { label: 'A precise figure with no source', explanation: 'No publisher, no year, no survey. Where did 72% come from, and how old is it? In the full report, this number was credited to two different sources on two different pages.' } },
+        { text: ' ' },
+        { text: 'and loyalty fraud attacks have risen 89% since 2019.', note: 'Also unsourced here, and worth a look later. In the full report it traces to a real (if out-of-date) Forter fraud index, though it was paraphrased loosely. Precise-sounding, but not the strongest lead.' },
+      ],
+      summary: 'Three things to test: do the two $200 billion figures agree, does the McKinsey report exist, and where does the 72% actually come from? Next, run the tests.',
+    },
+    {
+      type: 'investigation',
+      heading: 'Run the tests.',
+      intro: 'You have the report, a calculator and a browser. Which tests actually tell you whether these figures hold up?',
+      claim: {
+        label: 'Headline figures',
+        text: 'The global loyalty points market is worth $200 billion, and 30-50% of those points go unused. (Forbes)\nThere is $200 billion in unredeemed rewards globally. (McKinsey & Company, "Loyalty Economics Report," 2022)\n72% of customer loyalty programs have reported theft or fraud.',
       },
-      items: [
+      rounds: [
         {
-          id: 'item-1',
-          prompt: 'According to a 2023 Gartner study, 78% of mid-sized businesses have adopted AI-driven customer support.',
-          context: "You asked: 'Give me a stat for my pitch deck.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Unsourced',
-          explanation: "UNSOURCED. A famous name and a year, but no report title, link, or sample. Anyone can attach 'Gartner' to a number, and AI does it constantly: the EY Canada report listed a Gartner document that GPTZero found does not exist. Until you find the actual report, treat it as invented.",
-          redFlag: 'Big-brand name with no checkable report',
+          title: 'Test 1: Do the numbers agree?',
+          question: 'Before searching for anything, what do you check?',
+          options: [
+            {
+              id: 'recompute',
+              label: 'Recompute: what is 30-50% of $200 billion?',
+              useful: true,
+              resultLabel: 'Your calculator',
+              result: '0.30 x $200B = $60B\n0.50 x $200B = $100B\n\nUnused points: $60B to $100B, not $200B\nFor $200B to be unused: market of at least $400B',
+              feedback: 'If the whole market is $200 billion, unused points can be at most $100 billion. The two figures cannot both be right, so at least one of them is wrong.',
+              kit: 'Recompute the figures against each other before you check any source',
+            },
+            {
+              id: 'pages',
+              label: 'Line up the pages: what does each $200 billion describe?',
+              useful: true,
+              resultLabel: 'From the report (as documented by GPTZero)',
+              result: 'p. 4 (executive summary): $200B = the whole global market\np. 10:                    $200B = the unredeemed points',
+              feedback: 'One number doing two jobs. Real figures come from data, so they rarely line up this neatly. A number reused for two different things suggests nobody worked either of them out.',
+              kit: 'Check that one number is not being used for two different things',
+            },
+            {
+              id: 'byline',
+              label: 'Note that a Big Four firm published it, with two partners credited',
+              useful: false,
+              feedback: 'A byline tells you who signed it, not whether anyone checked it. This report carried three EY Canada names and still had 16 of its 27 sources fabricated, misattributed or broken.',
+            },
+          ],
         },
         {
-          id: 'item-2',
-          prompt: "About 71% of the Earth's surface is covered by water (USGS).",
-          context: "You asked: 'How much of the planet is water?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: "REAL. The U.S. Geological Survey publishes this figure in its water-science materials, and it is stable, widely repeated, and easy to confirm. Note the 'about': honest statistics admit approximation.",
-          meta: 'Checkable: USGS Water Science School',
+          title: 'Test 2: Does the source exist?',
+          question: 'The unredeemed $200 billion is credited to a McKinsey report. How do you check it?',
+          options: [
+            {
+              id: 'publisher-site',
+              label: 'Search McKinsey\'s own site for "Loyalty Economics Report"',
+              useful: true,
+              resultLabel: 'What GPTZero found',
+              result: 'No McKinsey publication with this title.\nLink given in the report: https://www.mckinsey.com (the homepage)',
+              feedback: 'A real report has its own page, or at least a press release or summary on the publisher\'s site. This one has neither, and the link points at the homepage, which is a link that cannot be wrong.',
+              kit: 'Search for the named report on the publisher\'s own site; a homepage link is not a citation',
+            },
+            {
+              id: 'exact-title',
+              label: 'Search the exact title in quotes across the web',
+              useful: true,
+              resultLabel: 'What GPTZero found',
+              result: 'Financial IT blog post, about six months before the EY report:\n"more than $200 billion in points sit idle each year"\nSources: "McKinsey & Company: Loyalty Economics Report (2022)"',
+              feedback: 'The only trail leads to a fintech blog citing the same non-existent report. Finding a citation somewhere else does not confirm it. Here it shows where the invented source was copied from.',
+              kit: 'If the only hits are other people citing it, follow the trail: echoes are not a source',
+            },
+            {
+              id: 'syndicated',
+              label: 'Trust it: the report was picked up by more than 60 newspapers',
+              useful: false,
+              feedback: 'That was one Canberra Times article, syndicated across Australia. Syndication copies a story. It adds reach, not evidence, and none of those papers checked McKinsey.',
+            },
+          ],
         },
         {
-          id: 'item-3',
-          prompt: 'In our survey of 212 users, 47.3% preferred the new design.',
-          context: "You asked: 'Summarize my survey results with percentages.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Impossible',
-          explanation: 'IMPOSSIBLE. With 212 respondents, 100 people is 47.2% and 101 people is 47.6%. No whole number of people gives 47.3%. The percentage and the sample size cannot both be true.',
-          redFlag: "Percentage doesn't fit the sample size",
-        },
-        {
-          id: 'item-4',
-          prompt: 'Studies show that humans only use 10% of their brains.',
-          context: "You asked: 'Give me a fun fact about the brain for my newsletter.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Myth',
-          explanation: "MYTH. 'Studies show' names no study. This claim is a long-debunked popular myth: brain imaging shows activity throughout the brain. AI repeats it because the internet repeats it.",
-          redFlag: "'Studies show' with no study",
-        },
-        {
-          id: 'item-5',
-          prompt: 'The U.S. Census Bureau counts the population of the United States every 10 years.',
-          context: "You asked: 'How often does the US count its population?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: 'REAL. The decennial census is required by the U.S. Constitution and the Census Bureau runs it every ten years (most recently 2020). It names its publisher and is trivially confirmed at census.gov.',
-          meta: 'Checkable: census.gov',
+          title: 'Test 3: Where does the 72% come from?',
+          question: 'The fraud figure has no source in the summary. How do you find out where it came from?',
+          options: [
+            {
+              id: 'ask-ai',
+              label: 'Ask an AI chatbot whether 72% is right',
+              useful: false,
+              resultLabel: 'Typical reply (illustrative)',
+              result: 'Yes. Around 72% of loyalty programs have reported fraud, according to industry research...',
+              feedback: 'GPTZero found ChatGPT, Claude and Perplexity already repeating claims from this report. Asking an AI can hand the same report back to you as confirmation.',
+            },
+            {
+              id: 'every-mention',
+              label: 'Search the report for every place the 72% appears',
+              useful: true,
+              resultLabel: 'From the report (as documented by GPTZero)',
+              result: 'p. 6:  72% ... credited to Paystone (a 2019 blog post)\np. 11: 72% ... credited to Forter ("NRF 2020 summary")\nReference table: neither source listed',
+              feedback: 'One number, two different sources, and neither in the reference list. When the credit changes from page to page, nobody went back to the original.',
+              kit: 'Check whether one number is credited to different sources in different places',
+            },
+            {
+              id: 'origin',
+              label: 'Follow the cited pages back to the original study',
+              useful: true,
+              resultLabel: 'What GPTZero found',
+              result: 'Paystone and Forter both repeat the figure.\nLikely origin: a 2017 Ipsos survey',
+              feedback: 'Two vendor blogs repeating a survey from years earlier. The number may be real, but it is old, secondhand, and presented as current.',
+              kit: 'Follow repeats back to the original study, and note how old it is',
+            },
+          ],
         },
       ],
-      scoring: {
-        tiers: [
-          { min: 5, message: "Perfect! You correctly identified all 5. You have strong instincts - let's sharpen them further." },
-          { min: 4, message: "4 out of 5! Solid instincts. The patterns we'll learn next will help you catch that last one." },
-          { min: 3, message: "3 out of 5 - not bad! Bad statistics are built to feel authoritative. That's exactly why this training exists." },
-          { min: 0, message: "This is tricky - and that's the point. Fabricated numbers are designed to sound measured. Let's learn what gives them away." },
+      verdict: {
+        question: 'So what are these headline figures?',
+        options: [
+          { id: 'sloppy', label: 'Solid numbers with a few sloppy citations', correct: false, feedback: 'The problem is not formatting. The two $200 billion figures contradict each other, and the source for one of them does not exist. A bad citation here means there is no evidence behind the number.' },
+          { id: 'unsupported', label: 'Unsupported: contradictory figures, an invented source, and an old secondhand stat', correct: true, feedback: 'Right. The $200 billion is used for two incompatible things, the McKinsey report does not exist, and the 72% is a 2017 survey figure credited to two different blogs. None of it should go in a deck as fact.' },
+          { id: 'wrong-firm', label: 'Real figures, just credited to the wrong firm', correct: false, feedback: 'Tempting, because a 2020 Forbes article does use the phrase "$200 billion loyalty economy". But the unredeemed $200 billion traces only to a blog citing the same invented report, and the two figures still cannot both be true.' },
         ],
       },
-      summary: {
-        insight: "In this batch, 3 of the 5 claims should not be used as written. Notice what the good ones had in common: a named publisher you can look up, and honest wording like 'about'. The bad ones had precision and confidence, but nothing to trace.",
+      kit: {
+        title: 'Your Statistics Invention Test Kit',
+        footer: 'A calculator and two searches. The figures looked just as polished either way. Only the tests showed there was nothing behind them.',
       },
     },
   ],
 };
 
 // ============================================
-// OBSERVE (5 min): 4 red flags + matching + method
+// OBSERVE: 4 red flags + matching + method
 // ============================================
 const observe = {
-  title: 'The Red Flags',
-  estimatedTime: 5,
+  title: 'Red Flags',
   steps: [
     {
       type: 'cardGrid',
       heading: 'Invented statistics follow predictable patterns.',
       subtext: 'They are written to sound like research. Four red flags show up again and again.',
       cards: [
-        { emoji: '🔬', label: 'The Suspiciously Precise Number' },
-        { emoji: '👤', label: 'The Vague Authority' },
-        { emoji: '🎯', label: 'The Convenient Round Number' },
-        { emoji: '🧮', label: 'The Impossible Math' },
+        { emoji: '🔬', label: 'Suspiciously Precise Number' },
+        { emoji: '👤', label: 'Vague Authority' },
+        { emoji: '🎯', label: 'Convenient Round Number' },
+        { emoji: '🧮', label: 'Impossible Math' },
       ],
     },
     {
       type: 'concept',
       emoji: '🔬',
       eyebrow: 'Red Flag 1 of 4',
-      name: 'The Suspiciously Precise Number',
+      name: 'Suspiciously Precise Number',
       description: 'A figure with a decimal point and no context: sample size, date, or definition.',
       compare: {
         left: { label: '❌ Precision with nothing behind it:', tone: 'danger', items: ['73.4% of marketers use AI daily', '63.4% of customers prefer it', 'Costs fell by 41.7%', 'Market worth $4.37B'] },
@@ -205,7 +262,7 @@ const observe = {
       type: 'concept',
       emoji: '👤',
       eyebrow: 'Red Flag 2 of 4',
-      name: 'The Vague Authority',
+      name: 'Vague Authority',
       description: 'The claim leans on an unnamed crowd or a famous brand, but never points at a specific document.',
       rows: [
         { label: 'Unnamed crowd:', variant: 'quote', tone: 'danger', value: 'Studies show... Experts agree... Research suggests...' },
@@ -220,7 +277,7 @@ const observe = {
       type: 'concept',
       emoji: '🎯',
       eyebrow: 'Red Flag 3 of 4',
-      name: 'The Convenient Round Number',
+      name: 'Convenient Round Number',
       description: 'The statistic supports exactly the argument you were making, in a tidy, memorable form.',
       rows: [
         { label: 'You asked:', variant: 'quote', tone: 'neutral', value: 'Give me a stat that proves remote work boosts productivity.' },
@@ -234,14 +291,14 @@ const observe = {
       type: 'concept',
       emoji: '🧮',
       eyebrow: 'Red Flag 4 of 4',
-      name: 'The Impossible Math',
+      name: 'Impossible Math',
       description: "The figures contradict each other, or can't be produced by the sample size.",
       rows: [
         { label: 'Shares that should total 100%:', variant: 'code', tone: 'danger', value: 'Chrome 64% + Safari 22% + Edge 9% + Firefox 8% = 103%' },
         { label: 'Sample size mismatch:', variant: 'code', tone: 'danger', value: '47.3% of 212 people = 100.3 people' },
         { label: 'Growth mismatch:', variant: 'code', tone: 'danger', value: '$4.2B to $9.1B in 4 years is "31% a year"  (it is about 21%)' },
       ],
-      note: 'You do not need any source to catch these. A calculator is enough. In the EY Canada report, $200B was the whole market on one page and only the unused part on another - a contradiction visible just by comparing the two pages.',
+      note: 'You do not need any source to catch these. A calculator is enough. In the EY Canada report, $200B was the whole market on one page and only the unused part on another. You can see the contradiction just by comparing the two pages.',
       why: "AI writes numbers by pattern, not by calculation. Each number looks fine alone, but they weren't computed from the same data.",
       spot: 'Check that parts sum to the whole, that percentages divide cleanly by the sample size, and that growth rates match the start and end values.',
     },
@@ -250,26 +307,26 @@ const observe = {
       title: 'Quick Check: Match the Red Flag',
       instruction: 'For each claim, identify which red flag gives it away:',
       options: [
-        { id: 'flag-1', emoji: '🔬', label: 'The Suspiciously Precise Number' },
-        { id: 'flag-2', emoji: '👤', label: 'The Vague Authority' },
-        { id: 'flag-3', emoji: '🎯', label: 'The Convenient Round Number' },
-        { id: 'flag-4', emoji: '🧮', label: 'The Impossible Math' },
+        { id: 'flag-1', emoji: '🔬', label: 'Suspiciously Precise Number' },
+        { id: 'flag-2', emoji: '👤', label: 'Vague Authority' },
+        { id: 'flag-3', emoji: '🎯', label: 'Convenient Round Number' },
+        { id: 'flag-4', emoji: '🧮', label: 'Impossible Math' },
       ],
       items: [
         { prompt: '73.4% of developers now use AI tools every single day.', correct: 'flag-1', explanation: 'A decimal with no date, sample, or source attached.' },
         { prompt: 'Experts agree that most customers prefer subscription pricing.', correct: 'flag-2', explanation: "'Experts' is an unnamed crowd, and 'most' is not a measurement." },
         { prompt: "Sales by region: North 45%, South 38%, West 30% (of total sales).", correct: 'flag-4', explanation: 'The shares add up to 113%. Parts of one whole cannot exceed 100%.' },
-        { prompt: 'Our tool improves conversion by exactly 50%, according to research.', correct: 'flag-3', explanation: 'Round, flattering, and conveniently perfect for a sales page - with no named research.' },
+        { prompt: 'Our tool improves conversion by exactly 50%, according to research.', correct: 'flag-3', explanation: 'Round, flattering, and conveniently perfect for a sales page, with no named research.' },
         { prompt: 'The U.S. Census Bureau counted about 331 million residents in 2020 (census.gov).', correct: 'trick-question', explanation: "Trick question! This one names its publisher, year, and a checkable location. It's a good claim.", extra: { id: 'trick-question', label: "✓ It's actually checkable" } },
       ],
     },
     {
       type: 'method',
       icon: 'shield',
-      name: 'The Numbers Trace',
-      tagline: 'Follow every statistic back to where it came from - or flag it as unsourced.',
+      name: 'Numbers Trace',
+      tagline: 'Follow every statistic back to where it came from, or flag it as unsourced.',
       steps: [
-        { number: 1, action: 'Copy the claim exactly', detail: 'The figure, the source name, and the year, word for word - not your paraphrase', time: '10 seconds' },
+        { number: 1, action: 'Copy the claim exactly', detail: 'The figure, the source name, and the year, word for word (not your paraphrase)', time: '10 seconds' },
         { number: 2, action: 'Find the primary source', detail: 'Search the exact figure in quotes, then search the publisher\'s own site for the report title. Look for the report or dataset itself, not a blog repeating it.', time: '60 seconds' },
         { number: 3, action: 'Read the fine print', detail: 'Who ran it, when, how many people or data points, how the thing was defined, and who paid for it. Does the real number match what AI said?', time: '60 seconds' },
         { number: 4, action: 'Recompute the math', detail: 'Do the parts sum to the whole? Does the percentage fit the sample size? Does the growth rate match the start and end values?', time: '30 seconds' },
@@ -300,86 +357,151 @@ const observe = {
 };
 
 // ============================================
-// PRACTICE (6 min): Drill -> Toolkit -> Completion
+// PRACTICE: Practice set -> Toolkit -> Completion
+// Checked in November 2026: World Bank API (SP.POP.TOTL, IND and CHN,
+// last updated 8 Oct 2026); UN Day of Eight Billion (15 Nov 2022, UN DESA
+// projections); UN forecast that India passed China by the end of April
+// 2023; NBER working paper w18871 (Bloom et al., CTrip, 13% performance
+// increase). Survey, churn and market figures are illustrative; the
+// arithmetic was recomputed in python3.
 // ============================================
 const practice = {
   title: 'Your Turn',
-  estimatedTime: 6,
   steps: [
     {
-      type: 'judgementSet',
+      type: 'practiceSet',
       intro: {
-        heading: 'Practice Drill: 5 harder claims.',
-        instruction: 'These are subtler than the first round. Use the four red flags and the Numbers Trace: use it as written, or check first?',
-        note: 'Some of these are real. Precision alone is not the problem - traceability is.',
-        legend: {
-          trust: { label: 'TRUST', detail: 'Use it as written', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Check the source first', button: 'Check first' },
-        },
+        heading: 'Practice: Six Numbers to Trace',
+        instruction: 'Recompute a survey, spot an unsourced figure, pick the right check, fix a growth rate, and read real data.',
+        note: 'Some of these are fine. Precision is not the problem. Traceability is.',
       },
       items: [
         {
-          id: 'drill-1',
-          prompt: 'Market size 2021: $2.0B\nMarket size 2024: $3.0B\nGrowth: "a 50% compound annual\ngrowth rate (CAGR) over 3 years"',
-          context: "AI summarizing a market report for your strategy memo:",
-          code: true,
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Wrong math',
-          explanation: 'WRONG MATH. Going from 2.0 to 3.0 is a 50% increase in total, over three years. The compound annual rate is (3.0/2.0)^(1/3) - 1, which is about 14.5%. The claim confuses total growth with annual growth, a classic AI slip.',
-          redFlag: 'Growth rate inconsistent with start and end values',
+          id: 'p5-diagnose-survey',
+          kind: 'pickAll',
+          label: 'Diagnose',
+          context: 'An AI summarized a small customer survey for your report.',
+          prompt: 'Which of these are real problems? A calculator is enough.',
+          artifact: {
+            label: 'AI summary (illustrative)',
+            text: 'Customer survey, n = 40\n\nVery satisfied: 47.3%\nSatisfied: 30.0%\nUnsatisfied: 27.5%\n\nTotal satisfied: 77.3%, up from 60% last year, an increase of 17.3%.',
+          },
+          options: [
+            { id: 'sum', label: 'The three shares add up to 104.8%', correct: true, feedback: 'Every respondent is in exactly one group, so the shares should total 100%. Rounding cannot explain 4.8 points.' },
+            { id: 'people', label: '47.3% of 40 people is 18.92 people', correct: true, feedback: 'With 40 people, each person is 2.5%. 18 people is 45% and 19 is 47.5%. No whole number of people gives 47.3%.' },
+            { id: 'eleven', label: '27.5% of 40 people is 11 people', feedback: 'That one works: 11 out of 40 is exactly 27.5%. A decimal is fine when the sample size allows it.' },
+            { id: 'total', label: 'Total satisfied is 47.3% plus 30.0%', feedback: '47.3 + 30.0 = 77.3, so this line agrees with the lines above it. They are wrong, but this sum is not.' },
+            { id: 'points', label: 'Going from 60% to 77.3% is called "an increase of 17.3%"', correct: true, feedback: 'That is 17.3 percentage points. As a percentage, the rise is about 29% (17.3 / 60).' },
+          ],
+          explanation: 'Three of the five checks fail, and you needed no source to find them. Invented figures are written one at a time, so they rarely fit together.',
+          takeaway: 'Shares must sum to 100%, fit the sample size, and points are not percent',
         },
         {
-          id: 'drill-2',
-          prompt: 'The speed of light in a vacuum is exactly 299,792,458 metres per second.',
-          context: "You asked: 'What is the exact speed of light?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: "REAL. Here the precision is legitimate: since 1983 the metre has been defined from this value, so it is exact by definition (published by the BIPM as part of the SI). A precise number is not automatically fake; what matters is whether a primary source stands behind it.",
-          meta: 'Checkable: BIPM SI Brochure / NIST',
-        },
-        {
-          id: 'drill-3',
-          prompt: 'Based on industry benchmarks, 73.4% of new subscribers cancel within 90 days.',
-          context: "You asked: 'What churn rate should I expect for my app?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Unsourced',
-          explanation: "UNSOURCED. 'Industry benchmarks' is a vague authority, and 73.4% is a precise number with no sample, year, or industry. Churn varies enormously by product and price; one confident figure for 'new subscribers' is a guess dressed as data.",
-          redFlag: "'Industry benchmarks' plus a precise decimal",
-        },
-        {
-          id: 'drill-4',
-          prompt: 'Research confirms remote workers are exactly 25% more productive than office workers.',
-          context: "You asked: 'Find me a stat that proves remote work boosts productivity.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Convenient',
-          explanation: 'CONVENIENT. It supports your exact argument, is perfectly round, and names no research. Real studies on remote work exist but vary in setting and outcome; no single clean number covers all workers. Be especially wary when the answer is shaped like your request.',
-          redFlag: 'Round number that fits your argument perfectly',
-        },
-        {
-          id: 'drill-5',
-          prompt: 'The United Nations estimated that the world population reached 8 billion on 15 November 2022 (UN World Population Prospects 2022).',
+          id: 'p5-spot-clean',
+          kind: 'spot',
+          label: 'Spot it',
           context: "You asked: 'When did the world reach 8 billion people?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Real',
-          explanation: "REAL. The UN named a specific day and framed it as a modeled estimate, from a named publication. Note the careful wording ('estimated'): real statisticians hedge. Still worth a quick look at un.org, but the claim has a clear, findable source.",
-          meta: 'Checkable: UN DESA, World Population Prospects 2022',
+          prompt: 'Tap the part that is invented, or tell us nothing is.',
+          artifact: { label: 'AI answer' },
+          segments: [
+            { text: 'The United Nations' },
+            { text: ' estimated that' },
+            { text: ' the world population reached 8 billion' },
+            { text: ' on 15 November 2022.' },
+            { text: ' The date is a projection' },
+            { text: ' by UN DESA,' },
+            { text: " the UN's Department of Economic and Social Affairs." },
+          ],
+          explanation: "Nothing is invented. The UN marked 15 November 2022 as the Day of Eight Billion, based on UN DESA projections. Note the wording: 'estimated' and 'projection'. Nobody counted the 8 billionth person, and real statisticians say so. A named publisher, a date and honest hedging: this one passes the trace.",
+          takeaway: 'A named source, a date and honest hedging: checking can confirm a claim',
+        },
+        {
+          id: 'p5-pick-test',
+          kind: 'choose',
+          label: 'Pick the test',
+          context: "You asked: 'Find me a stat that proves remote work boosts productivity.' The AI replied: 'Research confirms remote workers are exactly 25% more productive.'",
+          prompt: 'What settles whether you can use this?',
+          options: [
+            { id: 'ask', label: 'Ask the AI which study it came from', feedback: 'It may name a real study that says something else, or invent one. Either way, you still have to open the study.' },
+            { id: 'repeat', label: 'Search the figure and count how many sites repeat it', feedback: 'Repetition shows that a number spread, not that anyone measured it. Copies often trace back to one blog, or to nothing.' },
+            { id: 'study', label: 'Find the study itself and read who was measured, for how long, and how productivity was defined', correct: true, feedback: 'Right. If there is no study to open, there is no stat. If there is one, its setting decides what you can claim.' },
+            { id: 'round', label: 'A round 25% is probably a fair average of several studies', feedback: 'Nothing in the answer says it is an average. A round number that fits your argument perfectly is a red flag, not a summary.' },
+          ],
+          explanation: "Real research on this exists, and it is narrower than any slogan. A widely cited NBER working paper (Bloom and others, 2013) found a 13% performance increase for call centre staff at the Chinese travel agency CTrip, over nine months. That is a real number in one setting. It does not show that 'remote workers are 25% more productive'.",
+          takeaway: 'Open the study: its sample and setting decide what you can claim',
+        },
+        {
+          id: 'p5-spot-churn',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'What churn rate should I expect for my new subscription app?'",
+          prompt: 'Tap the part you would not put in your plan, or tell us nothing is wrong.',
+          artifact: { label: 'AI answer (illustrative)' },
+          segments: [
+            { text: 'Churn depends heavily on your category, price and how you find users.' },
+            { text: ' ' },
+            { text: 'Based on industry benchmarks,', flag: true },
+            { text: ' ' },
+            { text: '73.4% of new subscribers', flag: true },
+            { text: ' cancel within 90 days.' },
+            { text: ' ' },
+            { text: 'So focus on the first three months:' },
+            { text: ' track cancellations by sign-up month' },
+            { text: ' and look at where people drop off.' },
+          ],
+          explanation: "'Industry benchmarks' names no industry, publisher or year, and 73.4% has no sample behind it. The advice around it is sensible, which makes the number feel just as solid. It isn't. Churn varies widely by product, so one precise figure for every app is a guess. Use your own data, or a named benchmark you can open.",
+          takeaway: 'A precise decimal credited to "industry benchmarks" is unsourced',
+        },
+        {
+          id: 'p5-fix-cagr',
+          kind: 'choose',
+          label: 'Fix it',
+          context: 'An AI summarized a market report for your strategy memo:',
+          prompt: 'Which sentence should go in the memo?',
+          artifact: {
+            label: 'AI summary (illustrative)',
+            code: true,
+            text: 'Market size 2021: $2.0B\nMarket size 2024: $3.0B\nGrowth: "a 50% compound annual growth rate (CAGR)"',
+          },
+          options: [
+            { id: 'asis', label: 'The market grew at a 50% compound annual rate from 2021 to 2024.', feedback: 'At 50% a year, $2.0B would reach $6.75B by 2024, not $3.0B.' },
+            { id: 'simple', label: 'The market grew about 16.7% a year (50% divided by 3).', feedback: 'Dividing by the number of years ignores compounding. Each year grows on top of the last, so the real annual rate is lower.' },
+            { id: 'right', label: 'The market grew 50% in total over three years, about 14.5% a year (CAGR).', correct: true, feedback: 'Right. (3.0 / 2.0)^(1/3) - 1 is about 0.145. Total growth and annual growth are different numbers.' },
+            { id: 'total', label: 'The market grew 150% from 2021 to 2024.', feedback: '$3.0B is 150% of $2.0B, but the increase is 50%. Mixing up "is 150% of" and "grew 150%" is another common slip.' },
+          ],
+          explanation: 'The AI confused total growth with annual growth. One line catches it: python3 -c "print((3.0/2.0)**(1/3)-1)" prints about 0.145.',
+          takeaway: 'Recompute growth rates from the start and end values',
+        },
+        {
+          id: 'p5-evidence-worldbank',
+          kind: 'choose',
+          label: 'Read the evidence',
+          context: "An AI wrote: 'According to the World Bank, India overtook China as the world's most populous country in 2023.' You pulled the World Bank series.",
+          prompt: 'What does this tell you?',
+          artifact: {
+            label: 'World Bank API, SP.POP.TOTL (fetched 10 Nov 2026, simplified)',
+            code: true,
+            text: '$ curl -s "https://api.worldbank.org/v2/country/IND;CHN/indicator/SP.POP.TOTL?format=json&date=2022:2024"\n\nChina  2022  1,412,175,000\nChina  2023  1,410,710,000\nChina  2024  1,408,975,000\nIndia  2022  1,425,423,212\nIndia  2023  1,438,069,596\nIndia  2024  1,450,935,791',
+          },
+          options: [
+            { id: 'confirms', label: 'It confirms the claim: India is ahead in 2023.', feedback: 'India is ahead in 2023, but it is already ahead in 2022. This series does not show a 2023 overtake.' },
+            { id: 'mismatch', label: 'The trend is right, but this source does not support "in 2023". Reword it, or cite the source that gives that date.', correct: true, feedback: 'Right. The 2023 date comes from the UN, which forecast that India would pass China by the end of April 2023. Cite that instead.' },
+            { id: 'outdated', label: 'The World Bank data must be out of date. The AI probably has newer figures.', feedback: 'This series was last updated in October 2026. The AI has no data feed. It wrote a sentence that sounded right.' },
+            { id: 'close', label: 'The numbers are too close to say anything.', feedback: 'They differ by more than 10 million people in every year shown. The data is clear. It just does not match the citation.' },
+          ],
+          explanation: 'Estimates differ between sources and get revised. That is normal. What matters is that the figure, the year and the source all match. Here the year came from one source and the citation from another, and only opening the data showed it.',
+          takeaway: 'Check that the cited source says what the claim says, including the year',
         },
       ],
       scoring: {
         tiers: [
-          { min: 5, message: "Flawless. You're checking traceability, not just trusting how precise the number looks." },
-          { min: 4, message: "4 out of 5 - strong. Review the one you missed and which red flag it carried." },
-          { min: 3, message: "3 out of 5 - you're getting there. Remember: no source, no stat. Try the Numbers Trace on the ones you missed." },
-          { min: 0, message: "Tough round. Replay the red flags: precision, vague authority, convenient fit, impossible math. Then try again." },
+          { min: 6, message: 'Six out of six. You recompute, you trace, and you know when a number checks out.' },
+          { min: 4, message: 'Solid. Look again at the ones you missed and which check would have caught them.' },
+          { min: 0, message: 'Tough round. Replay the red flags: precision, vague authority, convenient fit, impossible math. Then run the Numbers Trace on the ones you missed.' },
         ],
       },
       summary: {
-        insight: "The pattern: confident statistics that fail the trace. Real statistics - even very precise ones - come with a named source, a date, and a method. Invented ones come with polish.",
+        insight: 'One answer was fine, two failed on arithmetic alone, and one cited real data that did not say what the claim said. None of them looked wrong. A calculator and the primary source told them apart.',
       },
     },
     {
@@ -413,7 +535,7 @@ const practice = {
           ecosystem: 'cli',
           command: `python3 -c "print(((9.1/4.2)**(1/4)-1)*100)"`,
           output: `21.31...`,
-          whatToLookFor: "Compare to the claim. Here the AI said '31% a year' - the real compound rate from $4.2B to $9.1B over 4 years is about 21%. Also try: print(100/212*100) to see what 100 of 212 respondents is.",
+          whatToLookFor: "Compare to the claim. Here the AI said '31% a year', but the real compound rate from $4.2B to $9.1B over 4 years is about 21%. Also try: print(100/212*100) to see what 100 of 212 respondents is.",
         },
         {
           title: 'Pull the number from a primary data portal',
@@ -426,12 +548,12 @@ const practice = {
         },
       ],
       quickReference: {
-        title: 'The Numbers Trace',
+        title: 'Numbers Trace',
         steps: [
           'Copy the figure, source, and year exactly as AI wrote them',
           'Search the exact figure in quotes, then the publisher site with site:',
           'Open the primary report or dataset: check sample, date, funder, definition',
-          "Recompute the math - and if you can't trace it, call it unsourced or drop it",
+          "Recompute the math. If you can't trace it, call it unsourced or drop it",
         ],
       },
     },
@@ -439,19 +561,19 @@ const practice = {
       type: 'completion',
       icon: 'check',
       title: 'Pattern Learned: Statistics Invention',
-      summary: "You can now spot when AI produces numbers that sound like research. You know the four red flags - precision without context, vague authority, convenient fit, and impossible math - and you have a way to trace any figure back to its source.",
-      // NOTE: no `checklist` here on purpose - phase-level keyTakeaways +
+      summary: "You can now spot when AI produces numbers that sound like research. You know the four red flags (precision without context, vague authority, convenient fit, and impossible math), and you have a way to trace any figure back to its source.",
+      // NOTE: no `checklist` here on purpose. Phase-level keyTakeaways +
       // checklist below are rendered by LessonShell's final screen.
-      next: { label: 'Up Next', body: "Pattern 6, API Mirage: AI recommends functions and endpoints that look perfectly real - and were never there." },
+      next: { label: 'Up Next', body: "Pattern 6, API Mirage: AI recommends functions and endpoints that look perfectly real, and were never there." },
     },
   ],
 
   keyTakeaways: [
-    'AI generates statistics by pattern, not by looking them up - precision is not evidence',
+    'AI generates statistics by pattern, not by looking them up. Precision is not evidence',
     'Red flags: suspiciously precise numbers, vague authorities, figures that conveniently fit your argument, and math that does not add up',
     'Real statistics have a named source, a date, a method, and numbers that reproduce when you recompute them',
     "The Numbers Trace: copy the claim, find the primary source, read the fine print, recompute the math",
-    "If you can't trace it, say 'unsourced' or drop it - never present it as fact",
+    "If you can't trace it, say 'unsourced' or drop it. Never present it as fact",
   ],
   checklist: {
     title: 'Your Statistics Check Checklist',
@@ -475,10 +597,10 @@ export const lesson = {
   title: 'Statistics Invention',
   subtitle: 'Made-up numbers stated with confidence',
   description: "Learn to spot when AI produces precise-looking percentages, market sizes, and 'studies show' claims that have no traceable source.",
-  estimatedTime: 15,
+  estimatedTime: 10,
 
   skillLearned: 'Tracing AI-provided statistics to their primary source',
-  verificationMethod: 'The Numbers Trace',
+  verificationMethod: 'Numbers Trace',
 
   caseStudy: {
     name: 'EY Canada "Points of Attack" loyalty-fraud report',

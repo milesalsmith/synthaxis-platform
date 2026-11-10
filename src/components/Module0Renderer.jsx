@@ -1,7 +1,7 @@
 // src/components/Module0Renderer.jsx
 // Renders "Why Smart People Get Fooled" foundation module
 //
-// Different from PhaseRenderer — this isn't STOP Protocol
+// Different from PhaseRenderer: this isn't STOP Protocol
 // It's psychological priming before the patterns begin
 //
 // Flow: Trust Test → 3 Biases → Formula → Transition → Start Patterns
@@ -189,7 +189,7 @@ export default function Module0Renderer({ content, onComplete }) {
           }`}>
             <div className="flex items-center gap-2 mb-3">
               <XCircle className="w-5 h-5 text-red-400" />
-              <span className="text-red-400 font-medium">Explanation A — Misleading</span>
+              <span className="text-red-400 font-medium">Explanation A: Misleading</span>
             </div>
             <ul className="space-y-2 text-sm">
               {trustTest.explanations.optionA.issues.map((issue, i) => (
@@ -207,7 +207,7 @@ export default function Module0Renderer({ content, onComplete }) {
           }`}>
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="w-5 h-5 text-synthaxis-300" />
-              <span className="text-synthaxis-300 font-medium">Explanation B — Accurate</span>
+              <span className="text-synthaxis-300 font-medium">Explanation B: Accurate</span>
             </div>
             <ul className="space-y-2 text-sm">
               {trustTest.explanations.optionB.strengths.map((strength, i) => (
@@ -538,8 +538,8 @@ export default function Module0Renderer({ content, onComplete }) {
                   {pattern.number}
                 </div>
                 <div>
-                  <span className="text-white font-medium">{pattern.name}</span>
-                  <span className="text-slate-500 text-sm ml-2">— {pattern.teaser}</span>
+                  <div className="text-white font-medium">{pattern.name}</div>
+                  <div className="text-slate-500 text-sm">{pattern.teaser}</div>
                 </div>
               </div>
             ))}

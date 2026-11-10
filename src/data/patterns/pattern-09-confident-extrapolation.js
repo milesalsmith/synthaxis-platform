@@ -8,15 +8,17 @@
 // Anchor: real 2026 research on AI chatbots answering US midterm voting
 // questions with outdated or wrong deadlines (IFPG via NPR, Nov 2026; ISD via
 // The Hill, Sep 2026). Callbacks: Cursor "Sam" (Apr 2025), Moffatt v. Air
-// Canada (Feb 2024). Quiz items that name "Acme" are illustrative; the quiz
-// tests the KIND of claim (time-sensitive vs timeless vs unknowable).
+// Canada (Feb 2024). TEST works through the reconstructed Michigan answer
+// against the official rules (Michigan.gov and vote.gov, checked 9 Nov 2026).
+// Practice items marked illustrative (Acme, the shop chatbot) are made up; the
+// practice set tests the KIND of claim (time-sensitive, place-specific,
+// private or future vs stable or grounded).
 
 // ============================================
-// SEE (3 min): Story -> Trust check -> Reveal
+// SEE: Story -> First reaction -> Reveal
 // ============================================
 const see = {
-  title: 'The Answer From Yesterday',
-  estimatedTime: 3,
+  title: 'Answer From Yesterday',
   steps: [
     {
       type: 'prose',
@@ -41,7 +43,7 @@ Then vote in person on Election Day, or request an absentee ballot.`,
     {
       type: 'choice',
       question: 'Would you plan your registration around those dates?',
-      subtext: "There's no wrong answer here. We're testing your instincts.",
+      subtext: "There's no wrong answer here. Go with your first reaction.",
       options: [
         { id: 'yes-pinned', label: 'Yes, it sounds specific and official', response: 'Very natural. Specific dates feel like facts. But specificity is not the same as freshness.' },
         { id: 'maybe-asked-date', label: "I'd ask where those dates came from", response: "Good instinct. The answer doesn't say. That missing source is the whole problem." },
@@ -69,7 +71,7 @@ It was not a one-off. In IFPG's October data, **13.9%** of chatbot answers to vo
     },
     {
       type: 'stats',
-      title: 'The Scale',
+      title: 'Scale',
       items: [
         { value: '13.9%', label: 'Voting-logistics answers', detail: 'outdated or inaccurate (IFPG)' },
         { value: '5.9%', label: 'Answers that could mislead', detail: 'e.g. a missed deadline or wrong day (IFPG)' },
@@ -85,112 +87,166 @@ It was not a one-off. In IFPG's October data, **13.9%** of chatbot answers to vo
         { label: 'Actually risky:', body: "The same confident tone covers things a bot can't know at all. In 2025 Cursor's support bot \"Sam\" told users about a one-device login policy that didn't exist, and in 2024 Air Canada was held liable for a refund policy its chatbot described wrongly.", tone: 'danger' },
       ],
       conclusion: 'The model is not lying on purpose. It is completing a pattern, and the pattern of a good answer is a confident one.',
-      transition: "Let's test your instincts: which claims can an AI actually know?",
+      transition: 'So how would you have caught it? Next, test that answer the way you would test any time-sensitive claim.',
     },
   ],
 };
 
 // ============================================
-// TEST (4 min): 5 AI claims - Trust or Verify?
+// TEST: Spot the flaw -> Investigate the deadline answer
 // ============================================
 const test = {
-  title: 'Trust or Verify?',
-  estimatedTime: 4,
+  title: 'Testing the Deadline',
   steps: [
     {
-      type: 'judgementSet',
-      intro: {
-        heading: 'Here are 5 claims from AI assistants.',
-        instruction: 'For each one, decide: could the AI actually know this, so you can use it, or should you check it first?',
-        note: 'Ask yourself: is this claim stable over time, or does it depend on today\'s date?',
-        legend: {
-          trust: { label: 'TRUST', detail: 'Safe to use as-is', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Check a live source first', button: 'Check first' },
-        },
+      type: 'spotTheFlaw',
+      heading: 'Before you plan around it, look at what the answer actually claims.',
+      instruction: 'Tap the parts of this answer you would want to test. Some parts are fine. Some are exactly where the problem hides.',
+      source: 'From the chatbot answer (reconstructed)',
+      segments: [
+        { text: "Here's how to vote", flag: { label: 'Stated as current, with no date or source', explanation: 'The answer reads like a description of the rules right now. It never says when its information is from, where it came from, or that you should confirm it with your election office.' } },
+        { text: ' ' },
+        { text: "in Michigan's 4th district:", note: 'This just repeats your question back. Registration deadlines in Michigan are set statewide, so naming the district adds no precision. It only makes the answer feel tailored.' },
+        { text: ' ' },
+        { text: 'Register online', note: 'A real option. Michigan does offer online voter registration.' },
+        { text: ' ' },
+        { text: 'by [a date later than the real deadline].', flag: { label: 'Online deadline', explanation: 'A deadline is a fact about one specific election, counted back from Election Day, and the rules can change. A model may be repeating an old cycle or filling in a plausible date. This is the claim that could cost someone their vote.' } },
+        { text: ' ' },
+        { text: 'Register by mail', note: 'Also a real option in Michigan.' },
+        { text: ' ' },
+        { text: 'by [a date later than the real deadline].', flag: { label: 'Mail deadline', explanation: 'A second confident date, also with no source. Two specific dates side by side look twice as solid, but they could come from the same stale information.' } },
+        { text: ' ' },
+        { text: 'Then vote in person on Election Day,', note: 'True in general. Michigan also offers early in-person voting, but this line makes no specific claim that could have gone stale.' },
+        { text: ' ' },
+        { text: 'or request an absentee ballot.', note: 'A real option in Michigan. Generic advice like this is usually right, which helps the wrong dates blend in.' },
+      ],
+      summary: 'Three things to test: could these dates have changed since the model was trained, what do the official rules say, and where did the answer get its dates? Next, run the tests.',
+    },
+    {
+      type: 'investigation',
+      heading: 'Run the tests.',
+      intro: 'You want to register in Michigan and this is the answer you got. You have a browser and a couple of minutes. Which tests tell you whether those deadlines are real?',
+      claim: {
+        label: 'Answer',
+        text: "Here's how to vote in Michigan's 4th district: Register online by [a date later than the real deadline]. Register by mail by [a date later than the real deadline]. Then vote in person on Election Day, or request an absentee ballot.",
       },
-      items: [
+      rounds: [
         {
-          id: 'item-1',
-          prompt: 'The latest stable release of Acme CLI is 4.2.\nInstall it with:\nacme upgrade --to 4.2',
-          code: true,
-          context: "You asked: 'What's the newest Acme CLI version?' (no web search available)",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Time-sensitive',
-          explanation: "VERIFY. 'The latest' changes over time, and the model can only report what it saw before its cutoff. Check the official release page.",
-          redFlag: "'The latest' stated as a present-tense fact, with no date",
+          title: 'Test 1: Could this have changed?',
+          question: 'Before looking anything up, what do you ask about these dates?',
+          options: [
+            {
+              id: 'district',
+              label: 'It named my exact district, so it must have looked it up',
+              useful: false,
+              feedback: 'Repeating your question back is not research. Michigan sets registration deadlines statewide, so the district name tells you nothing about where the dates came from.',
+            },
+            {
+              id: 'time-sensitive',
+              label: 'Ask: is this a fact that changes, and could the model have seen this year\'s version?',
+              useful: true,
+              feedback: 'Yes. Registration deadlines belong to a specific election and are counted back from Election Day, so they move every cycle. A model only knows what it saw before its training cutoff. ISD found chatbots giving outdated deadlines, and in one case 2024 election dates. Time-sensitive means check it.',
+              kit: 'Ask whether the fact is time-sensitive: could it have changed since the model was trained?',
+            },
+            {
+              id: 'sounds-official',
+              label: 'It sounds official and clear, so it is probably fine',
+              useful: false,
+              feedback: 'Tone is not evidence. A confident, tidy answer is what these models produce whether the facts are current or not. The wrong answer NPR reported sounded just as sure as a right one.',
+            },
+          ],
         },
         {
-          id: 'item-2',
-          prompt: 'Water boils at 100 degrees Celsius at sea-level atmospheric pressure.',
-          context: "You asked: 'At what temperature does water boil?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Timeless',
-          explanation: "TRUST. This is stable, well-established science. It doesn't depend on today's date, and the answer even includes the right condition (sea level).",
-          meta: 'Stable fact, no cutoff risk',
+          title: 'Test 2: What do the official rules say?',
+          question: 'The dates could be stale. Where do you check the real deadlines?',
+          options: [
+            {
+              id: 'state-site',
+              label: "Michigan's own election pages (Michigan Department of State, Michigan.gov/Vote)",
+              useful: true,
+              resultLabel: 'Michigan Department of State, checked 9 Nov 2026',
+              result: 'Online: register 15 or more days prior to Election Day\nBy mail: postmarked at least 15 days before Election Day\nWithin 14 days of an election: register in person at your\nlocal clerk\'s office and present proof of residency',
+              feedback: 'This is the primary source: the office that actually runs registration. It gives the rule, not a guess. Any date later than 15 days before Election Day for online or mail registration is wrong.',
+              kit: "Go to the official source: your state's election office or Secretary of State",
+            },
+            {
+              id: 'vote-gov',
+              label: 'vote.gov, the federal site with a page for every state',
+              useful: true,
+              resultLabel: 'vote.gov Michigan page, checked 9 Nov 2026',
+              result: 'Online registration deadline: 15 days before Election Day\nMail-in registration deadline: Must be postmarked 15 days before Election Day\nIn-person registration deadline: Available up to and including on Election Day\n\nLast updated: September 12, 2025',
+              feedback: 'It agrees with the state and links straight to Michigan\'s site. Notice the "last updated" line: even official summaries have a date. When they differ, the state election office has the final word.',
+              kit: 'Use vote.gov to find your state\'s page, and note the date on it',
+            },
+            {
+              id: 'guide',
+              label: 'A polished "Michigan voting guide" near the top of search results',
+              useful: false,
+              feedback: 'Good formatting is not freshness. A guide written for 2024 can rank well in 2026. As the Brennan Center\'s Abdiaziz Ahmed told NPR, chatbots "pull from whatever they can find online", and so does a search page.',
+            },
+          ],
         },
         {
-          id: 'item-3',
-          prompt: "I've read the article at that link. Its three main arguments are: (1) the policy was rushed, (2) costs were underestimated, (3) a review is planned for next spring.",
-          context: "You pasted a URL in a chat tool that has no browsing and asked: 'Summarize this.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Phantom read',
-          explanation: "VERIFY. If the tool can't open links, it never read the page. This summary is invented from the URL words and your wording. Open the article yourself.",
-          redFlag: "Claims to have read a link it couldn't open",
-        },
-        {
-          id: 'item-4',
-          prompt: 'HTTP status code 404 means "Not Found": the server could not find the requested resource.',
-          context: "You asked: 'What does a 404 error mean?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Timeless',
-          explanation: 'TRUST. This is a long-standing, standardized convention. Knowledge like this does not go stale the way versions and prices do.',
-          meta: 'Defined by the HTTP standard',
-        },
-        {
-          id: 'item-5',
-          prompt: 'The S&P 500 will close next year at 6,150.',
-          context: "You asked: 'Where will the S&P 500 close next year?'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Unknowable',
-          explanation: "VERIFY. Nobody can know this, including the AI. A precise number about the future is not knowledge, it's a pattern completed with false precision.",
-          redFlag: 'A specific prediction about the future, stated as fact',
+          title: 'Test 3: Where did the answer come from?',
+          question: 'The official rule does not match. How do you work out why the answer went wrong, so you know how far to trust the rest of it?',
+          options: [
+            {
+              id: 'ask-again',
+              label: 'Ask the chatbot again in a new chat',
+              useful: false,
+              resultLabel: 'Illustrative',
+              result: 'A slightly different answer, with different dates, or the same ones',
+              feedback: 'Either way it proves nothing. Getting the same dates twice does not make them right, and getting new ones only shows it is guessing. In IFPG\'s data, Claude gave wrong or outdated voting information one time in three.',
+            },
+            {
+              id: 'check-source',
+              label: 'Look for the source the answer used, and the date on it',
+              useful: true,
+              resultLabel: 'From the answer above',
+              result: 'Sources cited: none\nDate of information: none',
+              feedback: 'No source means no way to tell if the dates came from this year\'s rules, an old election, or nowhere. When an answer does cite a page, open it and check its date. ISD flagged "a reliance on outdated sources".',
+              kit: 'Check what source the answer used, and how old it is',
+            },
+            {
+              id: 'check-browsing',
+              label: 'Check whether the tool had live web search for this answer',
+              useful: true,
+              feedback: 'Without live search, the answer can only come from training data, which stops at a cutoff. With search, it can still pull an old page. Either way, a time-sensitive answer with no date or source should be treated as out of date until you confirm it.',
+              kit: 'Check whether the tool had live search. If not, assume time-sensitive answers may be stale',
+            },
+          ],
         },
       ],
-      scoring: {
-        tiers: [
-          { min: 5, message: "Perfect! You separated timeless knowledge from time-sensitive and unknowable claims. Let's sharpen that further." },
-          { min: 4, message: '4 out of 5. Strong instincts. The red flags ahead will help you catch the last one.' },
-          { min: 3, message: "3 out of 5. Time-sensitive claims are easy to miss because they sound just like facts. That's why this training exists." },
-          { min: 0, message: "This is tricky, and that's the point. Confident extrapolation sounds exactly like knowledge. Let's learn how to tell them apart." },
+      verdict: {
+        question: 'So what were those deadlines?',
+        options: [
+          { id: 'district-rules', label: 'Correct for the 4th district, which has its own deadlines', correct: false, feedback: 'Michigan sets its registration deadlines statewide. There is no separate 4th district rule for the dates to come from.' },
+          { id: 'extrapolated', label: 'Wrong dates, not grounded in this year\'s rules, stated as current fact', correct: true, feedback: "Right. Michigan's rule is 15 days before Election Day for online and mail registration. The answer gave later dates with no source, no date and no caveat. A voter who trusted it could have missed the cutoff, and after that the only route was registering in person at a clerk's office with proof of residency." },
+          { id: 'typo', label: 'A small slip in an otherwise reliable answer', correct: false, feedback: 'The rest of the answer was generic advice that is right almost anywhere. The only specific, time-sensitive facts in it were the two dates, and those were the parts that were wrong.' },
         ],
       },
-      summary: {
-        insight: "In this batch, 3 of 5 claims were things the AI couldn't reliably know: something that changes over time, something it never saw, and something in the future. The two safe ones were timeless. The midterm voting deadlines sounded just as sure as the boiling point of water. The question to ask is not 'does it sound right?' but 'could the AI know this?'",
+      kit: {
+        title: 'Your Extrapolation Test Kit',
+        footer: 'About a minute on the official site. The answer looked the same either way. Only checking the source could tell you the dates were wrong.',
       },
     },
   ],
 };
 
 // ============================================
-// OBSERVE (5 min): 4 red flags + matching + method
+// OBSERVE: 4 red flags + matching + method
 // ============================================
 const observe = {
-  title: 'The Red Flags',
-  estimatedTime: 5,
+  title: 'Red Flags',
   steps: [
     {
       type: 'cardGrid',
       heading: 'Extrapolation follows predictable patterns.',
       subtext: 'When a model answers beyond what it knows, the wording tends to give it away. Watch for these 4 red flags.',
       cards: [
-        { emoji: '🕰️', label: 'The Timeless Present' },
-        { emoji: '🔮', label: 'The Crystal Ball' },
-        { emoji: '👻', label: 'The Phantom Read' },
+        { emoji: '🕰️', label: 'Timeless Present' },
+        { emoji: '🔮', label: 'Crystal Ball' },
+        { emoji: '👻', label: 'Phantom Read' },
         { emoji: '🚫', label: 'Missing Cutoff Caveat' },
       ],
     },
@@ -198,7 +254,7 @@ const observe = {
       type: 'concept',
       emoji: '🕰️',
       eyebrow: 'Red Flag 1 of 4',
-      name: 'The Timeless Present',
+      name: 'Timeless Present',
       description: "Fast-changing facts are stated in plain present tense: 'currently', 'the latest', 'is now'.",
       compare: {
         left: {
@@ -219,7 +275,7 @@ const observe = {
       type: 'concept',
       emoji: '🔮',
       eyebrow: 'Red Flag 2 of 4',
-      name: 'The Crystal Ball',
+      name: 'Crystal Ball',
       description: 'A specific prediction about the future, stated as if it were a known fact.',
       rows: [
         { label: 'You ask:', variant: 'quote', tone: 'neutral', value: 'What will our revenue be next quarter?' },
@@ -233,7 +289,7 @@ const observe = {
       type: 'concept',
       emoji: '👻',
       eyebrow: 'Red Flag 3 of 4',
-      name: 'The Phantom Read',
+      name: 'Phantom Read',
       description: "The AI claims to have read a link, file, or private document it never actually saw.",
       rows: [
         { label: 'You ask:', variant: 'quote', tone: 'neutral', value: 'Summarize https://example.com/our-q3-planning-doc' },
@@ -262,9 +318,9 @@ const observe = {
       title: 'Quick Check: Match the Red Flag',
       instruction: 'For each AI statement, identify which red flag gives it away:',
       options: [
-        { id: 'flag-1', emoji: '🕰️', label: 'The Timeless Present' },
-        { id: 'flag-2', emoji: '🔮', label: 'The Crystal Ball' },
-        { id: 'flag-3', emoji: '👻', label: 'The Phantom Read' },
+        { id: 'flag-1', emoji: '🕰️', label: 'Timeless Present' },
+        { id: 'flag-2', emoji: '🔮', label: 'Crystal Ball' },
+        { id: 'flag-3', emoji: '👻', label: 'Phantom Read' },
         { id: 'flag-4', emoji: '🚫', label: 'Missing Cutoff Caveat' },
       ],
       items: [
@@ -312,86 +368,145 @@ const observe = {
 };
 
 // ============================================
-// PRACTICE (6 min): Drill -> Toolkit -> Completion
+// PRACTICE: Practice set -> Toolkit -> Completion
+// Checked 10 Nov 2026: devguide.python.org/versions (3.10 end of life
+// 2026-10-01), Wikipedia "Right turn on red" (NYC ban since 1977), US
+// federal minimum wage still $7.25 (Wikipedia; news reports, Nov 2026).
 // ============================================
 const practice = {
   title: 'Your Turn',
-  estimatedTime: 6,
   steps: [
     {
-      type: 'judgementSet',
+      type: 'practiceSet',
       intro: {
-        heading: 'Practice Drill: 5 subtler claims.',
-        instruction: "These are harder. Some are safe, some are traps. Decide: use it, or check first?",
-        note: 'Think about where the information came from, not just how it sounds.',
-        legend: {
-          trust: { label: 'TRUST', detail: 'Grounded or well-caveated', button: 'Use it' },
-          verify: { label: 'VERIFY', detail: 'Beyond what the AI could know', button: 'Check first' },
-        },
+        heading: 'Practice: Could It Know That?',
+        instruction: 'Six short exercises. Find the claim that does not hold everywhere, read an official page, sort what an AI could know, and pick the right check.',
+        note: 'Some answers here are fine. A good answer sticks to stable facts, uses what you gave it, or tells you where to check.',
       },
       items: [
         {
-          id: 'drill-1',
-          prompt: "My knowledge has a cutoff, so the newest release I know of may be out of date. Check the project's official releases page before pinning a version.",
-          context: "You asked: 'What's the latest version of this library?'",
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Honest limit',
-          explanation: "TRUST (the caveat, not any version number). The AI admits its limit and points to the right primary source. That's the behavior you want.",
-          meta: 'States its cutoff and names where to verify',
+          id: 'p9-spot-place',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'Can I turn right on a red light in the US?'",
+          prompt: 'Tap the part that overreaches, or tell us nothing does.',
+          artifact: { label: 'AI answer (illustrative)' },
+          segments: [
+            { text: 'Yes.' },
+            { text: ' ' },
+            { text: 'After coming to a full stop,' },
+            { text: ' ' },
+            { text: 'you can turn right on red anywhere in the US', flag: true },
+            { text: ' ' },
+            { text: 'unless a sign prohibits it.' },
+            { text: ' ' },
+            { text: 'This includes New York City.', flag: true },
+            { text: ' ' },
+            { text: 'Always yield to pedestrians and oncoming traffic.' },
+          ],
+          explanation: 'Right on red is the general rule in the US, but local rules differ. New York City has prohibited it since New York State legalized it in 1977, with only rare exceptions. The AI took a general rule and stretched it to every place. Check the rules for the state and city you are driving in.',
+          takeaway: 'A rule that is true in most places is not true in every place',
         },
         {
-          id: 'drill-2',
-          prompt: "According to your company's internal onboarding document, new hires get 25 days of paid leave.",
-          context: "You asked: 'How much leave do I get?' No document was shared with the AI.",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Unknowable',
-          explanation: "VERIFY. The AI has no access to your company's private documents unless you provide them. This number is a plausible-sounding guess. Ask HR or read the real policy.",
-          redFlag: 'Cites a private document it was never given',
+          id: 'p9-evidence-eol',
+          kind: 'choose',
+          label: 'Read the evidence',
+          context: "An AI told you: 'Python 3.10 still gets security fixes, so it's a safe choice for a new service.' You opened the official Python Developer's Guide.",
+          prompt: 'What does this tell you?',
+          artifact: {
+            label: 'devguide.python.org/versions (excerpt, checked 10 Nov 2026)',
+            code: true,
+            text: 'Supported versions\nBranch  Status       First release  End of life\n3.15    bugfix       2026-10-09     2031-10\n3.14    bugfix       2025-10-07     2030-10\n3.13    security     2024-10-07     2029-10\n3.12    security     2023-10-02     2028-10\n3.11    security     2022-10-24     2027-10\n\nUnsupported versions\n3.10    end-of-life  2021-10-04     2026-10-01',
+          },
+          options: [
+            { id: 'stale', label: 'The claim was probably true when the model was trained, but 3.10 reached end of life on 1 October 2026. Pick a supported version.', correct: true, feedback: 'Right. Both can be true: 3.10 was supported in the model\'s snapshot, and it is not today. The live page wins.' },
+            { id: 'page', label: 'The page is probably behind. The AI may know something newer.', feedback: 'This page is maintained by the Python core developers and is the primary source. A model has no newer information than its training data.' },
+            { id: 'broken', label: '3.10 has stopped working, so existing code will break.', feedback: 'End of life means no more fixes, including security fixes. The code still runs; it just stops getting patched.' },
+            { id: 'close', label: 'Close enough. It was supported until very recently.', feedback: 'For a new service, "supported until recently" means unpatched from now on. That is what you were trying to avoid.' },
+          ],
+          explanation: 'Support dates are set per version and run out on a schedule. A model trained before October 2026 could honestly believe 3.10 was supported. That is why "still" and "current" need the live page.',
+          takeaway: 'True when the model was trained is not the same as true today',
         },
         {
-          id: 'drill-3',
-          prompt: "Acme Corp's current CEO is Jane Doe, who has led the company since 2021.",
-          context: "You asked: 'Who runs Acme Corp?' (Illustrative company and name.)",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Time-sensitive',
-          explanation: "VERIFY. Leadership changes, and the model's snapshot may be old. A specific name and start date feel authoritative but need a check against the company's own site or recent news.",
-          redFlag: "'Current' role-holder stated with no date",
+          id: 'p9-diagnose-sort',
+          kind: 'pickAll',
+          label: 'Diagnose',
+          context: 'Five answers from the same chat. You did not share any documents, apart from one config file you pasted in.',
+          prompt: 'Which answers go beyond what the AI could know?',
+          options: [
+            { id: 'leave', label: "'Your company's onboarding document gives new hires 25 days of paid leave.'", correct: true, feedback: 'No document was shared. It cannot know your private policy, so the number is a guess. Check with HR.' },
+            { id: 'ceo', label: "'Acme Corp's current CEO is Jane Doe, who has led it since 2021.' (illustrative)", correct: true, feedback: "'Current' role-holders change, and the model's snapshot has an age. Check the company's own site or recent news." },
+            { id: 'port', label: "'Your pasted config says port: 8080, so the server listens on 8080.'", feedback: 'This is grounded in text you gave it, and quick to confirm against your paste.' },
+            { id: 'forecast', label: "'Signups grew 10%, 12% and 14%, so next month will be 16%.'", correct: true, feedback: 'Continuing a trend is arithmetic, not knowledge. It ignores seasons, campaigns and everything else that moves real numbers.' },
+            { id: 'km', label: "'There are 1,000 meters in a kilometer.'", feedback: 'A stable definition. It does not depend on the date, the place or a version.' },
+          ],
+          explanation: 'Private, current and future claims all depend on information the model did not have. Stable facts and content you supplied are different: the model can work from those reliably.',
+          takeaway: 'Private, current or future: the AI could not have known it',
         },
         {
-          id: 'drill-4',
-          prompt: 'Based on the config you pasted:\nport: 8080\nthe server listens on port 8080.',
-          code: true,
-          context: 'You pasted the config file into the chat, then asked what port it uses.',
-          correct: 'trust',
-          tone: 'good',
-          verdictLabel: 'Grounded',
-          explanation: "TRUST. The answer is drawn from text you supplied in the conversation, not from the model's memory of the world. Quote-checking it against your paste is still quick and easy.",
-          meta: 'Grounded in content you provided',
+          id: 'p9-spot-clean',
+          kind: 'spot',
+          label: 'Spot it',
+          context: "You asked: 'What's the latest version of the requests library?'",
+          prompt: 'Tap the part that overreaches, or tell us nothing does.',
+          artifact: { label: 'AI answer (illustrative)' },
+          segments: [
+            { text: "I can't check live data in this chat," },
+            { text: ' ' },
+            { text: 'and my training has a cutoff,' },
+            { text: ' ' },
+            { text: 'so the newest version I know of may be out of date.' },
+            { text: '\n\n' },
+            { text: 'To see the current release, run' },
+            { text: ' ' },
+            { text: 'pip index versions requests' },
+            { text: ' ' },
+            { text: 'or open pypi.org/project/requests.' },
+          ],
+          explanation: 'Nothing is wrong. It states its limits, gives no version number for you to trust, and points to two primary sources. That turns a guess into a 10-second check, which is the behavior you want.',
+          takeaway: 'An answer that names its limits and points to the source is a good answer',
         },
         {
-          id: 'drill-5',
-          prompt: "Your signups grew 10%, 12%, and 14% in the last three months, so next month's signups will be 16%, around 5,300 users.",
-          context: "You asked: 'Predict next month's signups.'",
-          correct: 'verify',
-          tone: 'bad',
-          verdictLabel: 'Extrapolation',
-          explanation: "VERIFY. Continuing a trend line is arithmetic, not knowledge. It ignores seasonality, campaigns, and everything else that moves real numbers. Treat it as a rough scenario with a range, not a prediction.",
-          redFlag: 'A single exact figure about the future with no uncertainty',
+          id: 'p9-pick-test',
+          kind: 'choose',
+          label: 'Pick the test',
+          context: "A shop's support chatbot tells you: 'You can return any item for a full refund within 90 days.' (Illustrative shop.)",
+          prompt: 'You want to rely on this. What do you check?',
+          options: [
+            { id: 'ask', label: "Ask the chatbot: 'Are you sure?'", feedback: 'It will usually repeat itself, sounding just as sure. That is the same source twice.' },
+            { id: 'forum', label: 'Search for other customers who say it worked for them', feedback: "Other people's experiences may come from an older policy, another country or a special case." },
+            { id: 'policy', label: "Open the shop's published returns policy and check its date and conditions", correct: true, feedback: 'Right. The written policy is the source that counts. Check the conditions too: sale items, opened goods, your country.' },
+            { id: 'tone', label: 'It sounds official and specific, so it is fine', feedback: 'Specific is not the same as current. Support bots can describe policies that do not exist.' },
+          ],
+          explanation: 'Policies vary by shop, country and date, and bots get them wrong. In 2024 a Canadian tribunal held Air Canada liable after its chatbot described a refund policy wrongly (Moffatt v. Air Canada). Read the written policy before you act on it.',
+          takeaway: 'For rules that vary by place and date, read the source that sets them',
+        },
+        {
+          id: 'p9-fix-scope',
+          kind: 'choose',
+          label: 'Fix it',
+          context: "You asked: 'What's the minimum wage where I work in the US?'",
+          prompt: 'Which rewrite fixes the problem?',
+          artifact: { label: 'AI answer (illustrative)', text: 'The minimum wage in the US is $7.25 an hour.' },
+          options: [
+            { id: 'cutoff', label: "'As of my knowledge cutoff, the minimum wage in the US is $7.25 an hour.'", feedback: 'A date caveat helps, but the bigger problem is place. $7.25 is the federal floor, and many states and some cities set a higher rate.' },
+            { id: 'fifteen', label: "'The minimum wage in the US is now $15 an hour.'", feedback: '$15 is the rate in some states, not a national rule. Swapping one number for another keeps the same mistake.' },
+            { id: 'scoped', label: "'The federal minimum is $7.25 an hour, but many states and some cities set higher rates, and these change. Check your state labor department for the rate where you work.'", correct: true, feedback: 'Right. It separates the national floor from local rates and sends you to the source that sets yours.' },
+            { id: 'probably', label: "'The minimum wage in the US is probably $7.25 an hour.'", feedback: '"Probably" adds doubt without saying why, or where to check.' },
+          ],
+          explanation: 'The federal minimum has been $7.25 since 2009, but employers must pay the highest of the federal, state and local rates. So the right figure depends on where you work, and many state rates went up in 2026.',
+          takeaway: 'National figure or local rule? Say which, and where to check',
         },
       ],
       scoring: {
         tiers: [
-          { min: 5, message: "Excellent! You're separating grounded answers from extrapolated ones, even when they sound similar." },
-          { min: 4, message: 'Nice work. 4 out of 5. Subtle ones are the hardest, so reread the explanation for the one you missed.' },
-          { min: 3, message: '3 out of 5. Keep asking: where did this information come from, and could the AI have seen it?' },
-          { min: 0, message: "These were designed to be tricky. Re-run the 'Check the Clock' steps on each one and try again." },
+          { min: 6, message: 'Six out of six. You can tell grounded answers from extrapolated ones, even when they sound the same.' },
+          { min: 4, message: 'Nice work. For the ones you missed, ask: where did this information come from, and could the AI have seen it?' },
+          { min: 0, message: "These were tricky on purpose. Re-run the 'Check the Clock' steps on each one and read the explanations again." },
         ],
       },
       summary: {
-        insight: "The safest answers are either timeless, grounded in something you provided, or honest about their limits. The risky ones are time-sensitive, private, or about the future, and they sound just as confident as the safe ones.",
+        insight: 'The risky answers depended on a place, a date, a version or something private, and they sounded as sure as the safe ones. The good answers stuck to stable facts, used what you gave them, or told you where to check.',
       },
     },
     {
@@ -482,7 +597,7 @@ export const lesson = {
   title: 'Confident Extrapolation',
   subtitle: 'Claims beyond training data',
   description: "Learn to spot when AI answers confidently about things it can't know: recent events, 'the latest' anything, the future, or content it never saw.",
-  estimatedTime: 15,
+  estimatedTime: 10,
 
   skillLearned: 'Recognizing claims that go beyond what the AI could know',
   verificationMethod: 'Check the Clock',

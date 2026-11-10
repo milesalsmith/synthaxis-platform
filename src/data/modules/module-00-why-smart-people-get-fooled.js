@@ -3,9 +3,9 @@
 //
 // PURPOSE: Create the "oh shit" moment before Pattern 1
 // TIME: 10 minutes
-// STRUCTURE: Trust Test → 3 Biases → The Formula → Transition
+// STRUCTURE: Trust Test → 3 Biases → Formula → Transition
 //
-// This module is NOT a pattern — it's psychological priming.
+// This module is NOT a pattern. It's psychological priming.
 // Users leave understanding WHY they're vulnerable, then learn HOW to spot errors.
 
 export const module00 = {
@@ -16,7 +16,7 @@ export const module00 = {
   type: 'foundation', // Different from 'pattern' type
   title: 'Why Smart People Get Fooled',
   subtitle: 'The psychology that makes AI mistakes invisible',
-  description: 'Before you learn the patterns, understand why your brain is wired to trust AI — even when it\'s wrong.',
+  description: 'Before you learn the patterns, understand why your brain is wired to trust AI, even when it\'s wrong.',
   estimatedTime: 10,
   
   // For navigation
@@ -27,10 +27,10 @@ export const module00 = {
   },
 
   // ============================================
-  // SECTION 2: The Trust Test
+  // SECTION 2: Trust Test
   // ============================================
   trustTest: {
-    title: "The Trust Test",
+    title: "Trust Test",
     estimatedTime: 2,
     
     intro: {
@@ -44,7 +44,7 @@ export const module00 = {
       
       optionA: {
         id: 'fluent',
-        text: `Dreams occur during REM sleep as a result of the brain's memory consolidation processes. According to the activation-synthesis hypothesis developed by Harvard researchers, the brainstem generates random neural activity during sleep, which the cortex then attempts to interpret by creating narrative experiences. This explains why dreams often feature fragmented imagery and illogical sequences — they are essentially the brain's attempt to make sense of random signals.`,
+        text: `Dreams occur during REM sleep as a result of the brain's memory consolidation processes. According to the activation-synthesis hypothesis developed by Harvard researchers, the brainstem generates random neural activity during sleep, which the cortex then attempts to interpret by creating narrative experiences. This explains why dreams often feature fragmented imagery and illogical sequences: they are essentially the brain's attempt to make sense of random signals.`,
         style: 'fluent', // Sounds authoritative
         isCorrect: false,
         issues: [
@@ -57,7 +57,7 @@ export const module00 = {
       
       optionB: {
         id: 'clunky',
-        text: `We don't fully know why we dream. There are several theories — some scientists think it's about processing memories, others think it might be random brain activity that we try to make sense of, and some think dreams have psychological meaning. The honest answer is that dream research is still ongoing and scientists disagree about the basics.`,
+        text: `We don't fully know why we dream. There are several theories. Some scientists think it's about processing memories, others think it might be random brain activity that we try to make sense of, and some think dreams have psychological meaning. The honest answer is that dream research is still ongoing and scientists disagree about the basics.`,
         style: 'clunky', // Sounds uncertain
         isCorrect: true,
         strengths: [
@@ -73,12 +73,12 @@ export const module00 = {
     reveal: {
       ifChoseA: {
         headline: "You trusted the confident one.",
-        message: "Most people do. The first explanation sounds more authoritative — but it oversimplifies a complex topic and presents one theory as fact. The second explanation is actually more accurate because it acknowledges what we don't know.",
+        message: "Most people do. The first explanation sounds more authoritative, but it oversimplifies a complex topic and presents one theory as fact. The second explanation is actually more accurate because it acknowledges what we don't know.",
         emotion: "surprise"
       },
       ifChoseB: {
         headline: "Good instincts.",
-        message: "You picked the more accurate explanation. But here's the thing: most people pick the other one. The fluent, confident explanation just *feels* more trustworthy — even when it's wrong.",
+        message: "You picked the more accurate explanation. But here's the thing: most people pick the other one. The fluent, confident explanation just *feels* more trustworthy, even when it's wrong.",
         emotion: "validation"
       },
       universal: {
@@ -89,7 +89,7 @@ export const module00 = {
   },
 
   // ============================================
-  // SECTION 3: The Three Biases
+  // SECTION 3: Three Biases
   // ============================================
   biases: {
     title: "Three Biases That Make You Vulnerable",
@@ -109,7 +109,7 @@ export const module00 = {
         oneLiner: "If it sounds like a textbook, it must be true.",
         description: "Humans instinctively trust authoritative voices. When information is presented with confidence, structure, and technical terminology, we assume it's credible.",
         
-        aiExploit: "AI outputs look like textbooks, academic papers, and expert explanations — even when they're completely made up.",
+        aiExploit: "AI outputs look like textbooks, academic papers, and expert explanations, even when they're completely made up.",
         
         example: {
           aiSays: `"According to research published in the European Journal of Cognitive Science (2019), working memory capacity directly correlates with creative problem-solving ability (r = 0.73, p < 0.001)."`,
@@ -154,10 +154,10 @@ export const module00 = {
     
     // Mini-quiz after explaining biases
     quiz: {
-      instruction: "Quick check — which bias is this?",
+      instruction: "Quick check: which bias is this?",
       items: [
         {
-          scenario: `You read an AI explanation that includes phrases like "studies have shown" and "according to researchers at MIT" — but you don't verify the sources.`,
+          scenario: `You read an AI explanation that includes phrases like "studies have shown" and "according to researchers at MIT", but you don't verify the sources.`,
           correctBias: 'authority',
           explanation: "The academic language triggered your Authority Bias. The phrasing made it sound credible without actually being verified."
         },
@@ -176,10 +176,10 @@ export const module00 = {
   },
 
   // ============================================
-  // SECTION 4: The Formula
+  // SECTION 4: Formula
   // ============================================
   formula: {
-    title: "The AI Persuasion Formula",
+    title: "AI Persuasion Formula",
     estimatedTime: 2,
     
     intro: {
@@ -209,7 +209,7 @@ export const module00 = {
   // SECTION 5: Transition to Patterns
   // ============================================
   transition: {
-    title: "The Good News",
+    title: "Good News",
     estimatedTime: 1,
     
     content: {
@@ -224,8 +224,8 @@ export const module00 = {
       ],
       
       preview: {
-        title: "The 10 Patterns",
-        description: "Each pattern takes 15 minutes. Total training: 2.5 hours. Then you're done.",
+        title: "10 Patterns",
+        description: "10 lessons, about 10 minutes each. Under 2 hours in total. Then you're done.",
         patterns: [
           { number: 1, name: 'Confident Fabrication', teaser: 'AI invents tools that don\'t exist' },
           { number: 2, name: 'Plausible Syntax', teaser: 'Code that looks right but won\'t run' },
@@ -251,13 +251,13 @@ export const module00 = {
     "AI triggers three cognitive biases: Authority, Fluency, and Automation",
     "Confident + fluent + machine-generated = dangerous combination",
     "AI outputs are predictions, not knowledge",
-    "Your brain is wired to trust AI — awareness is the first defense",
+    "Your brain is wired to trust AI, so awareness is the first defense",
     "AI mistakes follow predictable patterns you can learn to spot"
   ],
   
   completionMessage: {
     title: "Foundation Complete",
-    summary: "You understand why AI is so convincing — and why that's dangerous. Now let's learn the specific patterns that AI mistakes follow.",
+    summary: "You understand why AI is so convincing, and why that's dangerous. Now let's learn the specific patterns that AI mistakes follow.",
     nextStep: "Pattern 1 teaches you to spot when AI invents tools, packages, and libraries that don't exist."
   }
 };

@@ -1,12 +1,14 @@
 // src/components/phases/blocks/JudgementSetBlock.jsx
-// Self-navigating interactive block: the "Trust or Verify?" judgement quiz.
+// Self-navigating interactive block: the "Trust or Verify?" judgement set.
+// Used for the PRACTICE drill in non-package patterns. It is no longer the
+// TEST quiz (TEST is now spotTheFlaw + investigation).
 // Runs its own intro -> per-item -> results flow and calls onComplete() when the
 // learner leaves the results screen. Pattern-agnostic: correctness comes from
 // item.correct ('trust'|'verify'), not any package-specific field.
 //
 //   { type: 'judgementSet',
 //     intro?: { heading, instruction?, note?, legend?: { trust, verify } },
-//       legend entries: { label, detail, button? } — `button` overrides the small
+//       legend entries: { label, detail, button? }. `button` overrides the small
 //       text under the TRUST/VERIFY buttons (defaults: 'Install it' / 'Check first').
 //     item.code: true renders the prompt as a multi-line code block (no quotes).
 //     items: [{ id, prompt, context?, correct: 'trust'|'verify',

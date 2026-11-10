@@ -1,6 +1,6 @@
 // platform/src/components/STOPVisualization.jsx
 // Animated STOP Protocol visualizer - AI Discernment Training
-// "When AI gives you an answer — STOP."
+// "When AI gives you an answer, STOP."
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -24,8 +24,7 @@ export default function STOPVisualization() {
     {
       letter: "S",
       name: "See",
-      time: 2,
-      description: "See the AI output that fooled real people. Before you learn to spot problems, you need to see how convincing AI hallucinations can be—and why smart people get fooled.",
+      description: "See the AI output that fooled real people. Before you learn to spot problems, you need to see how convincing AI hallucinations can be, and why smart people get fooled.",
       icon: Eye,
       color: "amber",
       textColor: "text-amber-400",
@@ -37,8 +36,7 @@ export default function STOPVisualization() {
     {
       letter: "T",
       name: "Test",
-      time: 3,
-      description: "Test yourself—can you spot the problem? Before we show you the answer, try to find it yourself. This productive struggle primes your brain to remember the pattern.",
+      description: "Test the case you just saw. First spot which parts of the AI output are worth testing. Then run real checks, like a registry lookup, a source trace or recomputing a number, and make the call.",
       icon: Target,
       color: "blue",
       textColor: "text-blue-400",
@@ -50,8 +48,7 @@ export default function STOPVisualization() {
     {
       letter: "O",
       name: "Observe",
-      time: 6,
-      description: "Observe the pattern and learn the verification technique. This is the core of each lesson—hands-on practice with real examples, building your pattern recognition muscle.",
+      description: "Observe the pattern and learn the verification technique. This is the core of each lesson: hands-on practice with real examples, building your pattern recognition muscle.",
       icon: Search,
       color: "violet",
       textColor: "text-violet-400",
@@ -63,8 +60,7 @@ export default function STOPVisualization() {
     {
       letter: "P",
       name: "Practice",
-      time: 4,
-      description: "Practice on fresh examples with no scaffolding. Prove to yourself you've got it. Apply the pattern to new AI outputs and build lasting verification skills.",
+      description: "Practice on fresh examples, with a different kind of exercise each time: spot the invented part, read real evidence, pick the right test, fix the output. Some answers are fine, because checking is not the same as distrusting.",
       icon: CheckCircle,
       color: "emerald",
       textColor: "text-synthaxis-300",
@@ -88,13 +84,7 @@ export default function STOPVisualization() {
   }, [activePhase, isAnimating, phases.length]);
 
   // ============================================
-  // 04. CALCULATE PROGRESS
-  // ============================================
-  const totalTime = phases.reduce((sum, p) => sum + p.time, 0);
-  const elapsedTime = phases.slice(0, activePhase + 1).reduce((sum, p) => sum + p.time, 0);
-
-  // ============================================
-  // 05. RENDER
+  // 04. RENDER
   // ============================================
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -135,13 +125,6 @@ export default function STOPVisualization() {
                   {phase.name}
                 </div>
                 
-                {/* Time */}
-                <div className={`text-xs transition-colors duration-300 ${
-                  isActive ? phase.textColor : 'text-slate-600'
-                }`}>
-                  {phase.time} min
-                </div>
-
                 {/* Icon (visible when active) */}
                 <PhaseIcon 
                   size={20} 
@@ -182,12 +165,6 @@ export default function STOPVisualization() {
               <h3 className="text-2xl font-semibold text-slate-100">
                 {phases[activePhase].name}
               </h3>
-              <span className={`
-                px-2 py-1 text-xs font-medium rounded
-                ${phases[activePhase].bgColor} ${phases[activePhase].textColor}
-              `}>
-                {phases[activePhase].time} minutes
-              </span>
             </div>
             <p className="text-slate-300 leading-relaxed">
               {phases[activePhase].description}
@@ -199,7 +176,6 @@ export default function STOPVisualization() {
         <div className="mt-8">
           <div className="flex justify-between text-sm text-slate-400 mb-2">
             <span>Phase {activePhase + 1} of {phases.length}</span>
-            <span>{elapsedTime} / {totalTime} min</span>
           </div>
           <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden flex">
             {phases.map((phase, i) => (
@@ -209,7 +185,7 @@ export default function STOPVisualization() {
                   h-full transition-all duration-500 ease-out
                   ${i <= activePhase ? phase.textColor.replace('text-', 'bg-') : 'bg-transparent'}
                 `}
-                style={{ width: `${(phase.time / totalTime) * 100}%` }}
+                style={{ width: `${100 / phases.length}%` }}
               />
             ))}
           </div>
@@ -219,10 +195,10 @@ export default function STOPVisualization() {
       {/* Bottom Summary */}
       <div className="mt-6 text-center">
         <p className="text-slate-400 text-sm mb-2">
-          "When AI gives you an answer — <span className="text-synthaxis-300 font-semibold">STOP.</span>"
+          "When AI gives you an answer, <span className="text-synthaxis-300 font-semibold">STOP.</span>"
         </p>
         <p className="text-slate-500 text-xs">
-          <span className="text-slate-300 font-semibold">15 minutes</span> per lesson · 
+          <span className="text-slate-300 font-semibold">10 minutes</span> per lesson · 
           <span className="text-slate-300 font-semibold"> 4 phases</span> · 
           <span className="text-slate-300 font-semibold"> 1 pattern</span>
         </p>

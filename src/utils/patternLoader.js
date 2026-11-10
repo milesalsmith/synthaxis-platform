@@ -3,8 +3,8 @@
 // 
 // CURRICULUM STRUCTURE:
 // Module 0: Why Smart People Get Fooled (foundation - 10 min)
-// Patterns 1-10: Hallucination patterns (15 min each)
-// Total: 10 + 150 = 160 minutes (~2.5 hours)
+// Patterns 1-10: Hallucination patterns (10 min each)
+// Total: 10 + 100 = 110 minutes (under 2 hours)
 
 // ============================================
 // SECTION 1: Module & Pattern Registry
@@ -52,7 +52,7 @@ export const curriculumMetadata = {
       subtitle: 'AI invents packages, libraries, or tools that don\'t exist',
       hook: 'AI agents tried to install a package that never existed',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 2, 
@@ -61,7 +61,7 @@ export const curriculumMetadata = {
       subtitle: 'Code that looks right but isn\'t',
       hook: 'The AI-built app that worked fine and leaked everything',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 3, 
@@ -70,7 +70,7 @@ export const curriculumMetadata = {
       subtitle: 'Deprecated APIs recommended as current',
       hook: 'When AI pins the version with the known security hole',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 4, 
@@ -79,7 +79,7 @@ export const curriculumMetadata = {
       subtitle: 'Sources and cases that don\'t exist',
       hook: 'A Rs 425 crore penalty built on cases that never existed',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 5, 
@@ -88,7 +88,7 @@ export const curriculumMetadata = {
       subtitle: 'Made-up numbers stated with confidence',
       hook: 'The $200 billion that was two different things',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 6, 
@@ -97,7 +97,7 @@ export const curriculumMetadata = {
       subtitle: 'Endpoints and methods that don\'t exist',
       hook: 'The feature that was never there, until users forced it',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 7, 
@@ -106,7 +106,7 @@ export const curriculumMetadata = {
       subtitle: 'Wrong dates, events, attributions',
       hook: 'The cargo that was never there',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 8, 
@@ -115,7 +115,7 @@ export const curriculumMetadata = {
       subtitle: 'Reasoning that sounds valid but isn\'t',
       hook: 'One sign error, three papers withdrawn',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 9, 
@@ -124,7 +124,7 @@ export const curriculumMetadata = {
       subtitle: 'Claims beyond training data',
       hook: 'Confident voting deadlines, out of date',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
     { 
       number: 10, 
@@ -133,13 +133,13 @@ export const curriculumMetadata = {
       subtitle: 'Real and fake mixed together',
       hook: 'The most dangerous pattern of all',
       status: 'available',
-      estimatedTime: 15
+      estimatedTime: 10
     },
   ],
   
   // Curriculum stats
   totalPatterns: 10,
-  totalTime: 160, // 10 min foundation + 150 min patterns
+  totalTime: 110, // 10 min foundation + 100 min patterns
   framework: 'STOP Protocol',
   focus: 'Discernment'
 };

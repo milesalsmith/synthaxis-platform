@@ -20,6 +20,9 @@ import { RegistryBlock } from './RegistryBlock';
 import { ChoiceBlock, MatchingBlock } from './InteractiveSingle';
 import { JudgementSetBlock } from './JudgementSetBlock';
 import { DrillBlock } from './DrillBlock';
+import { SpotTheFlawBlock } from './SpotTheFlawBlock';
+import { InvestigationBlock } from './InvestigationBlock';
+import { PracticeSetBlock } from './PracticeSetBlock';
 
 const REGISTRY = {
   prose: ProseBlock,
@@ -37,6 +40,9 @@ const REGISTRY = {
   matching: MatchingBlock,
   judgementSet: JudgementSetBlock,
   drill: DrillBlock,
+  spotTheFlaw: SpotTheFlawBlock,
+  investigation: InvestigationBlock,
+  practiceSet: PracticeSetBlock,
 };
 
 export default function BlockRenderer({ block, accent, onResolved, onComplete, onBack }) {

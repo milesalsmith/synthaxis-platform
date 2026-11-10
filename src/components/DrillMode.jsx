@@ -60,7 +60,7 @@ const DRILL_PACKAGES = [
       versions: 114
     },
     explanation: 'The most depended-upon npm package. 12 years old, 114 versions, 45M weekly downloads.',
-    learnPoint: 'Check the "dependents" count — lodash has 150,000+ packages depending on it.'
+    learnPoint: 'Check the "dependents" count: lodash has 150,000+ packages depending on it.'
   },
   { 
     name: 'axios', 
@@ -105,7 +105,7 @@ const DRILL_PACKAGES = [
       versions: 45
     },
     explanation: 'Modern async HTTP client by the creator of Django REST Framework. Growing rapidly.',
-    learnPoint: 'Newer packages can be legitimate — check if maintainers have other known projects.'
+    learnPoint: 'Newer packages can be legitimate. Check if the maintainers have other known projects.'
   },
 
   // === FABRICATED PACKAGES ===
@@ -138,7 +138,7 @@ const DRILL_PACKAGES = [
       hasRepo: false,
       versions: 1
     },
-    explanation: 'FABRICATED. Combines "Flask" + "API" + "-toolkit" — a pattern AI creates to match your question perfectly.',
+    explanation: 'FABRICATED. Combines "Flask" + "API" + "-toolkit", a pattern AI creates to match your question perfectly.',
     learnPoint: 'Red flag: Package name matches your exact question too perfectly.'
   },
   { 
@@ -154,7 +154,7 @@ const DRILL_PACKAGES = [
       hasRepo: false,
       versions: 2
     },
-    explanation: 'FABRICATED. Mashes "pandas" with generic "datatools" — 38% of hallucinations are conflations like this.',
+    explanation: 'FABRICATED. Mashes "pandas" with generic "datatools". 38% of hallucinations are conflations like this.',
     learnPoint: 'Red flag: Combines two real concepts into a fake package name.'
   },
   { 
@@ -187,7 +187,7 @@ const DRILL_PACKAGES = [
       versions: 3
     },
     explanation: 'FABRICATED. Slightly higher downloads and has a repo, but the repo is nearly empty. Real state management: Redux, Zustand, Jotai.',
-    learnPoint: 'A GitHub link isn\'t enough — click through and check if the repo has real code and activity.'
+    learnPoint: 'A GitHub link isn\'t enough. Click through and check if the repo has real code and activity.'
   },
 ];
 
@@ -368,7 +368,7 @@ export default function DrillMode({
           <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <Zap className="w-8 h-8 text-amber-400" />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">{title || 'The Verification Drill'}</h3>
+          <h3 className="text-2xl font-bold text-white mb-2">{title || 'Verification Drill'}</h3>
           <p className="text-slate-400 max-w-md mx-auto">
             {description || subtitle || "10 packages. Each shows registry info. Spot the fakes using what you've learned."}
           </p>

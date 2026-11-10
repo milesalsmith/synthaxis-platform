@@ -1,6 +1,6 @@
 // platform/src/components/Landing.jsx
 // Synthaxis.ai - The AI Discernment Training Platform
-// "Discernment is the pause. When AI gives you an answer — STOP."
+// "Discernment is the pause. When AI gives you an answer, STOP."
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -33,8 +33,8 @@ function Landing() {
   
   const stats = [
     { value: '10', label: 'hallucination patterns', icon: Eye },
-    { value: '15', label: 'minutes per pattern', icon: Clock },
-    { value: '~3hrs', label: 'to AI discernment', icon: TrendingUp },
+    { value: '10', label: 'minutes per lesson', icon: Clock },
+    { value: '<2hrs', label: 'to AI discernment', icon: TrendingUp },
   ];
 
   // 10 Hallucination Patterns
@@ -175,7 +175,7 @@ function Landing() {
             The breath before you copy-paste. The second look before you ship.
           </p>
           <p className="text-center text-lg text-slate-500 max-w-2xl mx-auto mb-10">
-            When AI gives you an answer — <span className="text-synthaxis-300 font-semibold">STOP.</span>
+            When AI gives you an answer, <span className="text-synthaxis-300 font-semibold">STOP.</span>
           </p>
 
           {/* CTA */}
@@ -216,11 +216,12 @@ function Landing() {
                 <span className="text-slate-500">Not always correct ones.</span>
               </h2>
               <p className="text-slate-400 leading-relaxed mb-6">
-                30,000 developers installed a package that didn't exist. Lawyers cited fake court cases. 
-                Researchers quoted fabricated statistics. The AI sounded confident every time.
+                AI agents tried to install a package that never existed. India's Supreme Court threw out
+                a Rs 425 crore penalty built on fake cases. A Big Four report's headline figure meant two
+                different things. The AI sounded confident every time.
               </p>
               <p className="text-slate-400 leading-relaxed">
-                <span className="text-synthaxis-300">Discernment</span> — the ability to verify AI output — 
+                <span className="text-synthaxis-300">Discernment</span>, the ability to verify AI output,
                 is now the most important skill for anyone using AI professionally.
               </p>
             </div>
@@ -230,10 +231,11 @@ function Landing() {
                 <div className="flex items-start gap-4">
                   <AlertTriangle className="text-red-400 mt-0.5 flex-shrink-0" size={20} />
                   <div>
-                    <div className="font-medium text-slate-100 mb-1">The huggingface-cli incident</div>
+                    <div className="font-medium text-slate-100 mb-1">react-codeshift incident</div>
                     <div className="text-sm text-slate-400">
-                      ChatGPT recommended a package that didn't exist. 30,000+ developers installed it. 
-                      Alibaba added it to their documentation. It was a hallucination.
+                      An AI invented an npm package name. It spread through 237 GitHub repositories as an
+                      instruction for AI agents to run, until a security researcher claimed the name first
+                      (January 2026).
                     </div>
                   </div>
                 </div>
@@ -261,9 +263,9 @@ function Landing() {
       <section className="border-t border-slate-800 bg-slate-900/30">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold mb-4">The STOP Protocol</h2>
+            <h2 className="text-3xl font-semibold mb-4">STOP Protocol</h2>
             <p className="text-slate-400 max-w-xl mx-auto">
-              Every pattern follows the same 15-minute structure. 
+              Every lesson follows the same 10-minute structure. 
               Build the muscle memory for AI verification.
             </p>
           </div>
@@ -279,7 +281,7 @@ function Landing() {
       <section className="border-t border-slate-800">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold mb-4">The Curriculum</h2>
+            <h2 className="text-3xl font-semibold mb-4">Curriculum</h2>
             <p className="text-slate-400 max-w-xl mx-auto">
               Start with the psychology. Then learn the 10 patterns.
               <br />
@@ -315,7 +317,7 @@ function Landing() {
                       </span>
                     </div>
                     <p className="text-sm text-slate-400">The 3 biases that make AI mistakes invisible</p>
-                    <p className="text-xs text-slate-500 mt-1">Foundation · 10 min</p>
+                    <p className="text-xs text-slate-500 mt-1">Foundation</p>
                   </div>
                 </div>
                 <ArrowRight className="text-amber-400 flex-shrink-0" size={20} />
@@ -380,8 +382,8 @@ function Landing() {
             </h2>
             
             <p className="text-slate-400 leading-relaxed mb-8">
-              The AI Fluency Framework — developed by researchers at Ringling College, University College Cork, 
-              and Anthropic — identifies four competencies: Delegation, Description, Discernment, and Diligence.
+              The AI Fluency Framework (developed by researchers at Ringling College, University College Cork,
+              and Anthropic) identifies four competencies: Delegation, Description, Discernment, and Diligence.
             </p>
             
             <div className="grid grid-cols-4 gap-3 mb-8">
@@ -404,7 +406,7 @@ function Landing() {
             </div>
             
             <p className="text-slate-500 text-sm">
-              Synthaxis focuses entirely on Discernment — the skill that separates 
+              Synthaxis focuses entirely on Discernment, the skill that separates
               AI-fluent professionals from everyone else.
             </p>
           </div>
@@ -421,11 +423,11 @@ function Landing() {
               <h2 className="text-3xl font-semibold mb-6">Built for professionals who use AI daily</h2>
               <p className="text-slate-400 leading-relaxed mb-6">
                 You're already using AI. You're already delegating work to it. 
-                Now learn to verify its output — before your users, clients, or colleagues find the mistakes.
+                Now learn to verify its output before your users, clients, or colleagues find the mistakes.
               </p>
               <p className="text-slate-400 leading-relaxed mb-6">
-                Start with a 10-minute foundation on why AI is so convincing, then work through 
-                10 patterns at 15 minutes each. Less than 3 hours to build the most 
+                Start with a short foundation on why AI is so convincing, then work through 
+                10 lessons of 10 minutes each. Under 2 hours to build the most 
                 important skill in an AI world.
               </p>
               <div className="flex flex-wrap gap-2">
@@ -440,7 +442,7 @@ function Landing() {
             <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Clock className="text-synthaxis-300" size={24} />
-                <span className="text-xl font-semibold">The time investment</span>
+                <span className="text-xl font-semibold">Time Investment</span>
               </div>
               <div className="space-y-4 text-slate-400">
                 <div className="flex justify-between items-center pb-3 border-b border-slate-700">
@@ -448,16 +450,16 @@ function Landing() {
                   <span className="font-semibold text-slate-100">10 min</span>
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-slate-700">
-                  <span>Patterns</span>
-                  <span className="font-semibold text-slate-100">10 × 15 min</span>
+                  <span>Lessons</span>
+                  <span className="font-semibold text-slate-100">10 × 10 min</span>
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-slate-700">
                   <span>Total</span>
-                  <span className="font-semibold text-synthaxis-300">~3 hours</span>
+                  <span className="font-semibold text-synthaxis-300">Under 2 hours</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>At 1 lesson/day</span>
-                  <span className="font-semibold text-slate-100">Less than 2 weeks</span>
+                  <span className="font-semibold text-slate-100">Under 2 weeks</span>
                 </div>
               </div>
             </div>
@@ -478,7 +480,7 @@ function Landing() {
               and when to rely on themselves instead."
             </blockquote>
             <cite className="text-slate-500 text-sm">
-              — A.J. Juliani, "Discernment: The Most Important Skill in an AI World"
+              A.J. Juliani, "Discernment: The Most Important Skill in an AI World"
             </cite>
           </div>
         </div>
@@ -493,7 +495,7 @@ function Landing() {
             Learn to trust, but verify.
           </h2>
           <p className="text-slate-400 mb-4 max-w-xl mx-auto">
-            Start by understanding why AI is so convincing — and why that's dangerous.
+            Start by understanding why AI is so convincing, and why that's dangerous.
             Then learn the 10 patterns that AI mistakes follow.
           </p>
           <p className="text-slate-500 mb-8 text-sm">

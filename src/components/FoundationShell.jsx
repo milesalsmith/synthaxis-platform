@@ -1,14 +1,13 @@
 // src/components/FoundationShell.jsx
 // Shell for Module 0: Why Smart People Get Fooled
 //
-// Simpler than LessonShell — no STOP Protocol phases
+// Simpler than LessonShell: no STOP Protocol phases
 // Just loads the foundation module and renders Module0Renderer
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Brain, 
-  Clock,
   Zap
 } from 'lucide-react';
 import Module0Renderer from './Module0Renderer';
@@ -48,7 +47,7 @@ export default function FoundationShell() {
     loadContent();
   }, []);
 
-  // Handle completion — navigate to Pattern 1
+  // Handle completion: navigate to Pattern 1
   const handleComplete = () => {
     markFoundationComplete();
     navigate('/learn/1');
@@ -117,12 +116,6 @@ export default function FoundationShell() {
                 </h1>
                 <p className="text-slate-500 text-xs">Foundation Module</p>
               </div>
-            </div>
-
-            {/* Time estimate */}
-            <div className="flex items-center gap-1 text-slate-500 text-sm">
-              <Clock className="w-4 h-4" />
-              <span>{content.estimatedTime} min</span>
             </div>
           </div>
         </div>

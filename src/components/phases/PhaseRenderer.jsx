@@ -3,12 +3,12 @@
 //
 // The four hand-written phase components (See/Test/Observe/Practice) that used
 // to live here have been replaced by StepFlow + the block library in ./blocks.
-// Every phase is now just { title, estimatedTime, steps: [block, ...] } authored
+// Every phase is now just { title, steps: [block, ...] } authored
 // in the pattern data file, so patterns 2-10 need no code changes here.
 //
 // Props (unchanged, passed straight through by LessonShell):
 //   phase        'see' | 'test' | 'observe' | 'practice'
-//   content      the phase object: { title, estimatedTime, steps }
+//   content      the phase object: { title, steps }
 //   onComplete   advance to the next phase (or finish the lesson)
 //   onBack       go to the previous phase (null on the first phase)
 
